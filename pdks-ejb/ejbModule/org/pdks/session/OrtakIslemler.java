@@ -23769,23 +23769,20 @@ public class OrtakIslemler implements Serializable {
 											if (personelFazlaMesaiList.isEmpty() == false) {
 												boolean fazlaMesaiSureHesapla = calismaModeli.isFazlaMesaiSureHesaplansin();
 												List<YemekIzin> list = new ArrayList<YemekIzin>();
+												List yemekler = arifeGunu && arifeYemekEkle && oncekiCikisZaman != null && oncekiCikisZaman.getTime() == girisZaman.getTime() ? list : yemekList;
 												for (PersonelFazlaMesai pfm : personelFazlaMesaiList) {
 													if (personelFazlaMesaiList.size() == 1)
 														personelFazlaMesai = pfm;
 													pfm.setBasZaman(getSaniyeSifirla(pfm.getBasZaman(), vardiyaGun));
 													pfm.setBitZaman(getSaniyeSifirla(pfm.getBitZaman(), vardiyaGun));
 													pfm.setFazlaMesaiOnayDurum(fazlaMesaiOnayDurum);
-													pfm.setOnayDurum(PersonelFazlaMesai.DURUM_ONAYLANMADI);
-													// List yemekler = arifeGunu && arifeYemekEkle && oncekiCikisZaman != null && oncekiCikisZaman.getTime() == girisZaman.getTime() ? new ArrayList<YemekIzin>() : yemekList;
-													// double fazlaMesaiSaati = getSaatSure(pfm.getBasZaman(), pfm.getBitZaman(), yemekler, vardiyaGun, session);
-													// fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(fazlaMesaiSaati, vardiyaGun.getFazlaMesaiYuvarla());
-													// pfm.setFazlaMesaiSaati(fazlaMesaiSaati);
 													double fazlaMesaiSaati = 0.0d;
 													if (fazlaMesaiSureHesapla) {
-														fazlaMesaiSaati = getSaatSure(pfm.getBasZaman(), pfm.getBitZaman(), list, vardiyaGun, session);
+														fazlaMesaiSaati = getSaatSure(pfm.getBasZaman(), pfm.getBitZaman(), yemekler, vardiyaGun, session);
 														fazlaMesaiSaati = PdksUtil.setSureDoubleTypeRounded(fazlaMesaiSaati, vardiyaGun.getFazlaMesaiYuvarla());
 														pfm.setOnayDurum(PersonelFazlaMesai.DURUM_ONAYLANDI);
-													}
+													} else
+														pfm.setOnayDurum(PersonelFazlaMesai.DURUM_ONAYLANMADI);
 													pfm.setFazlaMesaiSaati(fazlaMesaiSaati);
 													pfm.setOlusturanUser(sistemUser != null ? sistemUser : loginUser);
 													if (cikisHareket.isTatil())
