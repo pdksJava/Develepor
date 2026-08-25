@@ -6,13 +6,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.springframework.scheduling.quartz.QuartzJobBean;
-
 import org.pdks.dao.PdksDAO;
 import org.pdks.dao.impl.BaseDAOHibernate;
 import org.pdks.entity.ServiceData;
 import org.pdks.genel.model.Constants;
 import org.pdks.genel.model.PdksUtil;
+import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import com.pdks.webService.PdksVeriOrtakAktar;
 
@@ -27,7 +26,6 @@ public final class LogRefresh extends QuartzJobBean {
 
 	public void tesisRefresh(Logger logger) {
 		PdksDAO pdksDAO = Constants.pdksDAO;
-		HashMap fields = new HashMap();
 		try {
 			PdksVeriOrtakAktar p = new PdksVeriOrtakAktar();
 			String parameter = p.getParametreDeger("kgsMasterUpdate");
@@ -42,10 +40,12 @@ public final class LogRefresh extends QuartzJobBean {
 			e.printStackTrace();
 		}
 		try {
-			fields.clear();
-			Date olusturmaTarihi = PdksUtil.tariheAyEkleCikar(new Date(), -2);
-			fields.put("olusturmaTarihi<", olusturmaTarihi);
-			List dataList = pdksDAO.getObjectByInnerObjectListInLogic(fields, ServiceData.class);
+			HashMap fields = new HashMap();
+ 			fields.put("d", PdksUtil.tariheAyEkleCikar(new Date(), -2));
+			StringBuffer sb = new StringBuffer();
+			sb.append("select V.* from " + ServiceData.TABLE_NAME + " V " + PdksVeriOrtakAktar.getSelectLOCK());
+			sb.append(" where  V." + ServiceData.COLUMN_NAME_OLUSTURMA_TARIHI + " < :d  ");
+			List dataList = pdksDAO.getNativeSQLList(fields, sb, ServiceData.class);
 			if (dataList != null && !dataList.isEmpty())
 				pdksDAO.deleteObjectList(dataList);
 		} catch (Exception e) {
