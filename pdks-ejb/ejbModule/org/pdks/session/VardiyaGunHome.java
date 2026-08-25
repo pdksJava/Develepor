@@ -377,7 +377,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 	private void sessionFlush() {
 		try {
-			// if (authenticatedUser != null)
 			pdksEntityController.sessionFlush(session);
 		} catch (Exception e) {
 			String str = (loginUser != null ? loginUser.getAdSoyad() + " " : "") + yil + " " + denklestirmeAy.getAyAdi();
@@ -7153,13 +7152,12 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					}
 					HashMap<Long, PersonelDonemselDurum> sutIzniMap = new HashMap<Long, PersonelDonemselDurum>();
 
-					flush = denklestirmeMap.isEmpty();
+					
 					TreeMap<Long, PersonelDenklestirme> denklestirmeGecenAyMap = getPersonelDenklestirme(denklestirmeGecenAy, perIdler);
 					TreeMap<Long, PersonelDenklestirme> denklestirmeGelecekAyMap = getPersonelDenklestirme(denklestirmeGelecekAy, perIdler);
 
 					TreeMap<String, VardiyaHafta> vardiyaHaftaMap = getVardiyaHaftaMap(perIdler);
-					if (!flush)
-						flush = vardiyaHaftaMap.isEmpty();
+					
 					boolean bolumGorevlendirmeVar = ortakIslemler.getParameterKey("bolumGorevlendirmeVar").equals("1");
 					fields.clear();
 					// fields.put(PdksEntityController.MAP_KEY_MAP, "getVardiyaGunId");
@@ -7369,7 +7367,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								if (cma == null) {
 									cma = new CalismaModeliAy(denklestirmeAy, personel.getCalismaModeli());
 									saveOrUpdate(cma);
-									flush = true;
+								 
 									gunSaatGuncelle = true;
 								}
 								cmaMap.put(cmaKey, cma);
@@ -7391,7 +7389,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							if (cma == null) {
 								cma = new CalismaModeliAy(denklestirmeAy, personel.getCalismaModeli());
 								saveOrUpdate(cma);
-								flush = true;
+								 
 								gunSaatGuncelle = true;
 							}
 							personelDenklestirme.setCalismaModeliAy(cma);

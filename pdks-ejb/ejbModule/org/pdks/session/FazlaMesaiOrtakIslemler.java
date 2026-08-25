@@ -34,6 +34,7 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Out;
+import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.security.Identity;
 import org.pdks.entity.AramaSecenekleri;
@@ -237,18 +238,23 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	 * @param dm
 	 * @param session
 	 */
-
+	@Transactional
 	public void setDenklestirmeAySure(TreeMap<String, Tatil> tatilGunleriMap, List<VardiyaGun> vardiyaGunList, Sirket sirket, DenklestirmeAy dm, Session session) {
-
-		List<CalismaModeliAy> modelList = pdksEntityController.getSQLParamByAktifFieldList(CalismaModeliAy.TABLE_NAME, CalismaModeliAy.COLUMN_NAME_DONEM, dm.getId(), CalismaModeliAy.class, session);
-
-		if (sirket != null && sirket.getDepartman() == null && sirket.getId() != null) {
-
+		List<CalismaModeliAy> modelList = null;
+		try {
+			modelList = pdksEntityController.getSQLParamByAktifFieldList(CalismaModeliAy.TABLE_NAME, CalismaModeliAy.COLUMN_NAME_DONEM, dm.getId(), CalismaModeliAy.class, session);
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+		if (modelList == null)
+			modelList = new ArrayList<CalismaModeliAy>();
+		if (sirket != null && sirket.getDepartman() == null && sirket.getId() != null)
 			sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, sirket.getId(), Sirket.class, session);
 
-		}
 		Departman dep = sirket != null ? sirket.getDepartman() : null;
 		LinkedHashMap<Long, CalismaModeliAy> modelMap = new LinkedHashMap<Long, CalismaModeliAy>();
+
 		for (Iterator iterator = modelList.iterator(); iterator.hasNext();) {
 			CalismaModeliAy cm = (CalismaModeliAy) iterator.next();
 			if (dep != null && cm.getCalismaModeli().getDepartman() != null && !dep.getId().equals(cm.getCalismaModeli().getDepartman().getId()))
@@ -3519,10 +3525,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		if (denklestirmeDonemi == null)
 			denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
 		if (yil > 0) {
-
 			aylikPuantaj.setAy(ay);
 			aylikPuantaj.setYil(yil);
-
 			Calendar cal = Calendar.getInstance();
 			cal.set(Calendar.DATE, 1);
 			cal.set(Calendar.MONTH, aylikPuantaj.getAy() - 1);

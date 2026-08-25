@@ -729,7 +729,7 @@ public class PdksEntityController implements Serializable {
 				logger.error(e);
 				throw e;
 			}
- 		}
+		}
 	}
 
 	/**
@@ -1579,6 +1579,8 @@ public class PdksEntityController implements Serializable {
 		}
 		if (list != null)
 			PdksUtil.getAktifList(list);
+		else
+			list = new ArrayList();
 
 		return list;
 	}
