@@ -467,90 +467,95 @@
 							<tr class="acik">
 
 								<a4j:repeat value="#{vardiyaHafta.vardiyaGunler}" var="vardiyaGun">
-									<td style="width: 90px; height: 20px;" id="vardiya#{vardiyaGun.vardiyaDateStr}"
-										class="#{vardiyaGunHome.vardiyaGunRenk(vardiyaGun,aylikPuantaj)}" align="center"><ui:fragment
-											rendered="#{vardiyaGun.vardiyalar == null or vardiyaGun.vardiya == null or vardiyaGun.aylikGirisYap == false or  vardiyaGun.izin != null or vardiyaGun.kullaniciYetkili == false}">
-											<h:panelGrid id="veriDigerAy">
-												<h:outputText style="font-size: 11px;#{vardiyaGun.styleGun}" value="#{vardiyaGun.aciklama}" />
-											</h:panelGrid>
-											<rich:toolTip for="veriDigerAy" rendered="#{vardiyaGun.title != ''}">
-												<SPAN style="font-size: 11px; font-weight: bold;"> #{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMM')} -->
-													#{vardiyaGun.title}</SPAN>
-											</rich:toolTip>
-										</ui:fragment> <ui:fragment rendered="#{vardiyaGun.vardiyalar != null and vardiyaGun.aylikGirisYap == true and vardiyaGun.kullaniciYetkili}">
-											<h:selectOneMenu styleClass="size10" style="width:85px#{vardiyaGun.styleGun}"
-												disabled="#{vardiyaGunHome.personelAylikPuantaj.kaydet == false}" value="#{vardiyaGun.vardiya}" required="true"
-												rendered="#{vardiyaGun != null}" requiredMessage="#{vardiyaGun.vardiyaGunAciklama} günü vardiyasını seçiniz">
-												<s:selectItems var="comp" value="#{vardiyaGun.vardiyalar}" label="#{comp.kisaAciklama}" noSelectionLabel="Seçiniz" />
-												<s:convertEntity />
-												<a4j:support event="onchange" ajaxSingle="true" action="#{vardiyaGunHome.vardiyaDegistir(vardiyaGun)}" reRender="secimler" />
-											</h:selectOneMenu>
-											<rich:toolTip for="vardiya#{vardiyaGun.vardiyaDateStr}">
-												<ui:fragment rendered="#{vardiyaGunHome.personelAylikPuantaj.kaydet == false}">
-													<h2>#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM ')} : #{vardiyaGun.vardiyaPlanAdi}</h2>
-													<ui:fragment rendered="#{authenticatedUser.admin}">
-														<b>Plan Id : </b> #{vardiyaGun.id} ---> <b>Vardiya Id : </b>#{vardiyaGun.vardiya.id}
-													</ui:fragment>
-												</ui:fragment>
-												<ui:fragment rendered="#{vardiyaGunHome.personelAylikPuantaj.kaydet}">
-													<DIV>
-														<h2>
-															<SPAN style="color: black;"> <ui:fragment rendered="#{vardiyaGunHome.ikRole}">#{vardiyaGun.personel.pdksSicilNo} - #{vardiyaGun.personel.adSoyad}<br />
-																</ui:fragment> #{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}
-															</SPAN>
-														</h2>
-														<TABLE>
-															<a4j:repeat value="#{vardiyaGun.vardiyalar}" var="vt">
-																<TR>
-																	<TD><ui:fragment rendered="#{vt.id == vardiyaGun.vardiya.id}">
-																			<SPAN style="font-size: 11px; font-weight: bold; color: red;">#{vardiyaGun.getVardiyaAdi(vt)}</SPAN>
-																		</ui:fragment> <ui:fragment rendered="#{vt.id != vardiyaGun.vardiya.id}">
-																			<SPAN style="font-size: 10px; color: black;">#{vardiyaGun.getVardiyaAdi(vt)}</SPAN>
-																		</ui:fragment></TD>
-																</TR>
-															</a4j:repeat>
-														</TABLE>
-													</DIV>
-												</ui:fragment>
-											</rich:toolTip>
-
-											<ui:fragment rendered="#{vardiyaGunHome.ozelIstek}">
-												<br />
-												<B> Özel Durum :</B>
-												<h:selectOneMenu style="width:90px" value="#{vardiyaGun.vardiyaGorev.ozelIstekDurum}">
-													<f:selectItems value="#{vardiyaGunHome.ozelDurumList}" />
-													<a4j:support event="onchange" ajaxSingle="true" reRender="secimler" action="#{vardiyaGunHome.vardiyaDegistir(vardiyaGun)}" />
-												</h:selectOneMenu>
-											</ui:fragment>
+									<td style="width: 90px; height: 20px;" class="#{vardiyaGunHome.vardiyaGunRenk(vardiyaGun,aylikPuantaj)}" align="center"><DIV
+											id="vardiya#{vardiyaGun.vardiyaDateStr}">
 											<ui:fragment
-												rendered="#{vardiyaGunHome.ozelIstek == false and vardiyaGunHome.personelAylikPuantaj.gorevYeriSec == false and not empty vardiyaGunHome.bolumKatlari }">
-												<br />
-												<h:selectOneMenu styleClass="size10" style="width:85px" disabled="#{vardiyaGunHome.personelAylikPuantaj.kaydet == false}"
-													value="#{vardiyaGun.vardiyaGorev.bolumKat}" rendered="#{vardiyaGun != null}">
-													<s:selectItems var="comp" value="#{vardiyaGunHome.bolumKatlari}" label="#{comp.aciklama}" noSelectionLabel="Seçiniz" />
-													<s:convertEntity />
-													<a4j:support event="onchange" ajaxSingle="true" reRender="secimler" action="#{vardiyaGunHome.vardiyaDegistir(vardiyaGun)}" />
-												</h:selectOneMenu>
+												rendered="#{vardiyaGun.vardiyalar == null or vardiyaGun.vardiya == null or vardiyaGun.aylikGirisYap == false or  vardiyaGun.izin != null or vardiyaGun.kullaniciYetkili == false}">
+												<h:panelGrid id="veriDigerAy">
+													<h:outputText style="font-size: 11px;#{vardiyaGun.styleGun}" value="#{vardiyaGun.aciklama}" />
+												</h:panelGrid>
+												<rich:toolTip for="veriDigerAy" rendered="#{vardiyaGun.title != ''}">
+													<SPAN style="font-size: 11px; font-weight: bold;"> #{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMM')} -->
+														#{vardiyaGun.title}</SPAN>
+												</rich:toolTip>
 											</ui:fragment>
-											<ui:fragment rendered="#{vardiyaGun.ayinGunu and vardiyaGunHome.ozelIstek == false and vardiyaGunHome.personelAylikPuantaj.gorevYeriSec}">
-												<br />
-												<h:selectOneMenu styleClass="size10" style="width:85px" disabled="#{vardiyaGunHome.personelAylikPuantaj.kaydet == false}"
-													value="#{vardiyaGun.vardiyaGorev.yeniGorevYeri}" rendered="#{vardiyaGun != null}">
-													<s:selectItems var="kat" value="#{vardiyaGunHome.gorevYeriTanimList}" label="#{kat.aciklama}" noSelectionLabel="Seçiniz" />
+											<ui:fragment rendered="#{vardiyaGun.vardiyalar != null and vardiyaGun.aylikGirisYap == true and vardiyaGun.kullaniciYetkili}">
+												<h:selectOneMenu styleClass="size10" style="width:85px#{vardiyaGun.styleGun}"
+													disabled="#{vardiyaGunHome.personelAylikPuantaj.kaydet == false}" value="#{vardiyaGun.vardiya}" required="true"
+													rendered="#{vardiyaGun != null}" requiredMessage="#{vardiyaGun.vardiyaGunAciklama} günü vardiyasını seçiniz">
+													<s:selectItems var="comp" value="#{vardiyaGun.vardiyalar}" label="#{comp.kisaAciklama}" noSelectionLabel="Seçiniz" />
 													<s:convertEntity />
-													<a4j:support event="onchange" ajaxSingle="true" reRender="secimler" action="#{vardiyaGunHome.vardiyaDegistir(vardiyaGun)}" />
+													<a4j:support event="onchange" ajaxSingle="true" action="#{vardiyaGunHome.vardiyaDegistir(vardiyaGun)}"
+														reRender="secimler" />
 												</h:selectOneMenu>
-											</ui:fragment>
-										</ui:fragment> <ui:fragment rendered="#{vardiyaGunHome.ozelIstek and ortakIslemler.getParameterKey('shiftSorumlusu') == '1'}">
-											<br />
-											<P align="left">
-												<B> Shift Sorumlusu :</B>
-												<h:selectBooleanCheckbox value="#{vardiyaGun.vardiyaGorev.gorevliDurum}">
-													<a4j:support event="onclick" reRender="secimler" ajaxSingle="true" action="#{vardiyaGunHome.vardiyaDegistir(vardiyaGun)}" />
+												<rich:toolTip for="vardiya#{vardiyaGun.vardiyaDateStr}">
+													<ui:fragment rendered="#{vardiyaGunHome.personelAylikPuantaj.kaydet == false}">
+														<h2>#{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM ')} : #{vardiyaGun.vardiyaPlanAdi}</h2>
+														<ui:fragment rendered="#{authenticatedUser.admin}">
+															<b>Plan Id : </b> #{vardiyaGun.id} ---> <b>Vardiya Id : </b>#{vardiyaGun.vardiya.id}
+													</ui:fragment>
+													</ui:fragment>
+													<ui:fragment rendered="#{vardiyaGunHome.personelAylikPuantaj.kaydet}">
+														<DIV>
+															<h2>
+																<SPAN style="color: black;"> <ui:fragment rendered="#{vardiyaGunHome.ikRole}">#{vardiyaGun.personel.pdksSicilNo} - #{vardiyaGun.personel.adSoyad}<br />
+																	</ui:fragment> #{authenticatedUser.getTarihFormatla(vardiyaGun.vardiyaDate, 'd MMMMM yyyy')}
+																</SPAN>
+															</h2>
+															<TABLE>
+																<a4j:repeat value="#{vardiyaGun.vardiyalar}" var="vt">
+																	<TR>
+																		<TD><ui:fragment rendered="#{vt.id == vardiyaGun.vardiya.id}">
+																				<SPAN style="font-size: 11px; font-weight: bold; color: red;">#{vardiyaGun.getVardiyaAdi(vt)}</SPAN>
+																			</ui:fragment> <ui:fragment rendered="#{vt.id != vardiyaGun.vardiya.id}">
+																				<SPAN style="font-size: 10px; color: black;">#{vardiyaGun.getVardiyaAdi(vt)}</SPAN>
+																			</ui:fragment></TD>
+																	</TR>
+																</a4j:repeat>
+															</TABLE>
+														</DIV>
+													</ui:fragment>
+												</rich:toolTip>
 
-												</h:selectBooleanCheckbox>
-											</P>
-										</ui:fragment></td>
+												<ui:fragment rendered="#{vardiyaGunHome.ozelIstek}">
+													<br />
+													<B> Özel Durum :</B>
+													<h:selectOneMenu style="width:90px" value="#{vardiyaGun.vardiyaGorev.ozelIstekDurum}">
+														<f:selectItems value="#{vardiyaGunHome.ozelDurumList}" />
+														<a4j:support event="onchange" ajaxSingle="true" reRender="secimler" action="#{vardiyaGunHome.vardiyaDegistir(vardiyaGun)}" />
+													</h:selectOneMenu>
+												</ui:fragment>
+												<ui:fragment
+													rendered="#{vardiyaGunHome.ozelIstek == false and vardiyaGunHome.personelAylikPuantaj.gorevYeriSec == false and not empty vardiyaGunHome.bolumKatlari }">
+													<br />
+													<h:selectOneMenu styleClass="size10" style="width:85px" disabled="#{vardiyaGunHome.personelAylikPuantaj.kaydet == false}"
+														value="#{vardiyaGun.vardiyaGorev.bolumKat}" rendered="#{vardiyaGun != null}">
+														<s:selectItems var="comp" value="#{vardiyaGunHome.bolumKatlari}" label="#{comp.aciklama}" noSelectionLabel="Seçiniz" />
+														<s:convertEntity />
+														<a4j:support event="onchange" ajaxSingle="true" reRender="secimler" action="#{vardiyaGunHome.vardiyaDegistir(vardiyaGun)}" />
+													</h:selectOneMenu>
+												</ui:fragment>
+												<ui:fragment rendered="#{vardiyaGun.ayinGunu and vardiyaGunHome.ozelIstek == false and vardiyaGunHome.personelAylikPuantaj.gorevYeriSec}">
+													<br />
+													<h:selectOneMenu styleClass="size10" style="width:85px" disabled="#{vardiyaGunHome.personelAylikPuantaj.kaydet == false}"
+														value="#{vardiyaGun.vardiyaGorev.yeniGorevYeri}" rendered="#{vardiyaGun != null}">
+														<s:selectItems var="kat" value="#{vardiyaGunHome.gorevYeriTanimList}" label="#{kat.aciklama}" noSelectionLabel="Seçiniz" />
+														<s:convertEntity />
+														<a4j:support event="onchange" ajaxSingle="true" reRender="secimler" action="#{vardiyaGunHome.vardiyaDegistir(vardiyaGun)}" />
+													</h:selectOneMenu>
+												</ui:fragment>
+											</ui:fragment>
+											<ui:fragment rendered="#{vardiyaGunHome.ozelIstek and ortakIslemler.getParameterKey('shiftSorumlusu') == '1'}">
+												<br />
+												<P align="left">
+													<B> Shift Sorumlusu :</B>
+													<h:selectBooleanCheckbox value="#{vardiyaGun.vardiyaGorev.gorevliDurum}">
+														<a4j:support event="onclick" reRender="secimler" ajaxSingle="true" action="#{vardiyaGunHome.vardiyaDegistir(vardiyaGun)}" />
+
+													</h:selectBooleanCheckbox>
+												</P>
+											</ui:fragment>
+										</DIV></td>
 
 								</a4j:repeat>
 								<ui:fragment rendered="#{vardiyaGunHome.sablonGuncelle and authenticatedUser == null}">

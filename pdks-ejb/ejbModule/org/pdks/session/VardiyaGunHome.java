@@ -1352,22 +1352,22 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param seciliVardiyaGun
 	 * @return
 	 */
-	public String vardiyaDegistir(VardiyaGun seciliVardiyaGun) {
+	public String vardiyaDegistir(VardiyaGun vg) {
 		if (personelAylikPuantaj != null)
 			personelAylikPuantaj.setVardiyaDegisti(Boolean.TRUE);
-		vardiyalarMap.put(seciliVardiyaGun.getVardiyaDateStr(), seciliVardiyaGun);
-		seciliVardiyaGun.setIslemVardiya(null);
-		seciliVardiyaGun.setGuncellendi(Boolean.TRUE);
-		seciliVardiyaGun.setHareketHatali(Boolean.FALSE);
-		seciliVardiyaGun.setBasSaat(null);
-		seciliVardiyaGun.setBasDakika(null);
-		seciliVardiyaGun.setBitSaat(null);
-		seciliVardiyaGun.setBitDakika(null);
+		vardiyalarMap.put(vg.getVardiyaDateStr(), vg);
+		vg.setIslemVardiya(null);
+		vg.setGuncellendi(Boolean.TRUE);
+		vg.setHareketHatali(Boolean.FALSE);
+		vg.setBasSaat(null);
+		vg.setBasDakika(null);
+		vg.setBitSaat(null);
+		vg.setBitDakika(null);
 		Personel personel = personelAylikPuantaj.getPdksPersonel();
 		PersonelDenklestirme seciliPersonelDenklestirme = personelAylikPuantaj.getPersonelDenklestirme();
 		boolean sutIzin = personel.isSutIzniKullan() || seciliPersonelDenklestirme.isSutIzniVar();
 		if (!sutIzin && AylikPuantaj.getGebelikGuncelle()) {
-			if (seciliVardiyaGun.getVardiya().isGebelikMi() || seciliVardiyaGun.isGebeMi())
+			if (vg.getVardiya().isGebelikMi() || vg.isGebeMi())
 				gebeSutIzniGuncelle = true;
 			else {
 				gebeSutIzniGuncelle = false;
@@ -9867,12 +9867,13 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	public void instanceRefresh() {
 		if (degisti != null && degisti) {
 			try {
-				pdksEntityController.sessionRefresh(session, entityManager, getVardiyaPlan().getPersonel().getSablon());
-				if (getVardiyaPlan().getVardiyaHafta1().getStyle().equals(VardiyaGun.STYLE_CLASS_EVEN) || getVardiyaPlan().getVardiyaHafta2().getStyle().equals(VardiyaGun.STYLE_CLASS_EVEN)) {
-					if (getVardiyaPlan().getVardiyaHafta1().isCheckBoxDurum())
-						haftaRefresh(getVardiyaPlan().getVardiyaHafta1());
-					if (getVardiyaPlan().getVardiyaHafta2().isCheckBoxDurum())
-						haftaRefresh(getVardiyaPlan().getVardiyaHafta2());
+				VardiyaPlan vp = getVardiyaPlan();
+				pdksEntityController.sessionRefresh(session, entityManager, vp.getPersonel().getSablon());
+				if (vp.getVardiyaHafta1().getStyle().equals(VardiyaGun.STYLE_CLASS_EVEN) || vp.getVardiyaHafta2().getStyle().equals(VardiyaGun.STYLE_CLASS_EVEN)) {
+					if (vp.getVardiyaHafta1().isCheckBoxDurum())
+						haftaRefresh(vp.getVardiyaHafta1());
+					if (vp.getVardiyaHafta2().isCheckBoxDurum())
+						haftaRefresh(vp.getVardiyaHafta2());
 				} else {
 					fillAylikVardiyaPlanList();
 				}
