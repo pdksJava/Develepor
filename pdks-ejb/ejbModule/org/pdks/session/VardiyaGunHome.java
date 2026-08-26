@@ -2976,7 +2976,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								refresh = PdksUtil.isLongDegisti(oldId, newId);
 								if (refresh) {
 									pdksVardiyaGun.setVardiya(vardiyaDbMap.get(oldId));
-									pdksEntityController.sessionRefresh(session, entityManager, pdksVardiyaGun);
+									pdksVardiyaGun = vardiyaGunRefresh(pdksVardiyaGun);
+									vardiyalarMap.put(key, pdksVardiyaGun);
 								}
 
 							} catch (Exception e1) {
@@ -3007,6 +3008,21 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		}
 
 		return "";
+	}
+
+	/**
+	 * @param vg
+	 */
+	private VardiyaGun vardiyaGunRefresh(VardiyaGun vg) {
+		VardiyaGun vardiyaGun = null;
+		try {
+			vardiyaGun = (VardiyaGun) ortakIslemler.getVardiyaTable(VardiyaGun.TABLE_NAME, VardiyaGun.COLUMN_NAME_ID, vg.getId(), VardiyaGun.class, session);
+		} catch (Exception e) {
+			pdksEntityController.sessionRefresh(session, entityManager, vg);
+			vardiyaGun = vg;
+		}
+
+		return vardiyaGun;
 	}
 
 	public String setPersonelDenklestirmeDinamikAlan(PersonelDenklestirmeDinamikAlan pda) {
@@ -7152,12 +7168,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					}
 					HashMap<Long, PersonelDonemselDurum> sutIzniMap = new HashMap<Long, PersonelDonemselDurum>();
 
-					
 					TreeMap<Long, PersonelDenklestirme> denklestirmeGecenAyMap = getPersonelDenklestirme(denklestirmeGecenAy, perIdler);
 					TreeMap<Long, PersonelDenklestirme> denklestirmeGelecekAyMap = getPersonelDenklestirme(denklestirmeGelecekAy, perIdler);
 
 					TreeMap<String, VardiyaHafta> vardiyaHaftaMap = getVardiyaHaftaMap(perIdler);
-					
+
 					boolean bolumGorevlendirmeVar = ortakIslemler.getParameterKey("bolumGorevlendirmeVar").equals("1");
 					fields.clear();
 					// fields.put(PdksEntityController.MAP_KEY_MAP, "getVardiyaGunId");
@@ -7367,7 +7382,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								if (cma == null) {
 									cma = new CalismaModeliAy(denklestirmeAy, personel.getCalismaModeli());
 									saveOrUpdate(cma);
-								 
+
 									gunSaatGuncelle = true;
 								}
 								cmaMap.put(cmaKey, cma);
@@ -7389,7 +7404,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							if (cma == null) {
 								cma = new CalismaModeliAy(denklestirmeAy, personel.getCalismaModeli());
 								saveOrUpdate(cma);
-								 
+
 								gunSaatGuncelle = true;
 							}
 							personelDenklestirme.setCalismaModeliAy(cma);
@@ -9822,11 +9837,19 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 */
 	public void haftaRefresh(VardiyaHafta vardiyaHafta) {
 		pdksEntityController.sessionRefresh(session, entityManager, vardiyaHafta);
-		for (VardiyaGun pdksVardiyaGun : vardiyaHafta.getVardiyaGunler()) {
-			if (pdksVardiyaGun.getId() != null)
-				pdksEntityController.sessionRefresh(session, entityManager, pdksVardiyaGun);
-
+		if (vardiyaHafta.getVardiyaGunler() != null) {
+			List<VardiyaGun> vardiyaGunList = new ArrayList<VardiyaGun>();
+			for (VardiyaGun vg : vardiyaHafta.getVardiyaGunler()) {
+				if (vg.getId() != null)
+					vardiyaGunList.add(vardiyaGunRefresh(vg));
+				else
+					vardiyaGunList.add(vg);
+			}
+			vardiyaHafta.getVardiyaGunler().clear();
+			vardiyaHafta.getVardiyaGunler().addAll(vardiyaGunList);
+			vardiyaGunList = null;
 		}
+
 	}
 
 	/**
@@ -11611,12 +11634,17 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					hataOlustu = Boolean.TRUE;
 
 				}
-				if (hataOlustu) {
-					for (VardiyaGun pdksVardiyaGun : vardiyaGunleri) {
-						Vardiya yeniVardiya = pdksVardiyaGun.getYeniVardiya();
-						pdksEntityController.sessionRefresh(session, entityManager, pdksVardiyaGun);
-						pdksVardiyaGun.setYeniVardiya(yeniVardiya);
+				if (hataOlustu && vardiyaGunleri != null) {
+					List<VardiyaGun> vardiyaGunList = new ArrayList<VardiyaGun>();
+					for (VardiyaGun vg : vardiyaGunleri) {
+						Vardiya yeniVardiya = vg.getYeniVardiya();
+						vg = vardiyaGunRefresh(vg);
+						vardiyaGunList.add(vg);
+						vg.setYeniVardiya(yeniVardiya);
 					}
+					vardiyaGunleri.clear();
+					vardiyaGunleri.addAll(vardiyaGunList);
+					vardiyaGunList = null;
 				}
 				if (flush) {
 					sessionFlush();
