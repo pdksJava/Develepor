@@ -3220,8 +3220,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			fazlaMesaiTalep = null;
 			kayitliVardiyalarMap.clear();
 			vardiyalarMap.clear();
-			boolean kaydet = !getPdksUser().isAdmin() && denklestirmeAyDurum;
-
+			boolean kaydet = false;
+			if (denklestirmeAyDurum)
+				kaydet = getPdksUser().isAdmin() == false || (ortakIslemler.getCanliDurum() == false && ortakIslemler.getTestSunucuDurum() == false);
 			ap.setKaydet(kaydet);
 
 			ozelDurumList = ortakIslemler.getSelectItemList("ozelDurum", getPdksUser());
