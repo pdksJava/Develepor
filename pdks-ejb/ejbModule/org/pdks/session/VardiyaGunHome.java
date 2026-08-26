@@ -3016,12 +3016,21 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	private VardiyaGun vardiyaGunRefresh(VardiyaGun vg) {
 		VardiyaGun vardiyaGun = null;
 		try {
-			vardiyaGun = (VardiyaGun) ortakIslemler.getVardiyaTable(VardiyaGun.TABLE_NAME, VardiyaGun.COLUMN_NAME_ID, vg.getId(), VardiyaGun.class, session);
+			if (vg.getId() != null)
+				vardiyaGun = (VardiyaGun) ortakIslemler.getVardiyaTable(VardiyaGun.TABLE_NAME, VardiyaGun.COLUMN_NAME_ID, vg.getId(), VardiyaGun.class, session);
+			else
+				vardiyaGun = vg;
 		} catch (Exception e) {
-			pdksEntityController.sessionRefresh(session, entityManager, vg);
+
+		}
+		if (vardiyaGun == null) {
+			try {
+				if (vg.getId() != null)
+					pdksEntityController.sessionRefresh(session, entityManager, vg);
+			} catch (Exception e) {
+			}
 			vardiyaGun = vg;
 		}
-
 		return vardiyaGun;
 	}
 
