@@ -775,32 +775,32 @@ public class PdksEntityController implements Serializable {
 					else {
 						if (pdksObject != null) {
 							StringBuffer sb = new StringBuffer();
-							sb.append("select V.* from " + pdksObject.getTableName() + " " + selectLOCK);
-							sb.append(" where V." + BasePDKSObject.COLUMN_NAME_ID + " = :v");
+							sb.append("select D.* from " + pdksObject.getTableName() + " D " + selectLOCK);
+							sb.append(" where D." + BasePDKSObject.COLUMN_NAME_ID + " = :v");
 							HashMap fields = new HashMap();
 							fields.put("v", id);
 							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 							List list = getObjectBySQLList(sb.toString(), fields, object.getClass());
-							if (list != null && list.isEmpty() == false)
-								object = list.get(0);
+							if (list != null) {
+								if (list.isEmpty() == false)
+									object = list.get(0);
+								list = null;
+							}
+							fields = null;
 						} else {
 							if (id instanceof Long)
 								object = session.get(object.getClass(), (Long) id);
 							else if (id instanceof Integer)
 								object = session.get(object.getClass(), (Integer) id);
 						}
-
 					}
 					if (em != null && object == null) {
 						if (em.contains(object) == false)
 							object = em.merge(object);
 						em.refresh(object);
-
-					}
-
+ 					}
 				}
-
-			} catch (Exception e) {
+ 			} catch (Exception e) {
 				logger.error(e);
 				e.printStackTrace();
 			}
