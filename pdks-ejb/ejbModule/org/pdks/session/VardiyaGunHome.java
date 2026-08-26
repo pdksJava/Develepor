@@ -9863,34 +9863,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	}
 
 	/**
-	 * 
-	 */
-	public void instanceRefresh() {
-		if (degisti != null && degisti) {
-			try {
-				VardiyaPlan vp = getVardiyaPlan();
-				pdksEntityController.sessionRefresh(session, entityManager, vp.getPersonel().getSablon());
-				if (vp.getVardiyaHafta1().getStyle().equals(VardiyaGun.STYLE_CLASS_EVEN) || vp.getVardiyaHafta2().getStyle().equals(VardiyaGun.STYLE_CLASS_EVEN)) {
-					if (vp.getVardiyaHafta1().isCheckBoxDurum())
-						haftaRefresh(vp.getVardiyaHafta1());
-					if (vp.getVardiyaHafta2().isCheckBoxDurum())
-						haftaRefresh(vp.getVardiyaHafta2());
-				} else {
-					fillAylikVardiyaPlanList();
-				}
-			} catch (Exception e) {
-				logger.error("Pdks hata in : \n");
-				e.printStackTrace();
-				logger.error("Pdks hata out : " + e.getMessage());
-				logger.error("instanceRefresh : " + e.getMessage());
-			}
-
-			degisti = Boolean.FALSE;
-		}
-		setKaydet(Boolean.TRUE);
-	}
-
-	/**
 	 * @throws Exception
 	 */
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
