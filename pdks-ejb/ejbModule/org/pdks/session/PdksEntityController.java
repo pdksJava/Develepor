@@ -761,15 +761,35 @@ public class PdksEntityController implements Serializable {
 	public void sessionRefresh(Session session, EntityManager em, Object object) {
 		if (session != null && object != null) {
 			try {
-				Object id = PdksUtil.getMethodObject(object, "getId", null);
+				BasePDKSObject pdksObject = null;
+				Object id = null;
+				if (object instanceof BasePDKSObject) {
+					pdksObject = (BasePDKSObject) object;
+					id = pdksObject.getId();
+				}
+				if (id == null)
+					id = PdksUtil.getMethodObject(object, "getId", null);
 				if (id != null) {
 					if (session.contains(object))
 						session.refresh(object);
 					else {
-						if (id instanceof Long)
-							object = session.get(object.getClass(), (Long) id);
-						else if (id instanceof Integer)
-							object = session.get(object.getClass(), (Integer) id);
+						if (pdksObject != null) {
+							StringBuffer sb = new StringBuffer();
+							sb.append("select V.* from " + pdksObject.getTableName() + " " + selectLOCK);
+							sb.append(" where V." + BasePDKSObject.COLUMN_NAME_ID + " = :v");
+							HashMap fields = new HashMap();
+							fields.put("v", id);
+							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+							List list = getObjectBySQLList(sb.toString(), fields, object.getClass());
+							if (list != null && list.isEmpty() == false)
+								object = list.get(0);
+						} else {
+							if (id instanceof Long)
+								object = session.get(object.getClass(), (Long) id);
+							else if (id instanceof Integer)
+								object = session.get(object.getClass(), (Integer) id);
+						}
+
 					}
 					if (em != null && object == null) {
 						if (em.contains(object) == false)
