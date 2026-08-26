@@ -44,6 +44,7 @@ import org.pdks.entity.TesisBaglanti;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaGun;
 import org.pdks.entity.VardiyaSablonu;
+import org.pdks.enums.BordroDetayTipi;
 import org.pdks.enums.PuantajKatSayiTipi;
 import org.pdks.erp.entity.PersonelERPDB;
 import org.pdks.genel.model.Constants;
@@ -2653,6 +2654,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 						tanim2.setTipi(Tanim.TIPI_IZIN_KODU_GRUPLARI);
 						tanim2.setKodu(BordroIzinGrubu.TANIMSIZ.value());
 						tanim2.setErpKodu(izinTipiTanim.getErpKodu());
+						tanim2.setKodu(BordroDetayTipi.UCRETLI_IZIN.value());
 						tanim2.setIslemYapan(islemYapan);
 						tanim2.setIslemTarihi(islemZamani);
 						izinGrupTanimMap.put(izinTipiTanim.getErpKodu(), tanim2);
