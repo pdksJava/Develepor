@@ -2655,6 +2655,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 						tanim2.setKodu(BordroIzinGrubu.TANIMSIZ.value());
 						tanim2.setErpKodu(izinTipiTanim.getErpKodu());
 						tanim2.setKodu(BordroDetayTipi.UCRETLI_IZIN.value());
+						tanim2.setAciklamatr(izinTipiTanim.getAciklamatr());
+						tanim2.setAciklamaen(izinTipiTanim.getAciklamaen());
 						tanim2.setIslemYapan(islemYapan);
 						tanim2.setIslemTarihi(islemZamani);
 						izinGrupTanimMap.put(izinTipiTanim.getErpKodu(), tanim2);
