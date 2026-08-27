@@ -6625,6 +6625,8 @@ public class OrtakIslemler implements Serializable {
 			basTarih = getSaniyeSifirla(basTarih, vardiyaGun);
 		if (bitTarih != null)
 			bitTarih = getSaniyeSifirla(bitTarih, vardiyaGun);
+		if (vardiyaGun != null && vardiyaGun.getVardiya() != null)
+			vardiyaGun.getVardiya().setYemekIzinList(yemekList);
 
 		double yemekVardiyaSuresi = vardiyaGun != null && vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().getYemekSuresi() != null ? vardiyaGun.getVardiya().getYemekSuresi() / 60.0d : 0.0d;
 		if (bitTarih.getTime() > basTarih.getTime()) {

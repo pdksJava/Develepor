@@ -248,7 +248,17 @@ public class Vardiya extends BaseObject {
 		if (yemekSuresi == null)
 			yemekSuresi = 0;
 		BigDecimal value = getKatSayi(PuantajKatSayiTipi.GUN_VARDIYA_MOLA.value());
-		return value != null ? value.intValue() : yemekSuresi;
+		Integer sure = value != null ? value.intValue() : yemekSuresi;
+		if (sure == null || sure <= 0) {
+			if (yemekIzinList != null && yemekIzinList.isEmpty() == false) {
+				sure = 0;
+				for (YemekIzin yi : yemekIzinList) {
+					if (yi.getDurum() && yi.getVardiyaMap() != null && yi.getVardiyaMap().containsKey(id))
+						sure += yi.getMaxSure();
+				}
+			}
+		}
+		return sure;
 
 	}
 
@@ -1878,9 +1888,9 @@ public class Vardiya extends BaseObject {
 	@Transient
 	public boolean isAksamVardiyaMaxCalismaDurum() {
 		boolean aksamVardiyaMaxCalismaDurum = false;
-		if (aksamVardiyaMaxCalismaVar != null && aksamVardiyaMaxCalismaVar.booleanValue()) 
+		if (aksamVardiyaMaxCalismaVar != null && aksamVardiyaMaxCalismaVar.booleanValue())
 			aksamVardiyaMaxCalismaDurum = isAksamVardiyasi() && this.getBasDonem() >= this.getBitDonem();
-		 
+
 		return aksamVardiyaMaxCalismaDurum;
 	}
 
