@@ -157,7 +157,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 							if (!parameterMap.containsKey("emailBozuk"))
 								loginUser.setEmail(ldapUser.getEmail());
 							pdksEntityController.saveOrUpdate(session, entityManager, loginUser);
-							 
+
 							pdksEntityController.sessionFlush(session);
 							userName = ldapUser.getUsername();
 						}
@@ -303,9 +303,9 @@ public class Authenticator implements IAuthenticator, Serializable {
 									pdksEntityController.saveOrUpdate(session, entityManager, loginUser);
 									pdksEntityController.sessionFlush(session);
 								} catch (Exception e) {
-				 					logger.error(e);
+									logger.error(e);
 									e.printStackTrace();
- 								}
+								}
 							}
 
 						}
@@ -357,18 +357,19 @@ public class Authenticator implements IAuthenticator, Serializable {
 	private User getKullanici(String userName, String fieldName) {
 		User user = null;
 		try {
-			if (userName.indexOf("%") > 0) {
-				StringBuilder sb = new StringBuilder();
-				sb.append("select S.* from " + User.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
+			StringBuilder sb = new StringBuilder();
+			sb.append("select S.* from " + User.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK());
+			if (userName.indexOf("%") > 0 == false)
+				sb.append(" where S." + fieldName + " = :userName");
+			else {
 				sb.append(" where S." + fieldName + " like :userName");
 				sb.append(" order by S." + User.COLUMN_NAME_DURUM + " desc");
-				HashMap fields = new HashMap();
-				fields.put("userName", userName);
-				if (session != null)
-					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				user = (User) pdksEntityController.getObjectBySQL(sb, fields, User.class);
-			} else
-				user = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, fieldName, userName, User.class, session);
+			}
+			HashMap fields = new HashMap();
+			fields.put("userName", userName);
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			user = (User) pdksEntityController.getObjectBySQL(sb, fields, User.class);
 
 		} catch (Exception ex) {
 			mesajList.clear();
