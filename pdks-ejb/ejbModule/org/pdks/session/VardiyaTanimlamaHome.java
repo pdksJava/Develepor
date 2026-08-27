@@ -831,7 +831,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 							break;
 
 						default:
-							fark = dayOfWeek - 3;
+							fark = dayOfWeek - 1;
 							break;
 						}
 						if (fark != 0)
