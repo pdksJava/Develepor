@@ -721,15 +721,15 @@ public class PdksEntityController implements Serializable {
 	public void sessionFlush(Session session) throws Exception {
 		if (session != null) {
 			Transaction t = null;
-			boolean rollback = false;
+			boolean rollBack = false;
 			try {
 				t = session.getTransaction();
-				rollback = t != null && t.isActive();
+				rollBack = t != null && t.isActive();
 				session.flush();
-				if (rollback)
+				if (rollBack)
 					t.commit();
 			} catch (Exception e) {
-				if (rollback)
+				if (rollBack)
 					t.rollback();
 				logger.error(e);
 				throw e;
