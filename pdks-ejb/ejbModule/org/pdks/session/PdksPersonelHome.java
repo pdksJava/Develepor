@@ -1174,31 +1174,36 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 							kullanici.setEntegrasyonMailDurum(true);
 
 						HashMap<Long, UserRoles> roller = new HashMap<Long, UserRoles>();
-						// String spName = "SP_SET_PDKS_USERx";
-						// boolean save = true;
-						// if (kullanici.getId() == null) {
-						// if (ortakIslemler.isExisStoreProcedure(spName, session)) {
-						// LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-						// veriMap.put("departmanId", kullanici.getDepartman() != null ? kullanici.getDepartman().getId() : null);
-						// veriMap.put("personelId", kullanici.getPersonelId());
-						// veriMap.put("username", kullanici.getUsername());
-						// veriMap.put("email", kullanici.getEmail());
-						// veriMap.put("sifre", kullanici.getPasswordHash());
-						//
-						// List<User> kullanicilar = pdksEntityController.execSPList(session, veriMap, spName, User.class);
-						// save = false;
-						// if (kullanicilar != null && kullanicilar.isEmpty() == false) {
-						// User kullaniciSP = kullanicilar.get(0);
-						// kullaniciSP.setVardiyaDuzeltYetki(kullanici.getVardiyaDuzeltYetki());
-						// kullaniciSP.setEntegrasyonMailDurum(kullanici.isEntegrasyonMailDurum());
-						// kullanici = kullaniciSP;
-						// save = true;
-						// }
-						//
-						// }
-						// }
-						// if (kullanici.getId() == null || save)
-						pdksEntityController.saveOrUpdate(session, entityManager, kullanici);
+						String spName = "SP_SET_PDKS_USER";
+						boolean save = true;
+						if (kullanici.getId() == null) {
+							if (ortakIslemler.isExisStoreProcedure(spName, session)) {
+								LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+								veriMap.put("departmanId", kullanici.getDepartman() != null ? kullanici.getDepartman().getId() : null);
+								veriMap.put("personelId", kullanici.getPersonelId());
+								veriMap.put("username", kullanici.getUsername());
+								veriMap.put("email", kullanici.getEmail());
+								veriMap.put("sifre", kullanici.getPasswordHash());
+								veriMap.put("perNo", pdksPersonel.getPdksSicilNo());
+								List<User> kullanicilar = null;
+								try {
+									kullanicilar = pdksEntityController.execSPList(session, veriMap, spName, User.class);
+									save = false;
+								} catch (Exception e) {
+									logger.error(e);
+								}
+								if (kullanicilar != null && kullanicilar.isEmpty() == false) {
+									User kullaniciSP = kullanicilar.get(0);
+									kullaniciSP.setVardiyaDuzeltYetki(kullanici.getVardiyaDuzeltYetki());
+									kullaniciSP.setEntegrasyonMailDurum(kullanici.isEntegrasyonMailDurum());
+									kullanici = kullaniciSP;
+									save = true;
+								}
+
+							}
+						}
+						if (kullanici.getId() == null || save)
+							pdksEntityController.saveOrUpdate(session, entityManager, kullanici);
 						List<UserRoles> yetkiliRoller = null;
 						if (kullanici.getId() != null)
 							yetkiliRoller = pdksEntityController.getSQLParamByFieldList(UserRoles.TABLE_NAME, UserRoles.COLUMN_NAME_USER, kullanici.getId(), UserRoles.class, session);
