@@ -1988,14 +1988,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								sonVardiyaBitZaman = islemVardiya.getVardiyaTelorans1BitZaman();
 						}
 						personelDenklestirme = puantaj.getPersonelDenklestirme();
-						if (denklestirmeAyDurum) {
+						if (denklestirmeAyDurum && personelDenklestirme.getId() != null) {
 							if (session.contains(personelDenklestirme) == false) {
 								PersonelDenklestirme pd = (PersonelDenklestirme) pdksEntityController.getSQLParamByFieldObject(PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.COLUMN_NAME_ID, personelDenklestirme.getId(), PersonelDenklestirme.class, session);
 								if (pd != null) {
 									puantaj.setPersonelDenklestirme(pd);
 									personelDenklestirme = pd;
 								}
-							} else
+							} else 
 								session.refresh(personelDenklestirme);
 						}
 						personelDenklestirme.setGuncellendi(false);
