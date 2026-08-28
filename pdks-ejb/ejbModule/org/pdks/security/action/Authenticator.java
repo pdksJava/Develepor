@@ -297,7 +297,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 								logger.error("PDKS hata out : " + e.getMessage());
 								logger.debug("Hata : " + e.getMessage());
 							}
-							if (!test || adres.startsWith("surum")) {
+							if (ortakIslemler.getCanliDurum() || ortakIslemler.getTestSunucuDurum()) {
 								try {
 									loginUser.setLastLogin(new Date());
 									pdksEntityController.saveOrUpdate(session, entityManager, loginUser);
