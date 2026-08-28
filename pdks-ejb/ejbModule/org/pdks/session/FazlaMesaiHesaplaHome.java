@@ -1989,14 +1989,16 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						}
 						personelDenklestirme = puantaj.getPersonelDenklestirme();
 						if (denklestirmeAyDurum && personelDenklestirme.getId() != null) {
-							if (session.contains(personelDenklestirme) == false) {
-								PersonelDenklestirme pd = (PersonelDenklestirme) pdksEntityController.getSQLParamByFieldObject(PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.COLUMN_NAME_ID, personelDenklestirme.getId(), PersonelDenklestirme.class, session);
-								if (pd != null) {
-									puantaj.setPersonelDenklestirme(pd);
-									personelDenklestirme = pd;
-								}
-							} else 
-								session.refresh(personelDenklestirme);
+							personelDenklestirme = (PersonelDenklestirme) pdksEntityController.sessionRefresh(session, (authenticatedUser != null ? entityManager : null), personelDenklestirme);
+//							if (session.contains(personelDenklestirme) == false) {
+//								PersonelDenklestirme pd = (PersonelDenklestirme) pdksEntityController.getSQLParamByFieldObject(PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.COLUMN_NAME_ID, personelDenklestirme.getId(), PersonelDenklestirme.class, session);
+//								if (pd != null) {
+//									puantaj.setPersonelDenklestirme(pd);
+//									personelDenklestirme = pd;
+//								}
+//							} else {
+//								session.refresh(personelDenklestirme);
+//							}
 						}
 						personelDenklestirme.setGuncellendi(false);
 						personelCalisiyor = personelDenklestirme.getPersonel().isCalisiyorGun(sonGun);

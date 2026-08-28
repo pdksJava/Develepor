@@ -763,7 +763,7 @@ public class PdksEntityController implements Serializable {
 	 * @param em
 	 * @param object
 	 */
-	public void sessionRefresh(Session session, EntityManager em, Object object) {
+	public Object sessionRefresh(Session session, EntityManager em, Object object) {
 		if (session != null && object != null) {
 			try {
 				BasePDKSObject pdksObject = null;
@@ -811,6 +811,7 @@ public class PdksEntityController implements Serializable {
 			}
 
 		}
+		return object;
 
 	}
 
