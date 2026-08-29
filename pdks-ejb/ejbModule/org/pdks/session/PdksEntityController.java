@@ -1602,11 +1602,10 @@ public class PdksEntityController implements Serializable {
 		} catch (Exception e) {
 			logger.error(tableName + " --> " + fieldName + " = " + value + " : " + class1.getName() + "\n" + e.getMessage());
 			e.printStackTrace();
+			list = new ArrayList();
 		}
 		if (list != null)
 			PdksUtil.getAktifList(list);
-		else
-			list = new ArrayList();
 
 		return list;
 	}
