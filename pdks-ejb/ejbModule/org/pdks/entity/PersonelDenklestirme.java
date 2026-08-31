@@ -121,8 +121,9 @@ public class PersonelDenklestirme extends BaseObject {
 			da = cmAy.getDenklestirmeAy();
 		this.denklestirmeAy = da;
 		this.calismaModeliAy = cmAy;
+		CalismaModeli cm = null;
 		if (cmAy != null) {
-			CalismaModeli cm = cmAy.getCalismaModeli();
+			cm = cmAy.getCalismaModeli();
 			this.onaylandi = cm.isIlkPlanOnaylidir() || cm.isFazlaMesaiVarMi() == false || cmAy.isHareketKaydiVardiyaBulsunmu();
 			if (cm.isFazlaMesaiVarMi() == false)
 				this.fazlaMesaiOde = false;
@@ -131,6 +132,10 @@ public class PersonelDenklestirme extends BaseObject {
 			this.fazlaMesaiOde = false;
 			this.fazlaMesaiIzinKullan = true;
 		}
+		if (cm == null && pdksPersonel != null)
+			cm = pdksPersonel.getCalismaModeli();
+		if (cm != null && cm.isSaatlikOdeme())
+			this.fazlaMesaiOde = true;
 		this.setDurum(Boolean.FALSE);
 		this.setGuncellendi(Boolean.FALSE);
 
@@ -656,7 +661,7 @@ public class PersonelDenklestirme extends BaseObject {
 		if (vardiyalar != null) {
 			for (VardiyaGun vardiyaGun : vardiyalar) {
 				if (vardiyaGun.isAyinGunu()) {
-					if ( vardiyaGun.getIzinler() != null) {
+					if (vardiyaGun.getIzinler() != null) {
 						if (cgsDus)
 							izinSure += vardiyaGun.getSaatIzinSuresi(false);
 
