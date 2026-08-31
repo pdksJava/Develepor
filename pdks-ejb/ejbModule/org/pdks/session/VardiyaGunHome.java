@@ -1860,11 +1860,15 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (haftaTatil) {
 						if (getPdksUser().isIK() == false)
 							yaz = Boolean.FALSE;
-						String mesajStr = "Arka arkaya hafta tatili olamaz! [ " + getPdksUser().dateFormatla(vardiyaGun.getVardiyaDate()) + " ] ";
-						sb.append(mesajStr);
-						manuelGirisHTML.append((manuelGirisHTML.length() > 0 ? "<br></br>" : "") + mesajStr);
+						if (getPdksUser().isIK() == false && getPdksUser().isAdmin() == false) {
+							String mesajStr = "Arka arkaya hafta tatili olamaz! [ " + getPdksUser().dateFormatla(vardiyaGun.getVardiyaDate()) + " ] ";
+							sb.append(mesajStr);
+							manuelGirisHTML.append((manuelGirisHTML.length() > 0 ? "<br></br>" : "") + mesajStr);
+							haftaTatil = Boolean.TRUE;
+						}
+
 					}
-					haftaTatil = Boolean.TRUE;
+
 				} else
 					haftaTatil = Boolean.FALSE;
 				vardiyaGunOnceki = vardiya.isCalisma() ? islemVardiya : null;
