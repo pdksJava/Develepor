@@ -1992,8 +1992,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							PersonelDenklestirme pd = null;
 							if (session.contains(personelDenklestirme) == false)
 								pd = (PersonelDenklestirme) pdksEntityController.sessionRefresh(session, (authenticatedUser != null ? entityManager : null), personelDenklestirme);
-							else
-								pd = (PersonelDenklestirme) pdksEntityController.getSQLParamByFieldObject(PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.COLUMN_NAME_ID, personelDenklestirme.getId(), PersonelDenklestirme.class, session);
 
 							if (pd != null) {
 								puantaj.setPersonelDenklestirme(pd);
