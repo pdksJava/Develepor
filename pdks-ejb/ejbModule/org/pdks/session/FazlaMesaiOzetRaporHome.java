@@ -1745,8 +1745,10 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 						}
 						if (!fazlaMesaiIzinKullan)
 							fazlaMesaiIzinKullan = personelDenklestirme.getFazlaMesaiIzinKullan() != null && personelDenklestirme.getFazlaMesaiIzinKullan();
-						if (!fazlaMesaiOde)
-							fazlaMesaiOde = personelDenklestirme.getFazlaMesaiOde() != null && !personelDenklestirme.getFazlaMesaiOde().equals(sirketFazlaMesaiOde);
+						if (!fazlaMesaiOde) {
+							CalismaModeli cm = personelDenklestirme.getCalismaModeli();
+							fazlaMesaiOde = cm.isAylikOdeme() && personelDenklestirme.getFazlaMesaiOde() != null && !personelDenklestirme.getFazlaMesaiOde().equals(sirketFazlaMesaiOde);
+						}
 						if (!kimlikGoster)
 							kimlikGoster = PdksUtil.hasStringValue(personel.getPersonelKGS().getKimlikNo());
 						if (!yasalFazlaCalismaAsanSaat && personelDenklestirme.getCalismaModeliAy().isGunMaxCalismaOdenir())

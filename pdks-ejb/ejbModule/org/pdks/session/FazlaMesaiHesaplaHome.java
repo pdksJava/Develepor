@@ -2634,8 +2634,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					}
 					if (!fazlaMesaiIzinKullan)
 						fazlaMesaiIzinKullan = personelDenklestirme.getFazlaMesaiIzinKullan() != null && personelDenklestirme.getFazlaMesaiIzinKullan();
-					if (!fazlaMesaiOde && personelDenklestirme != null)
-						fazlaMesaiOde = personelDenklestirme.getFazlaMesaiOde() != null && !personelDenklestirme.getFazlaMesaiOde().equals(sirketFazlaMesaiOde);
+					if (!fazlaMesaiOde && personelDenklestirme != null) {
+						if (calismaModeli == null)
+							calismaModeli = personelDenklestirme.getCalismaModeli();
+						fazlaMesaiOde = calismaModeli.isAylikOdeme() && personelDenklestirme.getFazlaMesaiOde() != null && !personelDenklestirme.getFazlaMesaiOde().equals(sirketFazlaMesaiOde);
+
+					}
 
 					double resmiTatilToplami = puantaj.getResmiTatilToplami(), resmiTatilKanunenEklenenSure = 0.0d;
 					double kesilenSure = personelDenklestirme != null ? personelDenklestirme.getKesilenSure() : 0.0d;
