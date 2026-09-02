@@ -1350,6 +1350,8 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void setAyinGunu(boolean value) {
+		if (this.getVardiyaDateStr().endsWith("0731"))
+			logger.debug(value);
 		this.ayinGunu = value;
 	}
 
