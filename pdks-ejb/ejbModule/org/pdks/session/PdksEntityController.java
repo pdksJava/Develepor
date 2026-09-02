@@ -1775,12 +1775,12 @@ public class PdksEntityController implements Serializable {
 	public Object getSQLParamByFieldObject(String tableName, String fieldName, Object value, Class class1, Session session) {
 		HashMap parametreMap = new HashMap();
 		StringBuffer sb = new StringBuffer();
-		sb.append("select top 1 * from " + tableName + " " + selectLOCK);
+		sb.append("select D.* from " + tableName + " D " + selectLOCK);
 		if (value != null) {
-			sb.append(" where " + fieldName + " = :u");
+			sb.append(" where D." + fieldName + " = :u");
 			parametreMap.put("u", value);
 		} else
-			sb.append(" where " + fieldName + "  is null");
+			sb.append(" where D." + fieldName + "  is null");
 
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
