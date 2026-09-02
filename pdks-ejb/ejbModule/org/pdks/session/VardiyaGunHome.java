@@ -8329,8 +8329,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 			if (!fazlaMesaiIzinKullan)
 				fazlaMesaiIzinKullan = pd.getFazlaMesaiIzinKullan() != null && pd.getFazlaMesaiIzinKullan();
-			if (!fazlaMesaiOde)
-				fazlaMesaiOde = pd.getFazlaMesaiOde() != null && !pd.getFazlaMesaiOde().equals(sirketFazlaMesaiOde);
+			if (!fazlaMesaiOde) {
+				CalismaModeli cm = pd.getCalismaModeli();
+				fazlaMesaiOde = cm.isAylikOdeme() && pd.getFazlaMesaiOde() != null && !pd.getFazlaMesaiOde().equals(sirketFazlaMesaiOde);
+			}
 		}
 		return sirket;
 	}
