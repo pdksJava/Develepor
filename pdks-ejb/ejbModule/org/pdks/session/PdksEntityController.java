@@ -1785,13 +1785,12 @@ public class PdksEntityController implements Serializable {
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List list = getObjectBySQLList(sb.toString(), parametreMap, class1);
-
-		Object object = list != null && !list.isEmpty() ? list.get(0) : null;
+		Object object = list != null && list.isEmpty() == false ? list.get(0) : null;
 		if (object == null && class1 != null) {
 			StringBuffer sb1 = new StringBuffer();
-			if (authenticatedUser != null && PdksUtil.hasStringValue(authenticatedUser.getCalistigiSayfa())) {
+			if (authenticatedUser != null && PdksUtil.hasStringValue(authenticatedUser.getCalistigiSayfa()))
 				sb1.append(authenticatedUser.getCalistigiSayfa() + "\n");
-			}
+
 			sb1.append(sb.toString() + " --> " + value + " " + class1.getName());
 			if (value != null)
 				logger.debug(sb1.toString());
