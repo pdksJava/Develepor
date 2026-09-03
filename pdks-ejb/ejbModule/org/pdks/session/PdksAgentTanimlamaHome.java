@@ -148,6 +148,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 	/**
 	 * @param sd
 	 */
+	@Transactional
 	public void mailGonderServisData(ServiceData sd) {
 		Gson gson = new Gson();
 		MailStatu mailStatu = null;
