@@ -2114,8 +2114,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					try {
 						pdksEntityController.sessionFlush(session);
 					} catch (Exception e) {
-						logger.error("flush : " + personelDenklestirme.getId() + " " + personel.getPdksSicilNo() + " " + personel.getAdSoyad() + "\n" + e);
-						e.printStackTrace();
+						logger.error("flush : " + personelDenklestirme.getId() + " " + personel.getPdksSicilNo() + personel.getAdSoyad() + " " + (authenticatedUser != null ? " [ " + authenticatedUser.getAdSoyad() + " ]" : "") + "\n" + e);
+//						e.printStackTrace();
 					}
 				}
 
