@@ -1291,7 +1291,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 */
 	@Transactional
 	public List<AylikPuantaj> fillPersonelDenklestirmeDevam(String inputPersonelNo, AylikPuantaj aylikPuantajSablon, DepartmanDenklestirmeDonemi denklestirmeDonemi) {
-		if (calisiyor == false || authenticatedUser == null) {
+		if (getPdksUser().isAdmin() == false || calisiyor == false) {
 			try {
 				calisiyor = true;
 				User loginUser = aylikPuantajSablon.getLoginUser();
@@ -1302,7 +1302,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				}
 				resmiTatilKanunenEklenenSureGoster = false;
 				aylikVardiyaTabloHareketExcelParameter = ortakIslemler.getAylikVardiyaTabloHareketExcelParameter(session);
-
 				aylikPuantajListClear();
 				boolean sonHafta = false, kullaniciCalistir = getPdksUser() != null && userHome != null;
 				if (loginUser == null && kullaniciCalistir)
