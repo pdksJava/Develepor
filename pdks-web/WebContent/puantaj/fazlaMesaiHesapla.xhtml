@@ -142,8 +142,8 @@
 									<TR>
 										<TD width="35%" valign="top"><a4j:commandButton action="#{fazlaMesaiHesaplaHome.fillPersonelDenklestirmeList(null)}"
 												value="Fazla Mesai Getir" rendered="#{not empty fazlaMesaiHesaplaHome.pdksSirketList}"
-												reRender="denklestirmeDonemiTable,hataliPuantajGoster,hareketTables" onclick="#{rich:component('wait')}.show()"
-												oncomplete="#{rich:component('wait')}.hide()" /></TD>
+												reRender="denklestirmeDonemiTable,hataliPuantajGoster,hareketTables" onclick="this.disabled=true;#{rich:component('wait')}.show()"
+												oncomplete="this.disabled=false;#{rich:component('wait')}.hide()" /></TD>
 
 										<TD width="35%" valign="top"><ui:fragment rendered="#{not empty fazlaMesaiHesaplaHome.aylikPuantajList}">
 												<ui:fragment rendered="#{fazlaMesaiHesaplaHome.denklestirmeAyDurum }">
