@@ -1291,7 +1291,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 */
 	@Transactional
 	public List<AylikPuantaj> fillPersonelDenklestirmeDevam(String inputPersonelNo, AylikPuantaj aylikPuantajSablon, DepartmanDenklestirmeDonemi denklestirmeDonemi) {
-		if (getPdksUser().isAdmin() == false || calisiyor == false) {
+		if (getPdksUser() == null || getPdksUser().isAdmin() == false || calisiyor == false) {
 			try {
 				calisiyor = true;
 				User loginUser = aylikPuantajSablon.getLoginUser();
