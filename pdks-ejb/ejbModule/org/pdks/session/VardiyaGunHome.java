@@ -3731,10 +3731,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			calismaModeli = aylikPuantaj.getCalismaModeli();
 		}
 		Calendar cal = Calendar.getInstance();
-		String ilkMaasDonemi = denklestirmeAyDurum ? ortakIslemler.getParameterKey("ilkMaasDonemi") : "";
-		for (VardiyaGun pdksVardiyaGun : aylikPuantaj.getVardiyalar()) {
+ 		for (VardiyaGun pdksVardiyaGun : aylikPuantaj.getVardiyalar()) {
 			String ayStr = pdksVardiyaGun.getVardiyaDateStr();
-			pdksVardiyaGun.setAyinGunu(ayStr.startsWith(keyDonem) || ayStr.startsWith(ilkMaasDonemi));
+			pdksVardiyaGun.setAyinGunu(ayStr.startsWith(keyDonem));
 			if (pdksVardiyaGun != null)
 				pdksVardiyaGun.setGorevliPersonelMap(gorevliPersonelMap);
 			pdksVardiyaGun.setVardiyalar(null);
@@ -9416,11 +9415,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				if (personelGebeDurum != null)
 					ortakIslemler.vardiyaCalismaModeliGuncelle(aylikPuantaj2.getVardiyalar(), session);
 				String donem = String.valueOf(yil * 100 + ay);
-				String ilkMaasDonemi = denklestirmeAyDurum ? ortakIslemler.getParameterKey("ilkMaasDonemi") : "";
-
+ 
 				for (VardiyaGun pdksVardiyaGun : aylikPuantaj2.getVardiyalar()) {
 					String ayStr = pdksVardiyaGun.getVardiyaDateStr();
-					pdksVardiyaGun.setAyinGunu(ayStr.startsWith(donem) || ayStr.startsWith(ilkMaasDonemi));
+					pdksVardiyaGun.setAyinGunu(ayStr.startsWith(donem) );
 					Vardiya pdksVardiya = pdksVardiyaGun.getVardiya();
 					if (pdksVardiyaGun.isAyinGunu() && pdksVardiya != null) {
 						if (pdksVardiya.isCalisma()) {

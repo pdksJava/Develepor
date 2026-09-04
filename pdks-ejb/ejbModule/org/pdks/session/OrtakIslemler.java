@@ -15573,6 +15573,17 @@ public class OrtakIslemler implements Serializable {
 						}
 					}
 				}
+				if (key.endsWith("0809"))
+					logger.debug(key);
+				if (islemVardiya.isCalisma() == false && sonrakiVardiyaGun != null && sonrakiVardiyaGun.getId() != null) {
+					int arti = vardiyaSonraki.getBasDonem() == 0 ? vardiyaSonraki.getGirisErkenToleransDakika() : 0;
+					Date vardiyaTelorans2BitZaman = addTarih(cal, sonrakiVardiyaGun.getVardiyaDate(), Calendar.MINUTE, -arti);
+					islemVardiya.setVardiyaFazlaMesaiBitZaman(addTarih(cal, vardiyaTelorans2BitZaman, Calendar.MILLISECOND, -20));
+					islemVardiya.setVardiyaTelorans2BitZaman(islemVardiya.getVardiyaFazlaMesaiBitZaman());
+
+					vardiyaSonraki = sonrakiVardiyaGun.getIslemVardiya();
+					vardiyaSonraki.setVardiyaFazlaMesaiBasZaman(vardiyaTelorans2BitZaman);
+				}
 
 				if (sonrakiVardiyaGun == null || islemVardiya.getVardiyaBitZaman().after(islemVardiya.getVardiyaFazlaMesaiBitZaman()) || islemVardiya.getVardiyaTelorans2BitZaman() == null) {
 					Date vardiyaTelorans2BitZaman = addTarih(cal, islemVardiya.getVardiyaFazlaMesaiBitZaman(), Calendar.MILLISECOND, -20);
@@ -15594,8 +15605,6 @@ public class OrtakIslemler implements Serializable {
 							basDakika = islemVardiya.getCikisGecikmeToleransDakika() + 5;
 						Date tarih = addTarih(cal, islemVardiya.getVardiyaTelorans2BitZaman(), Calendar.MINUTE, basDakika);
 						if (islemVardiya.isCalisma() == false) {
-							if (key.endsWith("0608") || key.endsWith("0607"))
-								logger.debug(key);
 							if (vardiyaSonraki.isCalisma() == false)
 								tarih = sonrakiVardiyaGun.getVardiyaDate();
 							else
