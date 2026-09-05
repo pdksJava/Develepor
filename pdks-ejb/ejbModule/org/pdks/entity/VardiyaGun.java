@@ -1063,9 +1063,9 @@ public class VardiyaGun extends BaseObject {
 	/**
 	 * @param value
 	 */
-	public void setKontrolVardiyalar(ArrayList<Vardiya> value) {
+	public void setKontrolVardiyalar(ArrayList<Vardiya> value, boolean durum) {
 		this.vardiyalar = value;
-		if (value != null && vardiya != null && (vardiya.isFMI() || vardiya.getDurum().equals(Boolean.FALSE)) && vardiya.getId() != null) {
+		if (value != null && vardiya != null && (durum || vardiya.isFMI() || vardiya.getDurum().equals(Boolean.FALSE)) && vardiya.getId() != null) {
 			boolean ekle = true;
 			Long vId = vardiya.getId();
 			for (Vardiya vardiya1 : vardiyalar) {
@@ -1900,8 +1900,10 @@ public class VardiyaGun extends BaseObject {
 		return donemAcik;
 	}
 
-	public void setDonemAcik(boolean donemAcik) {
-		this.donemAcik = donemAcik;
+	public void setDonemAcik(boolean value) {
+		if (value && this.getVardiyaDateStr().endsWith("0901"))
+			logger.debug("");
+		this.donemAcik = value;
 	}
 
 	@Transient
