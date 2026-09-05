@@ -4071,6 +4071,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						}
 					}
 					if (pdksVardiyaGun.getId() != null && pdksVardiyaGun.isGuncellendi()) {
+						if (session.contains(pdksVardiyaGun) == false) {
+							Vardiya vardiya = (Vardiya) pdksEntityController.sessionRefresh(session, entityManager, pdksVardiyaGun.getVardiya());
+							pdksVardiyaGun = (VardiyaGun) pdksEntityController.sessionRefresh(session, entityManager, pdksVardiyaGun);
+							pdksVardiyaGun.setVardiya(vardiya);
+						}
 						pdGuncellendi = true;
 						pdksVardiyaGun.setGuncelleyenUser(getPdksUser());
 						pdksVardiyaGun.setGuncellemeTarihi(new Date());

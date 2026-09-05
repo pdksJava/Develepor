@@ -63,7 +63,7 @@
 								rendered="#{ortakIslemler.tesisDurumu and fazlaMesaiOzetRaporHome.tesisList != null and fazlaMesaiOzetRaporHome.tesisList.size()>0}">
 								<ui:define name="label">#{ortakIslemler.tesisAciklama()}</ui:define>
 								<h:selectOneMenu value="#{fazlaMesaiOzetRaporHome.tesisId}" requiredMessage="#{ortakIslemler.tesisAciklama()} seçiniz!"
-									required="#{fazlaMesaiOzetRaporHome.denklestirmeAyDurum}" disabled="#{fazlaMesaiOzetRaporHome.tesisList.size() == 1}">
+									required="#{fazlaMesaiOzetRaporHome.tesisDurum}" disabled="#{fazlaMesaiOzetRaporHome.tesisList.size() == 1}">
 									<f:selectItem itemLabel="Lütfen seçiniz" />
 									<f:selectItems value="#{fazlaMesaiOzetRaporHome.tesisList}" />
 									<a4j:support event="onchange" status="ajaxStatus" action="#{fazlaMesaiOzetRaporHome.bolumDoldur()}" ajaxSingle="true"
@@ -260,6 +260,18 @@
 											style="width:autostretch ;white-space: nowrap;" /></SPAN>
 
 								</rich:column>
+								<c:if test="#{fazlaMesaiOzetRaporHome.tesisId==null and fazlaMesaiOzetRaporHome.tesisList.size() gt 1}">
+									<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;">
+										<f:facet name="header">
+											<h:outputText value="#{ortakIslemler.tesisAciklama()}" />
+										</f:facet>
+										<ui:fragment rendered="#{ap.pdksPersonel.tesis!=null}">
+											<h:outputText value="#{ap.pdksPersonel.tesis.aciklama}" />
+										</ui:fragment>
+
+									</rich:column>
+
+								</c:if>
 								<rich:column style="width: 60px;width:autostretch ;white-space: nowrap;" rendered="#{fazlaMesaiOzetRaporHome.seciliEkSaha3Id == null}">
 									<f:facet name="header">
 										<h:outputText value="#{fazlaMesaiOzetRaporHome.bolumAciklama}" />

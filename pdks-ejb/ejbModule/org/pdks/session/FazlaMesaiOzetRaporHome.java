@@ -150,7 +150,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	private Boolean hataYok, fazlaMesaiIzinKullan = Boolean.FALSE, fazlaMesaiOde = Boolean.FALSE, yetkili = Boolean.FALSE, resmiTatilVar = Boolean.FALSE, haftaTatilVar = Boolean.FALSE, kaydetDurum = Boolean.FALSE;
 	private Boolean onayla, hastaneSuperVisor = Boolean.FALSE, sirketIzinGirisDurum = Boolean.FALSE, hataliPuantajVar = Boolean.FALSE, secimDurum;
 	private Boolean kimlikGoster = Boolean.FALSE, aksamGun = Boolean.FALSE, maasKesintiGoster = Boolean.FALSE, aksamSaat = Boolean.FALSE, hataliPuantajGoster = Boolean.FALSE, stajerSirket, departmanBolumAyni = Boolean.FALSE;
-	private Boolean modelGoster = Boolean.FALSE, kullaniciPersonel = Boolean.FALSE, sirketGoster = Boolean.FALSE, denklestirmeAyDurum = Boolean.FALSE, yoneticiERP1Kontrol = Boolean.FALSE, icapciSaatGoster = Boolean.FALSE, yasalFazlaCalismaAsanSaat = Boolean.FALSE;
+	private Boolean modelGoster = Boolean.FALSE, kullaniciPersonel = Boolean.FALSE, sirketGoster = Boolean.FALSE, tesisDurum = Boolean.FALSE, denklestirmeAyDurum = Boolean.FALSE, yoneticiERP1Kontrol = Boolean.FALSE, icapciSaatGoster = Boolean.FALSE, yasalFazlaCalismaAsanSaat = Boolean.FALSE;
 	private boolean adminRole, ikRole, bordroPuantajEkranindaGoster = false, vardiyaPlanTopluAdet = false, fazlaMesaiVar = false, saatlikMesaiVar = false, aylikMesaiVar = false;
 	private Boolean gerceklesenMesaiKod = Boolean.FALSE, isAramaDurum = Boolean.FALSE, devredenBakiyeKod = Boolean.FALSE, normalCalismaSaatKod = Boolean.FALSE, haftaTatilCalismaSaatKod = Boolean.FALSE, resmiTatilCalismaSaatKod = Boolean.FALSE, izinSureSaatKod = Boolean.FALSE;
 	private Boolean normalCalismaGunKod = Boolean.FALSE, haftaTatilCalismaGunKod = Boolean.FALSE, resmiTatilCalismaGunKod = Boolean.FALSE, izinSureGunKod = Boolean.FALSE, ucretliIzinGunKod = Boolean.FALSE, ucretsizIzinGunKod = Boolean.FALSE, hastalikIzinGunKod = Boolean.FALSE;
@@ -2627,6 +2627,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		if (kimlikGoster)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.kimlikNoAciklama());
 		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Adı Soyadı");
+		if (tesisId == null)
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.tesisAciklama());
 		if (seciliEkSaha3Id == null)
 			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolumAciklama);
 		if (ekSaha4Tanim != null)
@@ -2910,7 +2912,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					}
 					Cell personelCell = ExcelUtil.getCell(sheet, row, col++, styleGenel);
 					personelCell.setCellValue(personel.getAdSoyad());
-
+					if (tesisId == null)
+						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(personel.getTesis() != null ? personel.getTesis().getAciklama() : "");
 					if (seciliEkSaha3Id == null)
 						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() : "");
 					if (ekSaha4Tanim != null)
@@ -3411,6 +3414,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	public void tesisDoldur(boolean bolumDoldurDurum) throws Exception {
 		sirket = null;
 		bolumleriTemizle();
+		tesisDurum = false;
 		if (pdksSirketList == null || pdksSirketList.isEmpty())
 			setTesisList(new ArrayList<SelectItem>());
 		else {
@@ -3420,6 +3424,11 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					tesisId = null;
 			}
 			List<SelectItem> list = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirket, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, true, session);
+			if (list.size() > 1 && denklestirmeAyDurum) {
+				List<Personel> personeList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(sirket, null, null, null, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, true, session);
+				tesisDurum = personeList == null || personeList.size() > 200;
+				personeList = null;
+			}
 			setTesisList(list);
 			Long onceki = tesisId;
 			if (list != null && !list.isEmpty()) {
@@ -4682,5 +4691,13 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 	public void setBrutUcretGoster(Boolean brutUcretGoster) {
 		this.brutUcretGoster = brutUcretGoster;
+	}
+
+	public Boolean getTesisDurum() {
+		return tesisDurum;
+	}
+
+	public void setTesisDurum(Boolean tesisDurum) {
+		this.tesisDurum = tesisDurum;
 	}
 }
