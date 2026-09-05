@@ -384,6 +384,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			if (linkAdresKey == null) {
 				veriLastMap = ortakIslemler.getLastParameter(sayfaURL, session);
 				if (veriLastMap != null) {
+					tesisId = null;
+					seciliEkSaha3Id = null;
 					if (veriLastMap.containsKey("yil"))
 						yilStr = (String) veriLastMap.get("yil");
 					if (veriLastMap.containsKey("ay"))
@@ -447,7 +449,8 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 							fillSirketList();
 							if (sirket != null)
 								sirketId = sirket.getId();
-							tesisDoldur(false);
+							if (tesisId != null)
+								tesisDoldur(false);
 						}
 
 					}
@@ -481,11 +484,12 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			if (departman != null && !departman.isAdminMi()) {
 				if (bolumDepartmanlari == null && departman != null)
 					bolumDepartmanlari = fazlaMesaiOrtakIslemler.getFazlaMesaiBolumList(sirket, null, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, Boolean.TRUE, session);
-			} else if (sirketId != null)
+			} else if (sirket != null && sirket.isTesisDurumu())
 				tesisDoldur(false);
 			if (tesisIdStr != null)
 				setTesisId(Long.parseLong(tesisIdStr));
-			bolumDoldur();
+			if (tesisId != null || gorevYeriIdStr != null)
+				bolumDoldur();
 			if (veriLastMap == null && hareketDoldur)
 				fillFazlaMesaiOzetRaporList();
 			denklestirmeAyDurum = denklestirmeAy != null && denklestirmeAy.getDurum();
@@ -3427,14 +3431,18 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 			if (list.size() > 1 && denklestirmeAyDurum) {
 				List<Personel> personeList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(sirket, null, null, null, denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, true, session);
 				tesisDurum = personeList == null || personeList.size() > 200;
+				if (tesisDurum == false)
+					tesisId = null;
 				personeList = null;
 			}
 			setTesisList(list);
 			Long onceki = tesisId;
 			if (list != null && !list.isEmpty()) {
-				if (list.size() == 1 || onceki == null)
-					tesisId = (Long) list.get(0).getValue();
-				else if (onceki != null) {
+				if (list.size() == 1 || onceki == null) {
+					if (tesisDurum)
+						tesisId = (Long) list.get(0).getValue();
+
+				} else if (onceki != null) {
 					tesisId = null;
 					for (SelectItem st : list) {
 						if (st.getValue().equals(onceki))
