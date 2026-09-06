@@ -1794,6 +1794,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					}
 					if (!resmiTatilVar)
 						setResmiTatilVar(puantaj.getResmiTatilToplami() != 0.0d);
+					puantaj.setYoneticiZorunlu(false);
 					puantaj.setFazlaMesaiHesapla(puantajFazlaMesaiHesapla);
 					puantaj.setIcapciMesaiSure(icapciMesaiSure);
 					if (!personelDenklestirme.getDenklestirmeAy().isDurumu()) {
