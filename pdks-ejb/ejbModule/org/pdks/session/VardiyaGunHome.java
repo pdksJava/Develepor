@@ -518,19 +518,19 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	public String modelDegisti() {
 		// personelAylikPuantaj
 		TreeMap<String, Vardiya> map = new TreeMap<String, Vardiya>();
-		for (VardiyaGun vg : personelAylikPuantaj.getVardiyalar()) {
+		List<VardiyaGun> vardiyaGunList = personelAylikPuantaj.getVardiyalar();
+		for (VardiyaGun vg : vardiyaGunList) {
 			Vardiya vardiya = vg.getVardiya();
 			if (vardiya != null) {
 				if (session.contains(vardiya) == false)
 					vardiya = (Vardiya) pdksEntityController.sessionRefresh(session, entityManager, vardiya);
 				map.put(vg.getVardiyaDateStr(), vardiya);
 			}
-
-		}
+ 		}
 		ArrayList<Vardiya> vardiyalar = fillAylikVardiyaList(personelAylikPuantaj, personelDenklestirme);
 		personelDenklestirme.setGuncellendi(true);
 		fillCalismaModeliVardiyaList(personelDenklestirme.getCalismaModeliAy() != null ? personelDenklestirme.getCalismaModeliAy().getCalismaModeli() : null);
-		for (VardiyaGun vg : personelAylikPuantaj.getVardiyalar()) {
+		for (VardiyaGun vg : vardiyaGunList) {
 			if (vg.getVardiya() != null) {
 				vg.setVardiyalar(vg.getIzin() == null ? vardiyalar : null);
 				Vardiya vardiya = vg.getVardiya();
@@ -540,7 +540,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						vg.setVardiya(vardiya);
 						vg.setGuncellendi(true);
 					}
- 				}
+				}
 				if (vg.getVardiyalar() != null) {
 					boolean ekle = true;
 					for (Vardiya vardiya2 : vardiyalar) {
