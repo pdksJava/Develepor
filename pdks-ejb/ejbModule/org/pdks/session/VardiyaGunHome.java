@@ -517,16 +517,50 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 */
 	public String modelDegisti() {
 		// personelAylikPuantaj
+		TreeMap<String, Vardiya> map = new TreeMap<String, Vardiya>();
+		for (VardiyaGun vg : personelAylikPuantaj.getVardiyalar()) {
+			Vardiya vardiya = vg.getVardiya();
+			if (vardiya != null) {
+				if (session.contains(vardiya) == false)
+					vardiya = (Vardiya) pdksEntityController.sessionRefresh(session, entityManager, vardiya);
+				map.put(vg.getVardiyaDateStr(), vardiya);
+			}
+
+		}
 		ArrayList<Vardiya> vardiyalar = fillAylikVardiyaList(personelAylikPuantaj, personelDenklestirme);
 		personelDenklestirme.setGuncellendi(true);
 		fillCalismaModeliVardiyaList(personelDenklestirme.getCalismaModeliAy() != null ? personelDenklestirme.getCalismaModeliAy().getCalismaModeli() : null);
-		for (VardiyaGun pdksVardiyaGun : personelAylikPuantaj.getVardiyalar()) {
-			if (pdksVardiyaGun.getVardiya() != null) {
-				pdksVardiyaGun.setVardiyalar(pdksVardiyaGun.getIzin() == null ? vardiyalar : null);
-				pdksVardiyaGun.setIslemVardiya(null);
-				pdksVardiyaGun.setIslendi(false);
+		for (VardiyaGun vg : personelAylikPuantaj.getVardiyalar()) {
+			if (vg.getVardiya() != null) {
+				vg.setVardiyalar(vg.getIzin() == null ? vardiyalar : null);
+				Vardiya vardiya = vg.getVardiya();
+				if (map.containsKey(vg.getVardiyaDateStr())) {
+					vardiya = map.get(vg.getVardiyaDateStr());
+					if (vardiya.getId().equals(vg.getVardiya().getId()) == false) {
+						vg.setVardiya(vardiya);
+						vg.setGuncellendi(true);
+					}
+ 				}
+				if (vg.getVardiyalar() != null) {
+					boolean ekle = true;
+					for (Vardiya vardiya2 : vardiyalar) {
+						if (vardiya2.getId().equals(vardiya.getId())) {
+							ekle = false;
+							break;
+						}
+					}
+					if (ekle) {
+						ArrayList<Vardiya> vardiyaList = new ArrayList<Vardiya>();
+						vardiyaList.add(vardiya);
+						vardiyaList.addAll(vardiyalar);
+						vg.setVardiyalar(vardiyaList);
+					}
+				}
+				vg.setIslemVardiya(null);
+				vg.setIslendi(false);
 			}
 		}
+		map = null;
 
 		return "";
 	}
