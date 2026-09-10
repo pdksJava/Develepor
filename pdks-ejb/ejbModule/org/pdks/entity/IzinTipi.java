@@ -107,6 +107,7 @@ public class IzinTipi extends BaseObject {
 	public static final int CGS_DURUM_YOK = 0;
 	public static final int CGS_DURUM_CIKAR = 1;
 	public static final int CGS_DURUM_EKLE = 2;
+	public static final int TCS_DURUM_EKLE = 3;
 
 	private Tanim izinTipiTanim;
 	private Double maxGun = 0D, maxSaat = 0D, minGun = 0D, minSaat = 0D, kotaBakiye = 0D, artikIzinGun = 0D;
@@ -676,6 +677,11 @@ public class IzinTipi extends BaseObject {
 	}
 
 	@Transient
+	public Boolean isEkleTCS() {
+		return durumCGS != null && durumCGS.equals(TCS_DURUM_EKLE);
+	}
+
+	@Transient
 	public Boolean isCikarCGS() {
 		return durumCGS != null && durumCGS.equals(CGS_DURUM_CIKAR);
 	}
@@ -696,6 +702,9 @@ public class IzinTipi extends BaseObject {
 				break;
 			case CGS_DURUM_EKLE:
 				durumCGSAciklama = "ÇGS Ekle";
+				break;
+			case TCS_DURUM_EKLE:
+				durumCGSAciklama = "TÇS Ekle";
 				break;
 			case CGS_DURUM_CIKAR:
 				durumCGSAciklama = "ÇGS Çıkar";

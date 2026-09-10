@@ -604,6 +604,7 @@ public class IzinTipiHome extends EntityHome<IzinTipi> implements Serializable {
 		durumCGSList.add(new SelectItem(IzinTipi.CGS_DURUM_YOK, IzinTipi.getDurumCGSAciklama(IzinTipi.CGS_DURUM_YOK)));
 		durumCGSList.add(new SelectItem(IzinTipi.CGS_DURUM_CIKAR, IzinTipi.getDurumCGSAciklama(IzinTipi.CGS_DURUM_CIKAR)));
 		durumCGSList.add(new SelectItem(IzinTipi.CGS_DURUM_EKLE, IzinTipi.getDurumCGSAciklama(IzinTipi.CGS_DURUM_EKLE)));
+		durumCGSList.add(new SelectItem(IzinTipi.TCS_DURUM_EKLE, IzinTipi.getDurumCGSAciklama(IzinTipi.TCS_DURUM_EKLE)));
 		IzinTipi izinTipi = new IzinTipi();
 		fillPersonelGirisTipiList(izinTipi);
 		fillBakiyeDevirTipiList(izinTipi);

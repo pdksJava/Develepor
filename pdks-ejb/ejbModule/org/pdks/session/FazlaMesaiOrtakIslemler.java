@@ -1771,11 +1771,11 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 							vardiyalIzin = null;
 						if (resmiTatil)
 							logger.debug(vardiyaGun.getVardiyaDateStr());
-
+						String izinKodu = null;
 						if (vardiyaGun.isIzinli()) {
 
 							// calisiyor = true;
-							String izinKodu = null;
+							
 							if (vardiyalIzin != null) {
 								Long gunFark = PdksUtil.tarihFarki(vardiyalIzin.getBaslangicZamani(), vardiyalIzin.getBitisZamani());
 								if (gunFark.longValue() == izinSuresi.longValue())
