@@ -5280,7 +5280,6 @@ public class OrtakIslemler implements Serializable {
 		fields.put(fieldName, perIdList);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		// ArrayList<Personel> personelList = (ArrayList<Personel>) pdksEntityController.getObjectBySQLList(sb, fields, Personel.class);
 		ArrayList<Personel> personelList = (ArrayList<Personel>) pdksEntityController.getSQLParamList(perIdList, sb, fieldName, fields, Personel.class, session);
 
 		fields = null;
@@ -12176,7 +12175,6 @@ public class OrtakIslemler implements Serializable {
 				fields.put(fieldName, veriList);
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-				// List<Personel> yetkiliPersoneller = pdksEntityController.getObjectBySQLList(sb, fields, Personel.class);
 				List<Personel> yetkiliPersoneller = pdksEntityController.getSQLParamList(veriList, sb, fieldName, fields, Personel.class, session);
 				long lBitTarih = bitTarih.getTime(), lBasTarih = basTarih.getTime();
 				ArrayList<String> perNoList = new ArrayList<String>();
@@ -12593,16 +12591,17 @@ public class OrtakIslemler implements Serializable {
 	public List<Personel> getPersonelByIdList(List<Long> idList, Session session) {
 		List<Personel> perList = null;
 		if (idList != null && !idList.isEmpty()) {
-			String fieldName = "s";
-			HashMap fields = new HashMap();
-			fields.put(fieldName, idList);
-			if (session != null)
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			StringBuilder sb = new StringBuilder();
-			sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
-			sb.append(" where P." + Personel.COLUMN_NAME_ID + " :" + fieldName);
-			// perList = pdksEntityController.getObjectBySQLList(session, LIST_MAX_SIZE / 2, sb.toString(), "s", idList, Personel.class);
-			perList = pdksEntityController.getSQLParamList(idList, sb, fieldName, fields, Personel.class, session);
+			// String fieldName = "s";
+			// HashMap fields = new HashMap();
+			// fields.put(fieldName, idList);
+			// if (session != null)
+			// fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			// StringBuilder sb = new StringBuilder();
+			// sb.append("select P.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK() + " ");
+			// sb.append(" where P." + Personel.COLUMN_NAME_ID + " :" + fieldName);
+			// perList = pdksEntityController.getSQLParamList(idList, sb, fieldName, fields, Personel.class, session);
+			perList = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_ID, idList, Personel.class, session);
+
 		}
 		if (perList == null)
 			perList = new ArrayList<Personel>();
@@ -12618,9 +12617,9 @@ public class OrtakIslemler implements Serializable {
 		List<Personel> perList = null;
 		Session session = fields.containsKey(PdksEntityController.MAP_KEY_SESSION) ? (Session) fields.get(PdksEntityController.MAP_KEY_SESSION) : authenticatedUser.getSessionSQL();
 		List<Long> idList = pdksEntityController.getObjectBySQLList(sb, fields, null);
-		if (!idList.isEmpty()) {
+		if (!idList.isEmpty())  
 			perList = getPersonelByIdList(idList, session);
-		}
+		 
 
 		idList = null;
 		if (perList == null)
@@ -13111,11 +13110,9 @@ public class OrtakIslemler implements Serializable {
 					}
 					TreeMap personelMap = new TreeMap();
 					// burada sorun var
-					map.clear();
-					map.put("pdksSicilNo", yetkiliPersonelNoList.clone());
-					if (session != null)
-						map.put(PdksEntityController.MAP_KEY_SESSION, session);
-					List personeller = pdksEntityController.getObjectByInnerObjectListInLogic(map, Personel.class);
+
+					List<Personel> personeller = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, yetkiliPersonelNoList.clone(), Personel.class, session);
+
 					for (Iterator iterator = personeller.iterator(); iterator.hasNext();) {
 						Personel personel = (Personel) iterator.next();
 						if (personel.getPdksYonetici() != null && !personel.getPdksYonetici().getId().equals(user.getPdksPersonel().getId()))
@@ -20174,10 +20171,8 @@ public class OrtakIslemler implements Serializable {
 		haricKodlar.add(IzinTipi.MOLA_IZNI);
 		HashMap<Long, TempIzin> izinMap = new HashMap<Long, TempIzin>();
 		HashMap parametreMap = new HashMap();
-		parametreMap.put("pdksSicilNo", sicilNoList);
-		if (session != null)
-			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<Personel> personeller = pdksEntityController.getObjectByInnerObjectList(parametreMap, Personel.class);
+		List<Personel> personeller = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, sicilNoList, Personel.class, session);
+
 		for (Iterator iterator = personeller.iterator(); iterator.hasNext();) {
 			Personel personel = (Personel) iterator.next();
 			if (izinTipiKodu.equals(IzinTipi.SUA_IZNI)) {
@@ -20330,10 +20325,11 @@ public class OrtakIslemler implements Serializable {
 	public HashMap<Long, TempIzin> fazlaMesaiIzinListesiOlustur(ArrayList<String> sicilNoList, Sirket sirket, Date basTarih, Date bitTarih, boolean personelKontrol, Session session) {
 		HashMap<Long, TempIzin> izinMap = new HashMap<Long, TempIzin>();
 		HashMap parametreMap = new HashMap();
-		parametreMap.put("pdksSicilNo", sicilNoList);
-		if (session != null)
-			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<Personel> personeller = pdksEntityController.getObjectByInnerObjectList(parametreMap, Personel.class);
+		// parametreMap.put("pdksSicilNo", sicilNoList);
+		// if (session != null)
+		// parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<Personel> personeller = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, sicilNoList, Personel.class, session);
+
 		parametreMap.clear();
 		if (sirket != null)
 			parametreMap.put("departman.id=", sirket.getDepartman().getId());

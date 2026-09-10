@@ -323,12 +323,19 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 				List<Tanim> statuTanimList = null;
 				HashMap fields = new HashMap();
 				if (authenticatedUser.isYonetici() || authenticatedUser.isYoneticiKontratli()) {
-					if (!authenticatedUser.isIKAdmin())
-						fields.put("pdksSicilNo <> ", authenticatedUser.getPdksPersonel().getPdksSicilNo());
-					fields.put("pdksSicilNo", authenticatedUser.getYetkiTumPersonelNoList());
-					if (session != null)
-						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-					List<Personel> list = pdksEntityController.getObjectByInnerObjectListInLogic(fields, Personel.class);
+					List<String> perNoList = new ArrayList<String>(authenticatedUser.getYetkiTumPersonelNoList());
+					if (!authenticatedUser.isIKAdmin()) {
+						if (perNoList.contains(authenticatedUser.getPdksPersonel().getPdksSicilNo()))
+							perNoList.remove(authenticatedUser.getPdksPersonel().getPdksSicilNo());
+						// fields.put("pdksSicilNo <> ", authenticatedUser.getPdksPersonel().getPdksSicilNo());
+					}
+
+					// fields.put("pdksSicilNo", authenticatedUser.getYetkiTumPersonelNoList());
+					// if (session != null)
+					// fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+					// List<Personel> list = pdksEntityController.getObjectByInnerObjectListInLogic(fields, Personel.class);
+					List<Personel> list = pdksEntityController.getSQLParamByFieldList(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, perNoList, Personel.class, session);
+					perNoList = null;
 					TreeMap<Long, Tanim> tanimMap = new TreeMap<Long, Tanim>();
 					for (Personel personel : list) {
 						if (personel.getEkSaha3() != null)

@@ -586,8 +586,6 @@ public class PersonelGeciciYoneticiHome extends EntityHome<PersonelGeciciYonetic
 			parametreMap.put("iseBaslamaTarihi <= ", bugun);
 			if (session != null)
 				parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-			// parametreMap.put(PdksEntityController.MAP_KEY_MAP, "getId");
-			// TreeMap<Long, Personel> yoneticiMap = pdksEntityController.getObjectByInnerObjectMapInLogic(parametreMap, Personel.class, false);
 			TreeMap<Long, Personel> yoneticiMap = ortakIslemler.getParamTreeMap(Boolean.TRUE, "getId", Boolean.FALSE, dataIdList, fieldName, parametreMap, Personel.class, session);
 			for (Long ld : yoneticiMap.keySet()) {
 				if (userMap.containsKey(ld))

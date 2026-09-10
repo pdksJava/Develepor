@@ -6485,7 +6485,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			map.put(fieldName, perIdList);
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
-			// List<Personel> perList = pdksEntityController.getObjectBySQLList(sb, map, Personel.class);
 			List<Personel> perList = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, map, Personel.class, session);
 			for (Personel yonetici : perList) {
 				mesajlar.add(yonetici.getPdksSicilNo() + " " + yonetici.getAdSoyad() + " aktif kullanıcısı bulunmamaktadır!");
@@ -12103,7 +12102,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 						fields.put(PdksEntityController.MAP_KEY_MAP, "getPdksSicilNo");
 						if (session != null)
 							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-						// TreeMap<String, Personel> personelMap = pdksEntityController.getObjectBySQLMap(sb, fields, Personel.class, false);
 						TreeMap<String, Personel> personelMap = pdksEntityController.getSQLParamTreeMap("getPdksSicilNo", false, dataIdList, sb, fieldName, fields, Personel.class, session);
 						if (personelMap.size() == perMap.size()) {
 							fieldName = "s";
