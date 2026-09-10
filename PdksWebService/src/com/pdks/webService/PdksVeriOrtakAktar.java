@@ -4412,21 +4412,20 @@ public class PdksVeriOrtakAktar implements Serializable {
 						if (sirket != null)
 							personel.setFazlaMesaiOde(sirket.getFazlaMesaiOde() != null && sirket.getFazlaMesaiOde());
 
-						if (personel.getCalismaModeli() == null) {
-							CalismaModeli cm = null;
-							if (sirket != null)
-								cm = (CalismaModeli) getCalismaModel_VardiyaSablonByMap(personelTipi, sirket, tesis, cmMap);
-							if (cm == null && modeller.size() == 1)
-								cm = modeller.get(0);
-							if (cm != null) {
-								personel.setCalismaModeli(cm);
-								if (personel.getSablon() == null)
-									personel.setSablon(cm.getBagliVardiyaSablonu());
-							}
-
-						}
 					}
+					if (personel.getCalismaModeli() == null) {
+						CalismaModeli cm = null;
+						if (sirket != null)
+							cm = (CalismaModeli) getCalismaModel_VardiyaSablonByMap(personelTipi, sirket, tesis, cmMap);
+						if (cm == null && modeller.size() == 1)
+							cm = modeller.get(0);
+						if (cm != null) {
+							personel.setCalismaModeli(cm);
+							if (personel.getSablon() == null)
+								personel.setSablon(cm.getBagliVardiyaSablonu());
+						}
 
+					}
 					if (personel.getSablon() == null) {
 						VardiyaSablonu vs = (VardiyaSablonu) getCalismaModel_VardiyaSablonByMap(null, sirket, tesis, sablonMap);
 						if (vs != null)
