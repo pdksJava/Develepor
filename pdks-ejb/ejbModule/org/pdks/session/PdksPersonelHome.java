@@ -3091,11 +3091,13 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (bos)
 			sb.append(str + " V." + PersonelKGS.COLUMN_NAME_DURUM + " = 1 and V." + PersonelKGS.COLUMN_NAME_PERSONEL_ID + " is null");
 		List<Long> tesisIdList = null;
-		if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
-			tesisIdList = new ArrayList<Long>();
-			for (Tanim tesis : authenticatedUser.getYetkiliTesisler())
-				tesisIdList.add(tesis.getId());
+		if (authenticatedUser.isIK_Tesis() || authenticatedUser.isIKSirket()) {
+			if (authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
+				tesisIdList = new ArrayList<Long>();
 
+				for (Tanim tesis : authenticatedUser.getYetkiliTesisler())
+					tesisIdList.add(tesis.getId());
+			}
 		}
 		if (authenticatedUser.isIK_Tesis() && authenticatedUser.getPdksPersonel().getTesis() != null) {
 			if (tesisIdList == null)

@@ -6745,12 +6745,14 @@ public class OrtakIslemler implements Serializable {
 		sb.append("select distinct S.* from " + Sirket.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
 		List<Long> tesisIdList = null;
 		if (authenticatedUser != null && authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
-			tesisIdList = new ArrayList<Long>();
-			for (Tanim tesis : authenticatedUser.getYetkiliTesisler())
-				tesisIdList.add(tesis.getId());
-			sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_SIRKET + " = S." + Sirket.COLUMN_NAME_ID);
-			sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :t ");
-			parametreMap.put("t", tesisIdList);
+			if (authenticatedUser.isIK_Tesis() || authenticatedUser.isIKSirket() || authenticatedUser.isIK() == false) {
+ 				tesisIdList = new ArrayList<Long>();
+				for (Tanim tesis : authenticatedUser.getYetkiliTesisler())
+					tesisIdList.add(tesis.getId());
+				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_SIRKET + " = S." + Sirket.COLUMN_NAME_ID);
+				sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :t ");
+				parametreMap.put("t", tesisIdList);
+			}
 		}
 		sb.append(" where S." + Sirket.COLUMN_NAME_DURUM + " = 1 ");
 		if (pdks != null)
@@ -12617,9 +12619,8 @@ public class OrtakIslemler implements Serializable {
 		List<Personel> perList = null;
 		Session session = fields.containsKey(PdksEntityController.MAP_KEY_SESSION) ? (Session) fields.get(PdksEntityController.MAP_KEY_SESSION) : authenticatedUser.getSessionSQL();
 		List<Long> idList = pdksEntityController.getObjectBySQLList(sb, fields, null);
-		if (!idList.isEmpty())  
+		if (!idList.isEmpty())
 			perList = getPersonelByIdList(idList, session);
-		 
 
 		idList = null;
 		if (perList == null)
