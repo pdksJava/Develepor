@@ -344,7 +344,7 @@
 																</f:setPropertyActionListener>
 															</a4j:commandLink>
 															<ui:fragment
-																rendered="#{hareketler.terminalKapi != null and (authenticatedUser.IK or authenticatedUser.admin or ortakIslemler.getParameterKey('terminalGuncelle') == '1')}">
+																rendered="#{hareketler.terminalKapi != null and (personelHareketHome.ikRole or authenticatedUser.admin or ortakIslemler.getParameterKey('terminalGuncelle') == '1')}">
 																<a4j:commandLink status="ajaxStatus" id="terminalKapilink" ajaxSingle="true"
 																	action="#{personelHareketHome.terminalGuncelle(hareketler)}" oncomplete="#{rich:component('terminalPanel')}.show()"
 																	reRender="terminalPanel">
