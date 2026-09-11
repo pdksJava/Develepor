@@ -822,7 +822,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 		}
 		fillSirketList();
-		if (!pdksSirketList.isEmpty()) {
+		if (pdksSirketList != null && !pdksSirketList.isEmpty()) {
 			boolean bolumDoldurulmadi = true;
 			if (sirketId != null || pdksSirketList.size() == 1) {
 				Long tesisIdOnceki = tesisId;
@@ -833,8 +833,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				if (tesisList.size() == 1) {
-					tesisId = (Long) tesisList.get(0).getValue();
+				if (tesisList.size() <= 1) {
+					if (tesisList.isEmpty() == false)
+						tesisId = (Long) tesisList.get(0).getValue();
 					bolumDoldur();
 					bolumDoldurulmadi = false;
 				} else if (tesisIdOnceki != null && !tesisList.isEmpty()) {
@@ -918,10 +919,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, sirketId, session);
 				}
 			}
-			setPdksSirketList(sirketler);
+
 		} else {
 			setSirket(userLogin.getPdksPersonel().getSirket());
+			sirketler = new ArrayList<SelectItem>();
+			sirketler.add(new SelectItem(sirket.getId(), sirket.getAd()));
+
 		}
+		setPdksSirketList(sirketler);
 
 		aylikPuantajList.clear();
 		setPersonelDenklestirmeList(new ArrayList<PersonelDenklestirme>());

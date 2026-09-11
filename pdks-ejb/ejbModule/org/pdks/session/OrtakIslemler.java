@@ -6172,7 +6172,7 @@ public class OrtakIslemler implements Serializable {
 		if (user == null)
 			user = authenticatedUser;
 		if (user != null) {
-			ikRol = user.isAdmin() || user.isIK() || user.isSistemYoneticisi() || user.isGenelMudur() || user.isIKAdmin();
+			ikRol = user.isAdmin() || user.isIK() || user.isIK_Tesis() || user.isIKSirket() || user.isSistemYoneticisi() || user.isGenelMudur() || user.isIKAdmin();
 			if (!ikRol && user.isRaporKullanici() && user.getCalistigiSayfa() != null && PdksUtil.hasStringValue(user.getCalistigiSayfa())) {
 				String ikRaporlar = getParameterKey("ikRaporlar");
 				if (PdksUtil.hasStringValue(ikRaporlar)) {
