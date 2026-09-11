@@ -195,7 +195,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	 */
 	private void adminRoleDurum() {
 		adminRole = getPdksUser().isAdmin() || getPdksUser().isSistemYoneticisi();
-		ikRole = getPdksUser().isAdmin() || getPdksUser().isSistemYoneticisi() || getPdksUser().isIK();
+		ikRole = PdksUtil.getIkRole(getPdksUser());
 	}
 
 	public void instanceRefresh() {

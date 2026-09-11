@@ -294,7 +294,7 @@ public class PersonelHareketHome extends EntityHome<HareketKGS> implements Seria
 	 */
 	private void adminRoleDurum() {
 		adminRole = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIKAdmin();
-		ikRole = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIK()|| authenticatedUser.isIK_Tesis()|| authenticatedUser.isIKSirket();
+		ikRole = PdksUtil.getIkRole(authenticatedUser);
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)

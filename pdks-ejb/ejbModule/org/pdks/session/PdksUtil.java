@@ -2967,6 +2967,13 @@ public class PdksUtil implements Serializable {
 		return getDate(cal.getTime());
 	}
 
+	public static boolean getIkRole(User user) {
+		boolean ikRole = false;
+		if (user != null)
+			ikRole = user.isAdmin() || user.isSistemYoneticisi() || user.isIK() || user.isIK_Tesis() || user.isIKSirket();
+		return ikRole;
+	}
+
 	/**
 	 * @param user
 	 */
@@ -3040,11 +3047,13 @@ public class PdksUtil implements Serializable {
 				user.setSistemYoneticisi(Boolean.TRUE);
 			else if (rolAdi.equals(Role.TIPI_IK))
 				user.setIK(Boolean.TRUE);
-			else if (rolAdi.equals(Role.TIPI_IK_SIRKET))
+			else if (rolAdi.equals(Role.TIPI_IK_SIRKET)) {
 				user.setIKSirket(Boolean.TRUE);
-			else if (rolAdi.equals(Role.TIPI_IK_Tesis))
+				// user.setIK(Boolean.TRUE);
+			} else if (rolAdi.equals(Role.TIPI_IK_Tesis)) {
 				user.setIK_Tesis(Boolean.TRUE);
-			else if (rolAdi.equals(Role.TIPI_IK_DIREKTOR))
+				// user.setIK(Boolean.TRUE);
+			} else if (rolAdi.equals(Role.TIPI_IK_DIREKTOR))
 				user.setIKDirektor(Boolean.TRUE);
 			else if (rolAdi.equals(Role.TIPI_YONETICI))
 				user.setYonetici(Boolean.TRUE);

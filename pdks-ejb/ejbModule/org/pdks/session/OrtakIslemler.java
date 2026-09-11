@@ -17950,7 +17950,7 @@ public class OrtakIslemler implements Serializable {
 			if (emailBCCDurum)
 				ExcelUtil.getCell(sheet, row, col++, header).setCellValue("E-Posta BCC");
 		}
-		boolean ikRole = authenticatedUser != null && (authenticatedUser.isAdmin() || authenticatedUser.isIK());
+		boolean ikRole = PdksUtil.getIkRole(authenticatedUser);
 		boolean renk = true;
 		for (Iterator iter = personelList.iterator(); iter.hasNext();) {
 			PersonelView personelView = (PersonelView) iter.next();

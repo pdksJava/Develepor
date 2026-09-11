@@ -410,7 +410,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (user == null)
 			user = getPdksUser();
 		adminRole = user != null && (user.isAdmin() || user.isSistemYoneticisi() || user.isIKAdmin());
-		ikRole = user != null && (user.isAdmin() || user.isSistemYoneticisi() || user.isIK());
+		ikRole = user != null && (PdksUtil.getIkRole(user));
 		fazlaMesaiTalepDurum = Boolean.FALSE;
 		aylikPuantajListClear();
 		if (fazlaMesaiTalepler != null)

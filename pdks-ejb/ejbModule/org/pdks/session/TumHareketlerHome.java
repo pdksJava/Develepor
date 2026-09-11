@@ -173,7 +173,7 @@ public class TumHareketlerHome extends EntityHome<HareketKGS> implements Seriali
 
 		sayfaGiris(session);
 
-		ikRole = ortakIslemler.getIKRolSayfa(authenticatedUser) || authenticatedUser.isRaporKullanici();
+		ikRole = PdksUtil.getIkRole(authenticatedUser) || authenticatedUser.isRaporKullanici();
 		setHareketList(new ArrayList<HareketKGS>());
 		HareketKGS hareket = new HareketKGS();
 		hareket.setPersonel(new PersonelView());

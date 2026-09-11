@@ -173,7 +173,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		fazlaMesaiGirisDurum = false;
 		adminRole = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIKAdmin();
-		ikRole = authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi() || authenticatedUser.isIK() || authenticatedUser.isIK_Tesis() || authenticatedUser.isIKSirket();
+		ikRole = PdksUtil.getIkRole(authenticatedUser);
 		if (authenticatedUser.isAdmin() == false || aramaSecenekleri == null)
 			aramaSecenekleri = new AramaSecenekleri(authenticatedUser);
 
