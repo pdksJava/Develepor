@@ -2970,7 +2970,7 @@ public class PdksUtil implements Serializable {
 	public static boolean getIkRole(User user) {
 		boolean ikRole = false;
 		if (user != null)
-			ikRole = user.isAdmin() || user.isSistemYoneticisi() || user.isIK() || user.isIK_Tesis() || user.isIKSirket();
+			ikRole = user.isAdmin() || user.isSistemYoneticisi() || user.isIK() || user.isIK_Tesis() || user.isIKSirket() || user.isGenelMudur();
 		return ikRole;
 	}
 
