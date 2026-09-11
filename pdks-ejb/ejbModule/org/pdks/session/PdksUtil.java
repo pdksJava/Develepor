@@ -2967,6 +2967,10 @@ public class PdksUtil implements Serializable {
 		return getDate(cal.getTime());
 	}
 
+	/**
+	 * @param user
+	 * @return
+	 */
 	public static boolean getIkRole(User user) {
 		boolean ikRole = false;
 		if (user != null)
