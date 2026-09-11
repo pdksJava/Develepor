@@ -1760,16 +1760,23 @@ public class OrtakIslemler implements Serializable {
 		if (userId != null && tipi != null) {
 			HashMap fields = new HashMap();
 			StringBuilder sb = new StringBuilder();
-			sb.append("select T.* from " + UserDigerOrganizasyon.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
-			sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_ID + " = P." + UserDigerOrganizasyon.COLUMN_NAME_ORGANIZASYON);
-			sb.append(" where P." + UserDigerOrganizasyon.COLUMN_NAME_USER + " = :s and P." + UserDigerOrganizasyon.COLUMN_NAME_TIPI + " = :t ");
-			fields.put("s", userId);
-			fields.put("t", tipi.value());
+			if (tipi.equals(OrganizasyonTipi.TESIS) && user.isIKAdmin()) {
+				sb.append("select distinct T.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+				sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_TESIS);
+				sb.append(" where P." + Personel.COLUMN_NAME_TESIS + " is not null");
+			} else {
+				sb.append("select distinct T.* from " + UserDigerOrganizasyon.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+				sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_ID + " = P." + UserDigerOrganizasyon.COLUMN_NAME_ORGANIZASYON);
+				sb.append(" where P." + UserDigerOrganizasyon.COLUMN_NAME_USER + " = :s and P." + UserDigerOrganizasyon.COLUMN_NAME_TIPI + " = :t ");
+				fields.put("s", userId);
+				fields.put("t", tipi.value());
+			}
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			tanimList = pdksEntityController.getObjectBySQLList(sb, fields, Tanim.class);
 			if (tanimList != null && tanimList.size() > 1)
 				tanimList = PdksUtil.sortTanimList(null, tanimList);
+
 		} else
 			tanimList = new ArrayList<Tanim>();
 		return tanimList;
@@ -6746,7 +6753,7 @@ public class OrtakIslemler implements Serializable {
 		List<Long> tesisIdList = null;
 		if (authenticatedUser != null && authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false) {
 			if (authenticatedUser.isIK_Tesis() || authenticatedUser.isIKSirket() || authenticatedUser.isIK() == false) {
- 				tesisIdList = new ArrayList<Long>();
+				tesisIdList = new ArrayList<Long>();
 				for (Tanim tesis : authenticatedUser.getYetkiliTesisler())
 					tesisIdList.add(tesis.getId());
 				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_SIRKET + " = S." + Sirket.COLUMN_NAME_ID);

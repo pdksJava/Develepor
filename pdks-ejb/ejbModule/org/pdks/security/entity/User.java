@@ -251,13 +251,6 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 	}
 
 	@Transient
-	public boolean isIK() {
-		if (!yetkiSet)
-			PdksUtil.setUserYetki(this);
-		return IK;
-	}
-
-	@Transient
 	public boolean isIK_Tesis() {
 		if (!yetkiSet)
 			PdksUtil.setUserYetki(this);
@@ -715,6 +708,14 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 
 	@Transient
 	public boolean isIKAdmin() {
+		boolean adminDurum = IK && departman != null && departman.isAdminMi();
+		if (adminDurum)
+			adminDurum = IK_Tesis == false && IKSirket == false;
+		return adminDurum;
+	}
+
+	@Transient
+	public boolean isIK() {
 		boolean adminDurum = IK && departman != null && departman.isAdminMi();
 		if (adminDurum)
 			adminDurum = IK_Tesis == false && IKSirket == false;
