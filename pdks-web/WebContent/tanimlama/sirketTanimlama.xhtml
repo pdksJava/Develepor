@@ -296,6 +296,10 @@
 									<ui:define name="label">#{ortakIslemler.fmIzinKullanAciklama()}</ui:define>
 									<h:selectBooleanCheckbox value="#{sirketHome.seciliSirket.fazlaMesaiIzinKullan}" />
 								</s:decorate>
+								<s:decorate template="/layout/edit.xhtml" rendered="#{sirketHome.seciliSirket.departman.fazlaMesaiTalepGirilebilir}">
+									<ui:define name="label">Fazla Mesai Talep</ui:define>
+									<h:selectBooleanCheckbox value="#{sirketHome.seciliSirket.fazlaMesaiTalepGirilebilir}" />
+								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml"
 									rendered="#{ortakIslemler.getParameterKey('fazlaMesaiTalepDurum') == '1' and sirketHome.seciliSirket.departman.fazlaMesaiTalepGirilebilir}">
 									<ui:define name="label">Fazla Mesai Talep</ui:define>
