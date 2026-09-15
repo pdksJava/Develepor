@@ -1999,9 +1999,9 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 		if (sirket != null) {
 			if (sirket.getDepartman().isAdminMi() == false)
-				ikinciYoneticiManuelTanimla = ikinciYoneticiIzinOnayla || sirket.getDepartman().isFazlaMesaiTalepGirer();
+				ikinciYoneticiManuelTanimla = ikinciYoneticiIzinOnayla || sirket.isFazlaMesaiTalepGirer();
 			else if (!ortakIslemler.getParameterKey("yonetici2ERPKontrol").equals("1"))
-				ikinciYoneticiManuelTanimla = ikinciYoneticiIzinOnayla || sirket.getDepartman().isFazlaMesaiTalepGirer();
+				ikinciYoneticiManuelTanimla = ikinciYoneticiIzinOnayla || sirket.isFazlaMesaiTalepGirer();
 
 		}
 
