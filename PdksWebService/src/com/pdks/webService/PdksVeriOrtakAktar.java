@@ -143,6 +143,57 @@ public class PdksVeriOrtakAktar implements Serializable {
 	}
 
 	/**
+	 * @param name
+	 * @param dAO
+	 * @return
+	 */
+	public boolean isExisStoreProcedure(String name, PdksDAO dAO) {
+		boolean durum = isExisObject(name, "P", dAO);
+		return durum;
+	}
+
+	/**
+	 * @param name
+	 * @param dAO
+	 * @return
+	 */
+	public boolean isExisFunction(String name, PdksDAO dAO) {
+		boolean durum = isExisObject(name, "FN", dAO);
+		return durum;
+	}
+
+	/**
+	 * @param name
+	 * @param dAO
+	 * @return
+	 */
+	public boolean isExisView(String name, PdksDAO dAO) {
+		boolean durum = isExisObject(name, "V", dAO);
+		return durum;
+	}
+
+	/**
+	 * @param name
+	 * @param type
+	 * @param dAO
+	 * @return
+	 */
+	public boolean isExisObject(String name, String type, PdksDAO dAO) {
+		boolean durum = false;
+		StringBuffer sb = new StringBuffer();
+		sb.append("select name, object_id from sys.objects " + PdksVeriOrtakAktar.getSelectLOCK());
+		sb.append(" where name = :k and type = :t");
+		HashMap fields = new HashMap();
+		fields.put("k", name);
+		fields.put("t", type);
+		if (dAO == null)
+			dAO = Constants.pdksDAO;
+		List list = pdksDAO.getNativeSQLList(fields, sb, null);
+		durum = list != null && list.size() == 1;
+		return durum;
+	}
+
+	/**
 	 * @return
 	 */
 	public String kidemBasTarihiAciklama() {
