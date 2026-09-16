@@ -234,10 +234,11 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 			tanim.setTipi(anaTanim.getKodu());
 		} else
 			tanim.setTipi(genelTanim.getChildGenelTanim().getKodu());
-		if (anaTanim.getTipi().equals(Tanim.TIPI_GENEL_TANIM) == false || anaTanim.getKodu().equals(Tanim.TIPI_GENEL_TANIM) == false)
+		if (anaTanim.getKodu().equals(Tanim.TIPI_GENEL_TANIM) == false) {
 			tanim.setParentTanim(anaTanim);
-		tanim.setGuncelle(!authenticatedUser.isAdmin());
-		setInstance(tanim);
+			tanim.setGuncelle(!authenticatedUser.isAdmin());
+		}
+ 		setInstance(tanim);
 		return "";
 	}
 
