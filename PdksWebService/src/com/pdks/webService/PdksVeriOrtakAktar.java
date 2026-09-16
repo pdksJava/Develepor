@@ -4207,11 +4207,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 									list = new ArrayList<PersonelKGS>();
 								}
 								if (list.size() == 1) {
-									if (personelNo.equals(list.get(0).getSicilNo())) {
+									digerSicilNo = list.get(0).getSicilNo();
+									if (digerSicilNo != null && personelNo.trim().equals(digerSicilNo.trim())) {
 										personelKGSBos = null;
 										personelKGSData = list.get(0);
 									}
-
 								}
 							}
 						}
