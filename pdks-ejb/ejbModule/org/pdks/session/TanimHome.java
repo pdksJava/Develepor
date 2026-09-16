@@ -253,6 +253,8 @@ public class TanimHome extends EntityHome<Tanim> implements Serializable {
 	@Transactional
 	public String save() {
 		Tanim tanim = getInstance();
+		if (tanim.getTipi().equals(Tanim.TIPI_GENEL_TANIM))
+			tanim.setParentTanim(null);
 		tanimKaydet(tanim);
 		getTanimByGenelTanim();
 		return "";
