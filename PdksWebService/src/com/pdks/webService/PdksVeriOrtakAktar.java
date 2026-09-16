@@ -4138,7 +4138,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 					if (PdksUtil.hasStringValue(personelERP.getSirketKodu()) == false)
 						addHatalist(hataList, personelERP, null, sirketAciklama() + " kodu boş olamaz!");
 					else {
-
 						if (sistemDestekVar && mailMap.containsKey("erpSirketOlustur") && mailMap.get("erpSirketOlustur").equals("1")) {
 							fields.clear();
 							fields.put("durum", Boolean.TRUE);
@@ -4175,7 +4174,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 							sirket.setGuncellendi(Boolean.TRUE);
 						} else
 							addHatalist(hataList, personelERP, null, personelERP.getSirketKodu() + " hatalı " + sirketAciklama() + " kodu!");
-
 					}
 				}
 				PersonelKGS personelKGSData = personelKGSMap.containsKey(personelNo) ? personelKGSMap.get(personelNo) : null, personelKGSBos = null;
@@ -4189,11 +4187,34 @@ public class PdksVeriOrtakAktar implements Serializable {
 					List<PersonelKGS> list = pdksDAO.getObjectByInnerObjectList(map, PersonelKGS.class);
 					if (list.size() == 1) {
 						personelKGSBos = list.get(0);
+						String digerSicilNo = personelKGSBos.getSicilNo();
 						map.clear();
-						map.put("pdksSicilNo", personelKGSBos.getSicilNo());
+						map.put("pdksSicilNo", digerSicilNo);
 						List<Personel> personelPDKSList = pdksDAO.getObjectByInnerObjectList(map, Personel.class);
 						if (!personelPDKSList.isEmpty())
 							personelKGSBos = null;
+						else if (digerSicilNo.startsWith("K" + kapiSirket.getId() + "_")) {
+							String spName = "SP_KGS_PERSONEL_SICIL_NO";
+							if (isExisStoreProcedure(spName, pdksDAO)) {
+								LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+								veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, spName);
+								veriMap.put("id", personelKGSBos.getKgsId());
+								veriMap.put("sicilNo", personelNo);
+								veriMap.put("sirketId", kapiSirket.getId());
+								try {
+									list = pdksDAO.execSPList(veriMap, PersonelKGS.class);
+								} catch (Exception e) {
+									list = new ArrayList<PersonelKGS>();
+								}
+								if (list.size() == 1) {
+									if (personelNo.equals(list.get(0).getSicilNo())) {
+										personelKGSBos = null;
+										personelKGSData = list.get(0);
+									}
+
+								}
+							}
+						}
 					}
 				}
 				String adSoyadERP = (personelERP.getAdi() != null ? personelERP.getAdi().trim() : "Ad tanımsız") + " " + (personelERP.getSoyadi() != null ? personelERP.getSoyadi().trim() : "Soyad tanımsız");
