@@ -1169,7 +1169,8 @@
 											<ui:define name="label">#{ortakIslemler.yoneticiAciklama()}</ui:define>
 											<h:selectOneMenu id="toComp" value="#{pdksPersonelHome.asilYonetici1}"
 												disabled="#{pdksPersonelHome.personelERPGuncelleme != 'M' and pdksPersonelHome.instance.sanalPersonel == false and pdksPersonelHome.instance.sirket.erp and (ortakIslemler.getParameterKey('yoneticiERPKontrol') == '' or ortakIslemler.getParameterKey('yoneticiERPKontrol') == '1')}">
-												<s:selectItems var="comp" value="#{pdksPersonelHome.yoneticiList}" label="#{comp.adSoyad}" noSelectionLabel="Lütfen seçiniz" />
+												<s:selectItems var="comp" value="#{pdksPersonelHome.yoneticiList}" label="#{comp.adSoyad} [ #{comp.pdksSicilNo} ]"
+													noSelectionLabel="Lütfen seçiniz" />
 												<s:convertEntity />
 											</h:selectOneMenu>
 										</s:decorate>
@@ -1178,7 +1179,8 @@
 											<ui:define name="label">#{ortakIslemler.yonetici2Aciklama()}</ui:define>
 											<h:selectOneMenu id="toComp" value="#{pdksPersonelHome.instance.asilYonetici2}"
 												disabled="#{pdksPersonelHome.personelERPGuncelleme != 'M' and pdksPersonelHome.ikinciYoneticiManuelTanimla == false}">
-												<s:selectItems var="comp" value="#{pdksPersonelHome.yonetici2List}" label="#{comp.adSoyad}" noSelectionLabel="Lütfen seçiniz" />
+												<s:selectItems var="comp" value="#{pdksPersonelHome.yonetici2List}" label="#{comp.adSoyad} [ #{comp.pdksSicilNo} ]"
+													noSelectionLabel="Lütfen seçiniz" />
 												<s:convertEntity />
 											</h:selectOneMenu>
 										</s:decorate>
