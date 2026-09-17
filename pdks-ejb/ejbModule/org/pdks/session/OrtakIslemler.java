@@ -158,6 +158,7 @@ import org.pdks.enums.DenklestirmeTipi;
 import org.pdks.enums.KesintiTipi;
 import org.pdks.enums.OrganizasyonTipi;
 import org.pdks.enums.PersonelDurumTipi;
+import org.pdks.enums.PersonelTipi;
 import org.pdks.enums.PuantajKatSayiTipi;
 import org.pdks.erp.action.ERPController;
 import org.pdks.erp.action.PdksNoSapController;
@@ -3559,11 +3560,29 @@ public class OrtakIslemler implements Serializable {
 						fields.put("iks", Role.TIPI_IK_SIRKET);
 						fields.put("s", sirket.getId());
 					}
+					boolean tesisYetki = false;
 					if (tesis != null) {
-						sb.append(" or ( " + Role.COLUMN_NAME_ROLE_NAME + " =:ikt and P." + Personel.COLUMN_NAME_TESIS + " = :t)");
+						tesisYetki = getParameterKey("tesisYetki").equals("1");
+						List<TesisBaglanti> baglantiList = pdksEntityController.getSQLParamByFieldList(TesisBaglanti.TABLE_NAME, TesisBaglanti.COLUMN_NAME_TESIS, tesis.getId(), TesisBaglanti.class, session);
+						sb.append(" or ( " + Role.COLUMN_NAME_ROLE_NAME + " =:ikt ");
+						if (baglantiList.isEmpty() == false) {
+							List<Long> tesisIdList = new ArrayList<Long>();
+							tesisIdList.add(tesis.getId());
+							for (TesisBaglanti tb : baglantiList) {
+								if (tb.getTesisBaglanti() != null)
+									if (tb.getPersonelTipi() == null || tb.getPersonelTipi().equals(PersonelTipi.IK) || tb.getPersonelTipi().equals(PersonelTipi.TUM))
+										tesisIdList.add(tb.getTesisBaglanti().getId());
+ 							}
+ 							fields.put("t", tesisIdList);
+							sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :t)");
+						} else {
+							fields.put("t", tesis.getId());
+							sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = :t)");
+						}
 						fields.put("ikt", Role.TIPI_IK_Tesis);
-						fields.put("t", tesis.getId());
+						baglantiList = null;
 					}
+					
 					sb.append(" ) ");
 					sb.append(" where U." + User.COLUMN_NAME_ID + " :k ");
 					sb.append(" order by R." + Role.COLUMN_NAME_ROLE_NAME + ", U." + User.COLUMN_NAME_USERNAME + "");
@@ -3573,7 +3592,7 @@ public class OrtakIslemler implements Serializable {
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 					List<UserRoles> userRoleList = pdksEntityController.getObjectBySQLList(sb, fields, UserRoles.class);
 					TreeMap<String, List<User>> map = new TreeMap<String, List<User>>();
-					if (tesis != null && getParameterKey("tesisYetki").equals("1")) {
+					if (tesisYetki) {
 						fields.clear();
 						sb = new StringBuilder();
 						sb.append("select U.* from " + User.TABLE_NAME + " U " + PdksEntityController.getSelectLOCK());
