@@ -3571,9 +3571,9 @@ public class OrtakIslemler implements Serializable {
 					if (session != null)
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 					List<UserRoles> userRoleList = pdksEntityController.getObjectBySQLList(sb, fields, UserRoles.class);
+					TreeMap<String, List<User>> map = new TreeMap<String, List<User>>();
 					idList.clear();
 					if (userRoleList.isEmpty() == false) {
-						TreeMap<String, List<User>> map = new TreeMap<String, List<User>>();
 						for (UserRoles userRoles : userRoleList) {
 							User user = userRoles.getUser();
 							String key = userRoles.getRole() != null ? userRoles.getRole().getRolename() : "";
@@ -3586,24 +3586,23 @@ public class OrtakIslemler implements Serializable {
 									map.put(key, list2);
 								list2.add(user);
 							}
-
-						}
-						if (map.isEmpty() == false) {
-							String key = null;
-							if (map.containsKey(Role.TIPI_IK_Tesis))
-								key = Role.TIPI_IK_Tesis;
-							else if (map.containsKey(Role.TIPI_IK_SIRKET))
-								key = Role.TIPI_IK_SIRKET;
-							if (key != null) {
-								List<User> list2 = map.get(key);
-								for (User user : list2) {
-									if (idList.contains(user.getId()) == false)
-										userList.add(user);
-								}
+ 						}
+ 					}
+					if (map.isEmpty() == false) {
+						String key = null;
+						if (map.containsKey(Role.TIPI_IK_Tesis))
+							key = Role.TIPI_IK_Tesis;
+						else if (map.containsKey(Role.TIPI_IK_SIRKET))
+							key = Role.TIPI_IK_SIRKET;
+						if (key != null) {
+							List<User> list2 = map.get(key);
+							for (User user : list2) {
+								if (idList.contains(user.getId()) == false)
+									userList.add(user);
 							}
 						}
-						map = null;
 					}
+					map = null;
 					userRoleList = null;
 				}
 				idList = null;
