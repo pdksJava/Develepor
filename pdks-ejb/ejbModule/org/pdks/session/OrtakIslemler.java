@@ -3523,6 +3523,95 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param sirket
+	 * @param tesis
+	 * @param session
+	 * @return
+	 */
+	public List<User> getSirketTesisIKList(Personel personel, Session session) {
+		List<User> userList = new ArrayList<User>();
+		Sirket sirket = null;
+		Tanim tesis = null;
+		if (personel != null) {
+			sirket = personel.getSirket();
+			tesis = sirket != null && sirket.isTesisDurumu() ? personel.getTesis() : null;
+		}
+		try {
+			List<User> list = getIKUserList(session);
+			if (list != null && list.isEmpty() == false) {
+				HashMap fields = new HashMap();
+				List<Long> idList = new ArrayList<Long>();
+				for (User user : list)
+					idList.add(user.getId());
+				StringBuffer sb = new StringBuffer();
+				sb.append("select UR.* from " + User.TABLE_NAME + " U " + PdksEntityController.getSelectLOCK());
+				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL);
+				sb.append(" inner join " + UserRoles.TABLE_NAME + " UR " + PdksEntityController.getJoinLOCK() + " on U." + User.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_USER);
+				sb.append(" inner join " + Role.TABLE_NAME + " R " + PdksEntityController.getJoinLOCK() + " on R." + Role.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_ROLE);
+				sb.append(" and ( " + Role.COLUMN_NAME_ROLE_NAME + " =:ik ");
+				if (sirket != null) {
+					sb.append(" or ( " + Role.COLUMN_NAME_ROLE_NAME + " =:iks and P." + Personel.COLUMN_NAME_SIRKET + " = :s)");
+					fields.put("iks", Role.TIPI_IK_SIRKET);
+					fields.put("s", sirket.getId());
+				}
+				if (tesis != null) {
+					sb.append(" or ( " + Role.COLUMN_NAME_ROLE_NAME + " =:ikt and P." + Personel.COLUMN_NAME_TESIS + " = :t)");
+					fields.put("ikt", Role.TIPI_IK_Tesis);
+					fields.put("t", tesis.getId());
+				}
+				sb.append(" ) ");
+				sb.append(" where U." + User.COLUMN_NAME_ID + " :k ");
+				sb.append(" order by R." + Role.COLUMN_NAME_ROLE_NAME + ", U." + User.COLUMN_NAME_USERNAME + "");
+				fields.put("ik", Role.TIPI_IK);
+				fields.put("k", idList);
+				if (session != null)
+					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+				List<UserRoles> userRoleList = pdksEntityController.getObjectBySQLList(sb, fields, UserRoles.class);
+				idList.clear();
+				if (userRoleList.isEmpty() == false) {
+					TreeMap<String, List<User>> map = new TreeMap<String, List<User>>();
+					for (UserRoles userRoles : userRoleList) {
+						String key = userRoles.getRole() != null ? userRoles.getRole().getRolename() : "";
+						User user = userRoles.getUser();
+						if (key.equals(Role.TIPI_IK)) {
+							userList.add(user);
+							idList.add(user.getId());
+						} else {
+							List<User> list2 = map.containsKey(key) ? map.get(key) : new ArrayList<User>();
+							if (list2.isEmpty())
+								map.put(key, list2);
+							list2.add(userRoles.getUser());
+						}
+
+					}
+					if (map.isEmpty() == false) {
+						String key = null;
+						if (map.containsKey(Role.TIPI_IK_Tesis))
+							key = Role.TIPI_IK_Tesis;
+						else if (map.containsKey(Role.TIPI_IK_SIRKET))
+							key = Role.TIPI_IK_SIRKET;
+						if (key != null) {
+							List<User> list2 = map.get(key);
+							for (User user : list2) {
+								if (idList.contains(user.getId()) == false)
+									userList.add(user);
+							}
+						}
+					}
+					map = null;
+				}
+				idList = null;
+				userRoleList = null;
+			}
+			list = null;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return userList;
+	}
+
+	/**
 	 * 
 	 */
 	public boolean yoneticiRolKontrol(Session session) {

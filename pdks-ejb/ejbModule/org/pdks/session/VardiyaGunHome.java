@@ -1078,8 +1078,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		else
 			ccList.clear();
 		if (onayDurum)
-			if (ortakIslemler.getParameterKey("fazlaMesaiMudurOnayCevabiIK").equals("1"))
-				ortakIslemler.IKKullanicilariBul(ccList, fmt.getVardiyaGun().getPersonel(), session);
+			if (ortakIslemler.getParameterKey("fazlaMesaiMudurOnayCevabiIK").equals("1")) {
+				ccList = ortakIslemler.getSirketTesisIKList(fmt.getVardiyaGun().getPersonel(), session);
+				if (ccList.isEmpty())
+					ortakIslemler.IKKullanicilariBul(ccList, fmt.getVardiyaGun().getPersonel(), session);
+			}
 
 		if (bccList == null)
 			bccList = new ArrayList<User>();
@@ -3126,6 +3129,15 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		personelGebeDurum = null;
 		personelSutIzniDurum = null;
 		Personel personel = ap.getPdksPersonel();
+		// try {
+		// List<User> userIKList = ortakIslemler.getSirketTesisIKList(personel, session);
+		// if (userIKList.isEmpty() == false)
+		// logger.debug(userIKList.size());
+		// userIKList = null;
+		// } catch (Exception e) {
+		// logger.error(e);
+		// }
+
 		if (tipi.equals("M")) {
 			Personel yoneticiOnay2 = ap.getYonetici2();
 			if (yoneticiOnay2 == null) {
