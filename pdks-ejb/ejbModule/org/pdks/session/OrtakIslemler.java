@@ -3576,7 +3576,6 @@ public class OrtakIslemler implements Serializable {
 						TreeMap<String, List<User>> map = new TreeMap<String, List<User>>();
 						for (UserRoles userRoles : userRoleList) {
 							User user = userRoles.getUser();
-
 							String key = userRoles.getRole() != null ? userRoles.getRole().getRolename() : "";
 							if (key.equals(Role.TIPI_IK)) {
 								userList.add(user);
@@ -3614,8 +3613,8 @@ public class OrtakIslemler implements Serializable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-//		if (userList.size() > 1)
-//			userList = PdksUtil.sortObjectStringAlanList(userList, "getAdSoyad", null);
+		// if (userList.size() > 1)
+		// userList = PdksUtil.sortObjectStringAlanList(userList, "getAdSoyad", null);
 		return userList;
 	}
 
