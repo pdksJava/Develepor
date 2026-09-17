@@ -526,7 +526,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					vardiya = (Vardiya) pdksEntityController.sessionRefresh(session, entityManager, vardiya);
 				map.put(vg.getVardiyaDateStr(), vardiya);
 			}
- 		}
+		}
 		ArrayList<Vardiya> vardiyalar = fillAylikVardiyaList(personelAylikPuantaj, personelDenklestirme);
 		personelDenklestirme.setGuncellendi(true);
 		fillCalismaModeliVardiyaList(personelDenklestirme.getCalismaModeliAy() != null ? personelDenklestirme.getCalismaModeliAy().getCalismaModeli() : null);
@@ -5385,6 +5385,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		TreeMap<Long, TreeMap<Long, Vardiya>> calismaModeliMap = getCalismaModeliMap(aylikPuantajList, null);
 		boolean onayliVar = false;
 		boolean ustYonetici = getPdksUser().getPdksPersonel().getUstYonetici();
+		String yoneticiPuantajKontrolStr = ortakIslemler.getParameterKey("yoneticiPuantajKontrol");
+		boolean yoneticiKontrolEtme = loginUser.isAdmin() || loginUser.isSistemYoneticisi() || PdksUtil.hasStringValue(yoneticiPuantajKontrolStr) == false;
+		if (!yoneticiKontrolEtme)
+			yoneticiKontrolEtme = yoneticiPuantajKontrolStr.equals("1") || ortakIslemler.yoneticiRolKontrol(session);
 
 		for (AylikPuantaj ap : aylikPuantajList) {
 			// for (Iterator iter = aylikPuantajList.iterator(); iter.hasNext();) {
@@ -5398,7 +5402,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					vardiyaMap = calismaModeliMap.get(id);
 			}
 			Personel personel = ap.getPdksPersonel();
-			if (denklestirmeAy.isDurumu() && !(getPdksUser().isAdmin() || getPdksUser().isSistemYoneticisi())) {
+			User user = getPdksUser();
+			if (denklestirmeAy.isDurumu() && !(user.isAdmin() || user.isSistemYoneticisi() || (ikRole && yoneticiKontrolEtme))) {
 				if (personel.isSanalPersonelMi() == false && (yoneticiTanimsiz == false && (ap.getYonetici() == null || ap.getYonetici().getId() == null))) {
 					ap.setOnayDurum(ustYonetici || false);
 				}
