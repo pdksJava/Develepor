@@ -3532,6 +3532,7 @@ public class OrtakIslemler implements Serializable {
 		List<User> userList = new ArrayList<User>();
 		Sirket sirket = null;
 		Tanim tesis = null;
+		List<Long> idList = new ArrayList<Long>();
 		if (personel != null) {
 			sirket = personel.getSirket();
 			tesis = sirket != null && sirket.isTesisDurumu() ? personel.getTesis() : null;
@@ -3540,14 +3541,14 @@ public class OrtakIslemler implements Serializable {
 			List<User> list = getIKUserList(session);
 			if (list != null && list.isEmpty() == false) {
 				HashMap fields = new HashMap();
-				List<Long> idList = new ArrayList<Long>();
+
 				for (User user : list) {
 					if (user.getDurum() && user.getPdksPersonel().isCalisiyor())
 						idList.add(user.getId());
 				}
 
 				if (idList.isEmpty() == false) {
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					sb.append("select UR.* from " + User.TABLE_NAME + " U " + PdksEntityController.getSelectLOCK());
 					sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL);
 					sb.append(" inner join " + UserRoles.TABLE_NAME + " UR " + PdksEntityController.getJoinLOCK() + " on U." + User.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_USER);
@@ -3572,22 +3573,39 @@ public class OrtakIslemler implements Serializable {
 						fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 					List<UserRoles> userRoleList = pdksEntityController.getObjectBySQLList(sb, fields, UserRoles.class);
 					TreeMap<String, List<User>> map = new TreeMap<String, List<User>>();
+					if (tesis != null && getParameterKey("tesisYetki").equals("1")) {
+						fields.clear();
+						sb = new StringBuilder();
+						sb.append("select U.* from " + User.TABLE_NAME + " U " + PdksEntityController.getSelectLOCK());
+						sb.append(" inner join " + UserDigerOrganizasyon.TABLE_NAME + " O " + PdksEntityController.getJoinLOCK() + " on O." + UserDigerOrganizasyon.COLUMN_NAME_USER + " = U." + User.COLUMN_NAME_ID);
+						sb.append(" and O." + UserDigerOrganizasyon.COLUMN_NAME_TIPI + " = :t and O." + UserDigerOrganizasyon.COLUMN_NAME_ORGANIZASYON + " = " + tesis.getId());
+						sb.append(" where U." + User.COLUMN_NAME_ID + " :k ");
+						fields.put("t", OrganizasyonTipi.TESIS.value());
+						fields.put("k", idList);
+						if (session != null)
+							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+						list = pdksEntityController.getObjectBySQLList(sb, fields, User.class);
+						if (list.isEmpty() == false)
+							map.put(Role.TIPI_IK_Tesis, list);
+					}
 					idList.clear();
 					if (userRoleList.isEmpty() == false) {
 						for (UserRoles userRoles : userRoleList) {
 							User user = userRoles.getUser();
 							String key = userRoles.getRole() != null ? userRoles.getRole().getRolename() : "";
 							if (key.equals(Role.TIPI_IK)) {
-								userList.add(user);
-								idList.add(user.getId());
+								if (idList.contains(user.getId()) == false) {
+									userList.add(user);
+									idList.add(user.getId());
+								}
 							} else if (idList.contains(user.getId()) == false) {
 								List<User> list2 = map.containsKey(key) ? map.get(key) : new ArrayList<User>();
 								if (list2.isEmpty())
 									map.put(key, list2);
 								list2.add(user);
 							}
- 						}
- 					}
+						}
+					}
 					if (map.isEmpty() == false) {
 						String key = null;
 						if (map.containsKey(Role.TIPI_IK_Tesis))
@@ -3605,13 +3623,22 @@ public class OrtakIslemler implements Serializable {
 					map = null;
 					userRoleList = null;
 				}
-				idList = null;
 
 			}
 			list = null;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		idList.clear();
+		for (Iterator iterator = userList.iterator(); iterator.hasNext();) {
+			User user = (User) iterator.next();
+			if (idList.contains(user.getId()) == false)
+				idList.add(user.getId());
+			else
+				iterator.remove();
+
+		}
+		idList = null;
 		// if (userList.size() > 1)
 		// userList = PdksUtil.sortObjectStringAlanList(userList, "getAdSoyad", null);
 		return userList;
