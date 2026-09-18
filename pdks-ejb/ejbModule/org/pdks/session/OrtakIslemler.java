@@ -3524,12 +3524,12 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
-	 * @param sirket
-	 * @param tesis
+	 * @param allIKUserList
+	 * @param personel
 	 * @param session
 	 * @return
 	 */
-	public List<User> getSirketTesisIKList(Personel personel, Session session) {
+	public List<User> getSirketTesisIKList(List<User> allIKUserList, Personel personel, Session session) {
 		List<User> userList = new ArrayList<User>();
 		Sirket sirket = null;
 		Tanim tesis = null;
@@ -3539,11 +3539,12 @@ public class OrtakIslemler implements Serializable {
 			tesis = sirket != null && sirket.isTesisDurumu() ? personel.getTesis() : null;
 		}
 		try {
-			List<User> list = getIKUserList(session);
-			if (list != null && list.isEmpty() == false) {
+			if (allIKUserList == null)
+				allIKUserList = getIKUserList(session);
+			if (allIKUserList != null && allIKUserList.isEmpty() == false) {
 				HashMap fields = new HashMap();
 
-				for (User user : list) {
+				for (User user : allIKUserList) {
 					if (user.getDurum() && user.getPdksPersonel().isCalisiyor())
 						idList.add(user.getId());
 				}
@@ -3602,9 +3603,11 @@ public class OrtakIslemler implements Serializable {
 						fields.put("k", idList);
 						if (session != null)
 							fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-						list = pdksEntityController.getObjectBySQLList(sb, fields, User.class);
+						List<User> list = pdksEntityController.getObjectBySQLList(sb, fields, User.class);
 						if (list.isEmpty() == false)
 							map.put(Role.TIPI_IK_Tesis, list);
+						else
+							list = null;
 					}
 					idList.clear();
 					if (userRoleList.isEmpty() == false) {
@@ -3642,7 +3645,7 @@ public class OrtakIslemler implements Serializable {
 					userRoleList = null;
 				}
 			}
-			list = null;
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

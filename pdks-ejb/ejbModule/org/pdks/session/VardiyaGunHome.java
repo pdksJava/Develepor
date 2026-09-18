@@ -1079,7 +1079,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			ccList.clear();
 		if (onayDurum)
 			if (ortakIslemler.getParameterKey("fazlaMesaiMudurOnayCevabiIK").equals("1")) {
-				ccList = ortakIslemler.getSirketTesisIKList(fmt.getVardiyaGun().getPersonel(), session);
+				ccList = ortakIslemler.getSirketTesisIKList(null, fmt.getVardiyaGun().getPersonel(), session);
 				if (ccList.isEmpty())
 					ortakIslemler.IKKullanicilariBul(ccList, fmt.getVardiyaGun().getPersonel(), session);
 			}
