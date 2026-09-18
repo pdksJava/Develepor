@@ -1057,7 +1057,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 		String mailIcerik = "";
 		if (mailDataMap.containsKey("mailIcerik"))
 			mailIcerik = (String) mailDataMap.get("mailIcerik");
-		if (userIKList != null) {
+		if (userIKList != null && userIKList.isEmpty() == false) {
 			if (userList == null)
 				userList = new ArrayList<User>();
 			userList.addAll(userIKList);
@@ -1898,7 +1898,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 									mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
 									mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
 								}
-								boolean testDurum = getTestDurum();
+
 								for (User user : userList) {
 									MailPersonel mailPersonel = new MailPersonel();
 									mailPersonel.setAdiSoyadi(user.getPdksPersonel().getAdSoyad());
@@ -4222,7 +4222,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 
 				}
-				;
+
 				if (personelKGSData == null) {
 					if (iseBaslamaTarihi != null && gecmisDonem.after(iseBaslamaTarihi)) {
 						personelTanim = getTanim(null, Tanim.TIPI_ERP_TEST_PERSONEL, personelERP.getPersonelNo(), personelERP.getAdi() + " " + personelERP.getSoyadi(), dataMap, saveList);
@@ -4303,7 +4303,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 				} else {
 					if (tip.equals("P")) {
-
 						String erpAdSoyad = PdksUtil.setTurkishStr(PdksUtil.getAdSoyad(personelERP.getAdi(), personelERP.getSoyadi()));
 						String kgsAdSoyad = PdksUtil.setTurkishStr(PdksUtil.getAdSoyad(personelKGSData.getAd(), personelKGSData.getSoyad()));
 						if (kgsPersonelSPAdi == null) {
@@ -4322,8 +4321,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 										mesaj = "adı";
 
 									mesaj = personelNo + " personel " + mesaj + " girilmemiş!  ";
-									addHatalist(bayanSoyad == false ? personelERP.getHataList() : kidemHataList, PdksUtil.replaceAllManuel(mesaj, "  ", " "));
-
+									// addHatalist(bayanSoyad == false ? personelERP.getHataList() : kidemHataList, PdksUtil.replaceAllManuel(mesaj, "  ", " "));
+									addHatalist(hataList, personelERP, null, PdksUtil.replaceAllManuel(mesaj, "  ", " "));
 								} else {
 									PersonelKGS personelKGS = personelKGSMap.get(personelNo);
 									String kgsAd = personelKGS.getAd();
@@ -4341,7 +4340,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 										String mesaj = "";
 										if (!adiUyumlu && !soyadiUyumlu)
 											mesaj = "adı ve soyadı";
-										if (!adiUyumlu) {
+										else if (!adiUyumlu) {
 											mesaj = "adı";
 										} else if (!soyadiUyumlu) {
 											mesaj = "soyadi";
@@ -4351,7 +4350,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 										}
 										mesaj = personelNo + " personel " + mesaj + " uyumsuz! ( " + adSoyadERP + " farklı " + personelKGS.getAdSoyad() + (personelKGS.getKapiSirket() != null ? " [ " + personelKGS.getKapiSirket().getAciklama() + " ] " : "") + " ) ";
-										addHatalist(bayanSoyad == false ? personelERP.getHataList() : kidemHataList, PdksUtil.replaceAllManuel(mesaj, "  ", " "));
+										// addHatalist(bayanSoyad == false ? personelERP.getHataList() : kidemHataList, PdksUtil.replaceAllManuel(mesaj, "  ", " "));
+										addHatalist(hataList, personelERP, null, PdksUtil.replaceAllManuel(mesaj, "  ", " "));
 
 									}
 								}
@@ -4401,7 +4401,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 									bayanSoyad = personelTest.getCinsiyetBayan();
 									if (bayanSoyad)
 										personelERP.setSoyadi(personelKGS2.getSoyad());
-									addHatalist(bayanSoyad == false ? personelERP.getHataList() : kidemHataList, PdksUtil.replaceAllManuel(uygulamaFark + " soyad uyumsuz!", "  ", " "));
+									// addHatalist(bayanSoyad == false ? personelERP.getHataList() : kidemHataList, PdksUtil.replaceAllManuel(uygulamaFark + " soyad uyumsuz!", "  ", " "));
+									addHatalist(hataList, personelERP, null, PdksUtil.replaceAllManuel(uygulamaFark + " soyad uyumsuz!", "  ", " "));
 								}
 
 								else if (soyadBenzer)
@@ -5878,7 +5879,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 			MailStatu statu = null;
 			boolean devam = true;
 			if (hataIKMap != null) {
-
 				adminIKHatalari();
 				int hataIKMapSize = hataIKMap.size();
 				List<Long> userIdList = new ArrayList<Long>();
@@ -6379,7 +6379,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 		if (object != null && PdksUtil.hasStringValue(hataStr)) {
 			if (personel == null) {
 				personel = new Personel();
-
 			}
 			if (personel.getSirket() == null)
 				personel.setSirket(new Sirket());
