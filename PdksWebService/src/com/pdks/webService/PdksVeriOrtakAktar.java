@@ -4092,6 +4092,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			boolean calisiyor = false;
 			Personel personel = null;
 			Date guncellemeTarihi = new Date();
+			Tanim personelTanim = null;
 			if (personelERPMap.containsKey(personelNo)) {
 				PersonelERP personelERP = personelERPMap.get(personelNo);
 				if (personelERP.getGuncellemeZamani() != null) {
@@ -4221,9 +4222,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 
 				}
+				;
 				if (personelKGSData == null) {
 					if (iseBaslamaTarihi != null && gecmisDonem.after(iseBaslamaTarihi)) {
-						Tanim personelTanim = getTanim(null, Tanim.TIPI_ERP_TEST_PERSONEL, personelERP.getPersonelNo(), personelERP.getAdi() + " " + personelERP.getSoyadi(), dataMap, saveList);
+						personelTanim = getTanim(null, Tanim.TIPI_ERP_TEST_PERSONEL, personelERP.getPersonelNo(), personelERP.getAdi() + " " + personelERP.getSoyadi(), dataMap, saveList);
 						if (personelTanim != null && PdksUtil.hasStringValue(personelTanim.getKodu()) == false) {
 							personelERP.setYazildi(true);
 							personelERP.setId(-personelTanim.getId());
@@ -4231,6 +4233,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 						}
 					}
 
+				} else {
+					String key = Tanim.TIPI_ERP_TEST_PERSONEL + "_" + personelERP.getPersonelNo();
+					if (genelTanimMap != null && genelTanimMap.containsKey(key))
+						personelTanim = genelTanimMap.get(key);
 				}
 				String adSoyadERP = (personelERP.getAdi() != null ? personelERP.getAdi().trim() : "Ad tanımsız") + " " + (personelERP.getSoyadi() != null ? personelERP.getSoyadi().trim() : "Soyad tanımsız");
 				String ad = PdksUtil.getCutFirstSpaces(personelERP.getAdi());
@@ -4803,6 +4809,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 
 					if (personelERP.getHataList().isEmpty()) {
+
 						if (personel.isDegisti()) {
 							if (personel.getId() != null) {
 								personel.setGuncellemeTarihi(guncellemeTarihi);
@@ -4832,6 +4839,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 							personelERP.setYazildi(Boolean.TRUE);
 							personelERP.setId(personel.getId());
 						}
+						if (personelTanim != null)
+							pdksDAO.deleteObject(personelTanim);
 						if (!personelListeMap.isEmpty()) {
 							for (String digerTanimAlanKey : personelListeMap.keySet()) {
 								Liste liste = personelListeMap.get(digerTanimAlanKey);
