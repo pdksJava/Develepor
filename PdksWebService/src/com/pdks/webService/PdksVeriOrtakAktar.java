@@ -4073,7 +4073,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 			}
 			list = null;
 		}
-		Date lastDate = getTarih(LAST_DATE, FORMAT_DATE);
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.MONTH, -1);
+		cal.set(Calendar.DATE, 1);
+		Date gecmisDonem = PdksUtil.getDate(cal.getTime()), lastDate = getTarih(LAST_DATE, FORMAT_DATE);
 		Personel personelTest = new Personel();
 
 		boolean sirketBirlestirme = mailMap.containsKey("sirketKoduBirlestirme");
@@ -4084,7 +4087,6 @@ public class PdksVeriOrtakAktar implements Serializable {
 		List<VardiyaSablonu> sablonList = new ArrayList<VardiyaSablonu>();
 		String tumPersonelDenklestirme = mailMap.containsKey("tumPersonelDenklestirme") ? (String) mailMap.get("tumPersonelDenklestirme") : "";
 		String uygulamaBordro = mailMap.containsKey("uygulamaBordro") ? (String) mailMap.get("uygulamaBordro") : "Bordro Uygulaması ";
-
 		for (String personelNo : personelList) {
 			kidemHataList.clear();
 			boolean calisiyor = false;
@@ -4178,6 +4180,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				}
 				PersonelKGS personelKGSData = personelKGSMap.containsKey(personelNo) ? personelKGSMap.get(personelNo) : null, personelKGSBos = null;
 				if (personelKGSData == null) {
+
 					map.clear();
 					if (kapiSirket != null)
 						map.put("kapiSirket.id", kapiSirket.getId());
@@ -4216,6 +4219,18 @@ public class PdksVeriOrtakAktar implements Serializable {
 							}
 						}
 					}
+
+				}
+				if (personelKGSData == null) {
+					if (iseBaslamaTarihi != null && gecmisDonem.after(iseBaslamaTarihi)) {
+						Tanim personelTanim = getTanim(null, Tanim.TIPI_ERP_TEST_PERSONEL, personelERP.getPersonelNo(), personelERP.getAdi() + " " + personelERP.getSoyadi(), dataMap, saveList);
+						if (personelTanim != null && PdksUtil.hasStringValue(personelTanim.getKodu()) == false) {
+							personelERP.setYazildi(true);
+							personelERP.setId(-personelTanim.getId());
+							continue;
+						}
+					}
+
 				}
 				String adSoyadERP = (personelERP.getAdi() != null ? personelERP.getAdi().trim() : "Ad tanımsız") + " " + (personelERP.getSoyadi() != null ? personelERP.getSoyadi().trim() : "Soyad tanımsız");
 				String ad = PdksUtil.getCutFirstSpaces(personelERP.getAdi());
@@ -5705,6 +5720,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			}
 		}
 		personelEKSahaAciklamaList = null;
+		tanimGetir(personelEKSahaVeriMap, Tanim.TIPI_ERP_TEST_PERSONEL);
 		tanimGetir(personelEKSahaVeriMap, Tanim.TIPI_GIRIS_TIPI);
 		tanimGetir(personelEKSahaVeriMap, Tanim.TIPI_CINSIYET);
 		tanimGetir(personelEKSahaVeriMap, Tanim.TIPI_GOREV_TIPI);

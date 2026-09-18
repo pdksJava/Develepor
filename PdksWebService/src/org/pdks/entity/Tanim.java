@@ -49,6 +49,7 @@ public class Tanim extends BasePDKSObject implements Serializable, Cloneable {
 	public static final String TIPI_ILCE = "ILCE";
 	public static final String TIPI_MENU_BILESENI = "MENU_BILESENI";
 
+	public static final String TIPI_ERP_TEST_PERSONEL = "ERP_TEST_PERSONEL";
 	public static final String TIPI_DUYURU = "DUYURULAR";
 	public static final String TIPI_BAGLI_DEPARTMANLAR = "BAGLI_DEPARTMAN";
 	public static final String TIPI_TATIL_TIPI = "TATIL_TIPI";
