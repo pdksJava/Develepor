@@ -4233,11 +4233,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 						}
 					}
 
-				} else {
-					String key = Tanim.TIPI_ERP_TEST_PERSONEL + "_" + personelERP.getPersonelNo();
-					if (genelTanimMap != null && genelTanimMap.containsKey(key))
-						personelTanim = genelTanimMap.get(key);
 				}
+
 				String adSoyadERP = (personelERP.getAdi() != null ? personelERP.getAdi().trim() : "Ad tanımsız") + " " + (personelERP.getSoyadi() != null ? personelERP.getSoyadi().trim() : "Soyad tanımsız");
 				String ad = PdksUtil.getCutFirstSpaces(personelERP.getAdi());
 				String soyad = PdksUtil.getCutFirstSpaces(personelERP.getSoyadi());
@@ -4839,8 +4836,13 @@ public class PdksVeriOrtakAktar implements Serializable {
 							personelERP.setYazildi(Boolean.TRUE);
 							personelERP.setId(personel.getId());
 						}
-						if (personelTanim != null)
-							pdksDAO.deleteObject(personelTanim);
+						String perKey = Tanim.TIPI_ERP_TEST_PERSONEL + "_" + personelERP.getPersonelNo();
+						if (genelTanimMap != null && genelTanimMap.containsKey(perKey)) {
+							personelTanim = genelTanimMap.get(perKey);
+							if (personelTanim != null)
+								pdksDAO.deleteObject(personelTanim);
+						}
+
 						if (!personelListeMap.isEmpty()) {
 							for (String digerTanimAlanKey : personelListeMap.keySet()) {
 								Liste liste = personelListeMap.get(digerTanimAlanKey);
