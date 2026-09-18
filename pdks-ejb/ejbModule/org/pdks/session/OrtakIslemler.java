@@ -3572,8 +3572,8 @@ public class OrtakIslemler implements Serializable {
 								if (tb.getTesisBaglanti() != null)
 									if (tb.getPersonelTipi() == null || tb.getPersonelTipi().equals(PersonelTipi.IK) || tb.getPersonelTipi().equals(PersonelTipi.TUM))
 										tesisIdList.add(tb.getTesisBaglanti().getId());
- 							}
- 							fields.put("t", tesisIdList);
+							}
+							fields.put("t", tesisIdList);
 							sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " :t)");
 						} else {
 							fields.put("t", tesis.getId());
@@ -3582,8 +3582,7 @@ public class OrtakIslemler implements Serializable {
 						fields.put("ikt", Role.TIPI_IK_Tesis);
 						baglantiList = null;
 					}
-					
-					sb.append(" ) ");
+					sb.append(" )");
 					sb.append(" where U." + User.COLUMN_NAME_ID + " :k ");
 					sb.append(" order by R." + Role.COLUMN_NAME_ROLE_NAME + ", U." + User.COLUMN_NAME_USERNAME + "");
 					fields.put("ik", Role.TIPI_IK);
@@ -3642,7 +3641,6 @@ public class OrtakIslemler implements Serializable {
 					map = null;
 					userRoleList = null;
 				}
-
 			}
 			list = null;
 		} catch (Exception e) {
@@ -3655,7 +3653,6 @@ public class OrtakIslemler implements Serializable {
 				idList.add(user.getId());
 			else
 				iterator.remove();
-
 		}
 		idList = null;
 		// if (userList.size() > 1)
