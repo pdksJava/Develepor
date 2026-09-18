@@ -4839,10 +4839,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 						String perKey = Tanim.TIPI_ERP_TEST_PERSONEL + "_" + personelERP.getPersonelNo();
 						if (genelTanimMap != null && genelTanimMap.containsKey(perKey)) {
 							personelTanim = genelTanimMap.get(perKey);
-							if (personelTanim != null)
+							if (personelTanim != null) {
 								pdksDAO.deleteObject(personelTanim);
+								genelTanimMap.remove(perKey);
+							}
 						}
-
 						if (!personelListeMap.isEmpty()) {
 							for (String digerTanimAlanKey : personelListeMap.keySet()) {
 								Liste liste = personelListeMap.get(digerTanimAlanKey);
