@@ -4226,7 +4226,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				if (personelKGSData == null) {
 					if (iseBaslamaTarihi != null && gecmisDonem.after(iseBaslamaTarihi)) {
 						personelTanim = getTanim(null, Tanim.TIPI_ERP_TEST_PERSONEL, personelERP.getPersonelNo(), personelERP.getAdi() + " " + personelERP.getSoyadi(), dataMap, saveList);
-						if (personelTanim != null && PdksUtil.hasStringValue(personelTanim.getKodu()) == false) {
+						if (personelTanim != null && personelTanim.getKodu().equals(personelERP.getPersonelNo()) == false) {
 							personelERP.setYazildi(true);
 							personelERP.setId(-personelTanim.getId());
 							continue;
