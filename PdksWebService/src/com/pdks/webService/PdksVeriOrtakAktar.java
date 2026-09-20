@@ -99,7 +99,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 	private VardiyaSablonu vardiyaSablonu = null;
 
-	private boolean erpVeriOku = false, testDurum = false;
+	private boolean erpVeriOku = false, testDurum = false, mailGonderildi = false;
 
 	private KapiSirket kapiSirket = null;
 
@@ -883,7 +883,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 
 					mailMap.put("mailObject", mailObject);
-					MailManager.ePostaGonder(mailMap);
+					MailStatu statu = MailManager.ePostaGonder(mailMap);
+					if (mailGonderildi == false)
+						this.setMailGonderildi(statu != null && statu.isDurum());
+						 
 				} catch (Exception e) {
 					logger.error(e);
 					e.printStackTrace();
@@ -1165,6 +1168,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				hataListesi = new ArrayList<Liste>();
 			else
 				hataListesi.clear();
+			mailGonderildi = false;
 			HashMap<String, Parameter> pmMap = new HashMap<String, Parameter>();
 			islemYapan = getSistemAdminUser(dao);
 			try {
@@ -1495,6 +1499,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 						MailManager.ePostaGonder(mailMap);
 						mailStatu.setDurum(Boolean.TRUE);
 						mailStatu.setHataMesai(pasifPersonelSB.toString());
+						if (mailGonderildi == false)
+							this.setMailGonderildi(mailStatu != null && mailStatu.isDurum());
 					} else {
 						mailStatu.setHataMesai("Adres giriniz!");
 					}
@@ -1932,7 +1938,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 								mailFile.setIcerik(PdksUtil.getBytesUTF8(xml));
 								mailObject.getAttachmentFiles().add(mailFile);
 								mailMap.put("mailObject", mailObject);
-								MailManager.ePostaGonder(mailMap);
+								MailStatu statu = MailManager.ePostaGonder(mailMap);
+								if (mailGonderildi == false)
+									this.setMailGonderildi(statu != null && statu.isDurum());
 								gs = null;
 								mailObject = null;
 							}
@@ -2294,7 +2302,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 					mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
 				}
 				kullaniciIKYukle(null, mailMap, pdksDAO);
-				MailManager.ePostaGonder(mailMap);
+				MailStatu statu = MailManager.ePostaGonder(mailMap);
+				if (mailGonderildi == false)
+					this.setMailGonderildi(statu != null && statu.isDurum());
 
 			}
 		}
@@ -3182,6 +3192,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 					kullaniciIKYukle(null, mailMap, pdksDAO);
 					mailStatu = MailManager.ePostaGonder(mailMap);
+ 					if (mailGonderildi == false)
+						this.setMailGonderildi(mailStatu != null && mailStatu.isDurum());
 				}
 				personelIzinList = null;
 			}
@@ -3345,6 +3357,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 									}
 									kullaniciIKYukle(null, mailMap, pdksDAO);
 									mailStatu = MailManager.ePostaGonder(mailMap);
+									if (mailGonderildi == false)
+										this.setMailGonderildi(mailStatu != null && mailStatu.isDurum());
 									mailBosGonder = false;
 								} else
 									doktorUserMap.remove(personelId);
@@ -6096,8 +6110,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 						mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
 					}
 					MailObject mailObject = kullaniciIKYukle(userList, mailMap, pdksDAO);
-					if (mailObject != null && !mailObject.getToList().isEmpty())
+					if (mailObject != null && !mailObject.getToList().isEmpty()) {
 						mailStatu = MailManager.ePostaGonder(mailMap);
+						if (mailGonderildi == false)
+							this.setMailGonderildi(mailStatu != null && mailStatu.isDurum());
+					}
 
 				}
 			} catch (Exception em) {
@@ -6268,6 +6285,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 				kullaniciIKYukle(userList, mailMap, pdksDAO);
 				mailStatu = MailManager.ePostaGonder(mailMap);
 				mailBosGonder = false;
+ 				if (mailGonderildi == false)
+					this.setMailGonderildi(mailStatu != null && mailStatu.isDurum());
 			} catch (Exception ex) {
 				logger.error(ex);
 				ex.printStackTrace();
@@ -6642,6 +6661,14 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 	public static void setSqlBuGun(String sqlBuGun) {
 		PdksVeriOrtakAktar.sqlBuGun = sqlBuGun;
+	}
+
+	public boolean isMailGonderildi() {
+		return mailGonderildi;
+	}
+
+	public void setMailGonderildi(boolean mailGonderildi) {
+		this.mailGonderildi = mailGonderildi;
 	}
 
 }
