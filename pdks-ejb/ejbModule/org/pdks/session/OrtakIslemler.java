@@ -17909,6 +17909,17 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param user
+	 * @return
+	 */
+	public boolean getIkRole(User user) {
+		if (user == null)
+			user = authenticatedUser;
+		boolean ikRole = PdksUtil.getIkRole(user);
+		return ikRole;
+	}
+
+	/**
 	 * @param ldap
 	 * @param list
 	 * @param tanimMap

@@ -13,7 +13,7 @@
 		<rich:dropDownMenu binding="#{menuLoaderAction.kullaniciIslemleri}" />
 	</h:form>
 	<h:form id="izinIslemleri"
-		rendered="#{userHome.hasPermission('izinIslemleri','view') and ( authenticatedUser.izinGirebilir  or authenticatedUser.IK or authenticatedUser.admin or ortakIslemler.getParameterKey('izinERPUpdate') != '1')}">
+		rendered="#{userHome.hasPermission('izinIslemleri','view') and ( authenticatedUser.izinGirebilir  or ortakIslemler.getIkRole(null) or ortakIslemler.getParameterKey('izinERPUpdate') != '1')}">
 		<rich:dropDownMenu binding="#{menuLoaderAction.izinIslemleri}" />
 	</h:form>
 	<h:form id="puantajIslemleri" rendered="#{userHome.hasPermission('puantajIslemleri','view')}">
