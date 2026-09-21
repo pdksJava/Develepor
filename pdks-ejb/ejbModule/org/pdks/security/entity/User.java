@@ -90,6 +90,7 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 	private boolean operatorSSK = Boolean.FALSE, yetkiSet = Boolean.FALSE, tesisSuperVisor = Boolean.FALSE, direktorSuperVisor = Boolean.FALSE, taseronAdmin = Boolean.FALSE;
 	private boolean browserIE, izinGirebilir = Boolean.FALSE, izinSSKGirebilir = Boolean.FALSE, izinOnaylayabilir = Boolean.FALSE, testLogin = Boolean.FALSE;
 	private boolean sirketSuperVisor = Boolean.FALSE, raporKullanici = Boolean.FALSE;
+	private Boolean adminIK;
 	private ArrayList<User> userVekaletList;
 
 	private List<Personel> yetkiliPersoneller, ikinciYoneticiPersonel;
@@ -708,9 +709,13 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 
 	@Transient
 	public boolean isIKAdmin() {
-		boolean adminDurum = IK && departman != null && departman.isAdminMi();
-		if (adminDurum)
-			adminDurum = IK_Tesis == false && IKSirket == false;
+		boolean adminDurum = adminIK;
+		if (adminIK == null) {
+			adminDurum = IK && departman != null && departman.isAdminMi();
+			if (adminDurum)
+				adminDurum = IK_Tesis == false && IKSirket == false;
+			adminIK = adminDurum;
+		}
 		return adminDurum;
 	}
 
@@ -1197,6 +1202,15 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 				sessionMap.put(key, sessionNewSQL);
 		}
 
+	}
+
+	@Transient
+	public Boolean getAdminIK() {
+		return adminIK;
+	}
+
+	public void setAdminIK(Boolean adminIK) {
+		this.adminIK = adminIK;
 	}
 
 	@Transient
