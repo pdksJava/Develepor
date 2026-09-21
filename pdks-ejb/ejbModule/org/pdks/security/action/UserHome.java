@@ -364,8 +364,8 @@ public class UserHome extends EntityHome<User> implements Serializable {
 						else if (yetkiliRollerim != null) {
 							boolean ikRole = ortakIslemler.getIkRole(authenticatedUser);
 							boolean ikEkran = ekranIK.contains(target);
-							if (ikEkran)
-								ikEkran = authenticatedUser.isSistemYoneticisi() == false;
+							if (ikEkran && ikRole)
+								ikEkran = authenticatedUser.isIK_Tesis() || authenticatedUser.isIKSirket();
 
 							for (Role role : yetkiliRollerim) {
 								if (role.getId() == null && ikEkran)
