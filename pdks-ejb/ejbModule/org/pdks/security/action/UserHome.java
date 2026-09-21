@@ -68,7 +68,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 	private static boolean menuKapali = false;
 	private List<String> izinRaporlari = Arrays.asList("aylikIzinRapor", "bakiyeIzin", "fazlaMesaiIzin", "holdingKalanIzin", "iseGelmeyenPersonelDagilimi", "izinKagidi", "izinOnay", "personelKalanIzin");
 	private List<String> izinIslemler = Arrays.asList("izinIslemleri", "izinERPAktarim", "izinHakedisHakkiTanimlama", "onayimaGelenIzinler", "personelIzinKopyala", "sskIzinGirisi", "personelIzinGirisi");
-	private List<String> ekranIK = Arrays.asList("pdksVardiyaTanimlama");
+	private List<String> ekranIK = Arrays.asList("pdksVardiyaTanimlama", "personelTanimlama");
 
 	private User currentUser;
 	private String newPassword1, newPassword2, passwordHash, oldUserName;

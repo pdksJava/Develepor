@@ -316,6 +316,7 @@ public class Authenticator implements IAuthenticator, Serializable {
 				// sonuc = getSonDurum(sonuc, userName, loginUser);
 				// return sonuc;
 			} catch (Exception ex) {
+				ex.printStackTrace();
 				mesajList.clear();
 				String str = (ex.getMessage() != null ? ex.getMessage() : "Hata oluştu! ") + " " + ex.getClass().getName();
 				addMessageAvailableError(str + " [ " + userName + " ]");
