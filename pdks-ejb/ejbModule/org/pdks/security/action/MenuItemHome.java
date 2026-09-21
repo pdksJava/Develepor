@@ -359,6 +359,31 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 
 	private void menuItemGiris() {
 		rootNode = null;
+		if (PdksUtil.isSessionKapali(session))
+			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
+		HashMap fields = new HashMap();
+		StringBuilder sb = new StringBuilder();
+		sb.append("select distinct M.* from " + MenuItem.TABLE_NAME + " M " + PdksEntityController.getSelectLOCK());
+		sb.append(" inner join " + MenuIliski.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on M." + MenuItem.COLUMN_NAME_ID + " in (I." + MenuIliski.COLUMN_NAME_MENU_ITEM + ", I." + MenuIliski.COLUMN_NAME_CHILD_MENU_ITEM + " )");
+		sb.append(" where  M." + MenuItem.COLUMN_NAME_DURUM + " = 0 ");
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		List<MenuItem> pasifMenuList = pdksEntityController.getObjectBySQLList(sb, fields, MenuItem.class);
+		if (pasifMenuList.isEmpty() == false) {
+			pdksEntityController.startTransaction(session);
+			for (Iterator iterator = pasifMenuList.iterator(); iterator.hasNext();) {
+				MenuItem menuItem = (MenuItem) iterator.next();
+				menuItem.setStatus(Boolean.TRUE);
+				session.saveOrUpdate(menuItem);
+			}
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		freeMenuItemList = pdksEntityController.getSQLParamByFieldList(MenuItem.TABLE_NAME, MenuItem.COLUMN_NAME_DURUM, Boolean.FALSE, MenuItem.class, session);
+		pasifMenuList = null;
 		selectedIdsFromTreeMap.clear();
 		selectedIdsFromDataTableMap.clear();
 		selectedNodeChildren.clear();
