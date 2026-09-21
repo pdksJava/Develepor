@@ -32,7 +32,7 @@
 								<ui:define name="label">#{ortakIslemler.personelNoAciklama()} </ui:define>
 								<h:inputText value="#{personelIzinGirisiHome.aramaSecenekleri.sicilNo}" size="10" />
 							</s:decorate>
-							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or authenticatedUser.IK}">
+							<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or personelIzinGirisiHome.ikRole}">
 								<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 
 								<h:selectOneMenu value="#{personelIzinGirisiHome.aramaSecenekleri.sirketId}">
@@ -360,11 +360,11 @@
 							value="#{personelIzinGirisiHome.filtreBitisZamani}" required="true" requiredMessage="Tarih giriniz" />
 					</s:decorate>
 
-					<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or authenticatedUser.IK}">
+					<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or personelIzinGirisiHome.ikRole}">
 						<ui:define name="label">#{ortakIslemler.personelNoAciklama()}</ui:define>
 						<h:inputText value="#{personelIzinGirisiHome.sicilNo}" />
 					</s:decorate>
-					<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or authenticatedUser.IK}">
+					<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin or personelIzinGirisiHome.ikRole}">
 						<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 
 						<h:selectOneMenu value="#{personelIzinGirisiHome.aramaListeSecenekleri.sirketId}">
@@ -426,7 +426,7 @@
 						<a4j:commandButton status="ajaxStatus" value="#{ortakIslemler.getParameterKey('uygulamaBordro')}  Güncelle"
 							action="#{personelIzinGirisiHome.izinERPDBGuncelle()}" reRender="izinListPanel" />
 					</s:decorate>
-					<s:decorate template="/layout/edit.xhtml" rendered="#{false and ( authenticatedUser.admin or authenticatedUser.IK )}">
+					<s:decorate template="/layout/edit.xhtml" rendered="#{false and ( authenticatedUser.admin or personelIzinGirisiHome.ikRole )}">
 						<a4j:commandButton status="ajaxStatus" value="İzin Güncelle" action="#{izinBakiyeGuncelleme.izinleriHesapla(authenticatedUser)}" />
 					</s:decorate>
 
@@ -477,7 +477,7 @@
 								</ui:fragment>
 							</rich:column>
 							<rich:column style="text-align:center"
-								rendered="#{personelIzinGirisiHome.izinERPGiris == false and ((ortakIslemler.getParameterKey('izinERPDelete') == '1' and authenticatedUser.IK ) or authenticatedUser.admin )}">
+								rendered="#{personelIzinGirisiHome.izinERPGiris == false and ((ortakIslemler.getParameterKey('izinERPDelete') == '1' and personelIzinGirisiHome.ikRole ) or authenticatedUser.admin )}">
 								<f:facet name="header">
 				                        İşlemler
 				                </f:facet>
@@ -576,7 +576,7 @@
 								</f:facet>
 								<h:outputText value="#{izin.sureAciklama}" />
 							</rich:column>
-							<rich:column rendered="#{authenticatedUser.admin or authenticatedUser.IK}">
+							<rich:column rendered="#{authenticatedUser.admin or personelIzinGirisiHome.ikRole}">
 								<f:facet name="header">
 									<h:outputText value="İzin Açıklama" />
 								</f:facet>
@@ -601,7 +601,7 @@
 								</f:facet>
 								<h:outputText value="#{izin.sonIslemTarihiStr}" id="islemTarihi" />
 								<rich:toolTip for="islemTarihi"
-									rendered="#{izin.olusturmaTarihi != null and izin.guncellemeTarihi != null and (authenticatedUser.IK or authenticatedUser.admin)}">
+									rendered="#{izin.olusturmaTarihi != null and izin.guncellemeTarihi != null and (personelIzinGirisiHome.ikRole or authenticatedUser.admin)}">
 									<h:outputText value="Oluşturma tarihi : #{authenticatedUser.dateTimeLongFormatla(izin.olusturmaTarihi)}" />
 								</rich:toolTip>
 							</rich:column>
@@ -612,7 +612,7 @@
 								<h:panelGrid columns="3" rendered="#{izin.izinTipi.departman.izinGirilebilir}">
 									<a4j:commandButton title="Onay Akışı" image="/img/middle.gif" status="ajaxStatus" ajaxSingle="true"
 										action="#{personelIzinGirisiHome.onayAkisiGoster(izin)}"
-										rendered="#{izin.izinTipi.onaysiz == false and (authenticatedUser.admin or authenticatedUser.IK)}"
+										rendered="#{izin.izinTipi.onaysiz == false and (authenticatedUser.admin or personelIzinGirisiHome.ikRole)}"
 										oncomplete="#{rich:component('onayPanel')}.show()" reRender="onayPanel" />
 									<h:commandButton target="blank" image="/img/down.gif" title="#{izin.dosya.dosyaAdi} indir" ajaxSingle="true"
 										action="#{ortakIslemler.downloadFile(izin.dosya,false)}" rendered="#{authenticatedUser.admin and personelIzinGirisiHome.getIzinDosya(izin)}" />
@@ -636,7 +636,7 @@
 
 
 							<rich:column
-								rendered="#{(authenticatedUser.izinGirebilir or authenticatedUser.admin or authenticatedUser.IK) and ortakIslemler.getParameterKey('izinERPUpdate') != '1'}">
+								rendered="#{(authenticatedUser.izinGirebilir or authenticatedUser.admin or personelIzinGirisiHome.ikRole) and ortakIslemler.getParameterKey('izinERPUpdate') != '1'}">
 								<f:facet name="header">
 				                        İzin Kağıdı 
 				                </f:facet>

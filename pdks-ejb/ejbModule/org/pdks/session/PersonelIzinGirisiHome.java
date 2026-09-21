@@ -140,7 +140,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 
 	private boolean checkBox, izinERPGiris = Boolean.FALSE, checkBoxDurum, bakiyeYetersizGoster;
 
-	private Boolean bakiyeYetersiz, bakiyeOnayDurum;
+	private Boolean bakiyeYetersiz, bakiyeOnayDurum,ikRole;
 
 	private String reRender, bolumAciklama;
 
@@ -1093,6 +1093,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
+		ikRole=PdksUtil.getIkRole(authenticatedUser);
 		servisAktarDurum = Boolean.FALSE;
 		boolean ayniSayfa = authenticatedUser.getCalistigiSayfa() != null && authenticatedUser.getCalistigiSayfa().equals("personelIzinGirisi");
 		try {
@@ -6284,5 +6285,13 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 
 	public static void setSayfaURL(String sayfaURL) {
 		PersonelIzinGirisiHome.sayfaURL = sayfaURL;
+	}
+
+	public Boolean getIkRole() {
+		return ikRole;
+	}
+
+	public void setIkRole(Boolean ikRole) {
+		this.ikRole = ikRole;
 	}
 }
