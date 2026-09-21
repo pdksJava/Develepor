@@ -886,7 +886,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					MailStatu statu = MailManager.ePostaGonder(mailMap);
 					if (mailGonderildi == false)
 						this.setMailGonderildi(statu != null && statu.isDurum());
-						 
+
 				} catch (Exception e) {
 					logger.error(e);
 					e.printStackTrace();
@@ -3192,7 +3192,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 					kullaniciIKYukle(null, mailMap, pdksDAO);
 					mailStatu = MailManager.ePostaGonder(mailMap);
- 					if (mailGonderildi == false)
+					if (mailGonderildi == false)
 						this.setMailGonderildi(mailStatu != null && mailStatu.isDurum());
 				}
 				personelIzinList = null;
@@ -4353,11 +4353,11 @@ public class PdksVeriOrtakAktar implements Serializable {
 									if (kgsPersonelSPAdi == null && (!adiUyumlu || !soyadiUyumlu)) {
 										String mesaj = "";
 										if (!adiUyumlu && !soyadiUyumlu)
-											mesaj = "adı ve soyadı";
+											mesaj = "ad ve soyad";
 										else if (!adiUyumlu) {
-											mesaj = "adı";
+											mesaj = "ad";
 										} else if (!soyadiUyumlu) {
-											mesaj = "soyadi";
+											mesaj = "soyad";
 											bayanSoyad = personelTest.getCinsiyetBayan();
 											if (bayanSoyad)
 												personelERP.setSoyadi(personelKGS.getSoyad());
@@ -4365,7 +4365,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 										}
 										mesaj = personelNo + " personel " + mesaj + " uyumsuz! ( " + adSoyadERP + " farklı " + personelKGS.getAdSoyad() + (personelKGS.getKapiSirket() != null ? " [ " + personelKGS.getKapiSirket().getAciklama() + " ] " : "") + " ) ";
 										// addHatalist(bayanSoyad == false ? personelERP.getHataList() : kidemHataList, PdksUtil.replaceAllManuel(mesaj, "  ", " "));
-										addHatalist(hataList, personelERP, null, PdksUtil.replaceAllManuel(mesaj, "  ", " "));
+										if (bayanSoyad == false || adiUyumlu == false || soyadiUyumlu)
+											addHatalist(hataList, personelERP, null, PdksUtil.replaceAllManuel(mesaj, "  ", " "));
+										else
+											addHatalist(kidemHataList, PdksUtil.replaceAllManuel(mesaj + " soyad uyumsuz!", "  ", " "));
 
 									}
 								}
@@ -4415,8 +4418,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 									bayanSoyad = personelTest.getCinsiyetBayan();
 									if (bayanSoyad)
 										personelERP.setSoyadi(personelKGS2.getSoyad());
-									// addHatalist(bayanSoyad == false ? personelERP.getHataList() : kidemHataList, PdksUtil.replaceAllManuel(uygulamaFark + " soyad uyumsuz!", "  ", " "));
-									addHatalist(hataList, personelERP, null, PdksUtil.replaceAllManuel(uygulamaFark + " soyad uyumsuz!", "  ", " "));
+									if (bayanSoyad == false)
+										addHatalist(hataList, personelERP, null, PdksUtil.replaceAllManuel(uygulamaFark + " soyad uyumsuz!", "  ", " "));
+									else
+										addHatalist(kidemHataList, PdksUtil.replaceAllManuel(uygulamaFark + " soyad uyumsuz!", "  ", " "));
 								}
 
 								else if (soyadBenzer)
@@ -5946,7 +5951,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					statu = personelHataMailGonder(userIKList, personelList, orjPersonelERPMap, hataList, sirketMap, mailBosGonder);
 					if (statu != null && statu.isDurum())
 						logger.info("savePersoneller hata gonderildi. " + PdksUtil.getCurrentTimeStampStr());
-				} else {
+				} else if (mailGonderildi == false) {
 					userIKList = new ArrayList<User>();
 					statu = personelHataMailGonder(userIKList, personelList, orjPersonelERPMap, hataList, sirketMap, mailBosGonder);
 					if (statu != null && statu.isDurum())
@@ -6285,7 +6290,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				kullaniciIKYukle(userList, mailMap, pdksDAO);
 				mailStatu = MailManager.ePostaGonder(mailMap);
 				mailBosGonder = false;
- 				if (mailGonderildi == false)
+				if (mailGonderildi == false)
 					this.setMailGonderildi(mailStatu != null && mailStatu.isDurum());
 			} catch (Exception ex) {
 				logger.error(ex);
