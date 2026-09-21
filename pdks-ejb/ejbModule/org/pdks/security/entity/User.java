@@ -709,13 +709,16 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 
 	@Transient
 	public boolean isIKAdmin() {
-		boolean adminDurum = adminIK != null && adminIK;
+		boolean adminDurum = false;
 		if (adminIK == null) {
-			adminDurum = IK && departman != null && departman.isAdminMi();
-			if (adminDurum)
-				adminDurum = IK_Tesis == false && IKSirket == false;
-			adminIK = adminDurum;
-		}
+			if (yetkiliRollerim != null) {
+				adminDurum = IK && departman != null && departman.isAdminMi();
+				if (adminDurum)
+					adminDurum = IK_Tesis == false && IKSirket == false;
+				adminIK = adminDurum;
+			}
+		} else
+			adminDurum = adminIK;
 		return adminDurum;
 	}
 
