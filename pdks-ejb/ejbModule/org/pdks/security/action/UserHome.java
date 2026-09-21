@@ -68,7 +68,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 	private static boolean menuKapali = false;
 	private List<String> izinRaporlari = Arrays.asList("aylikIzinRapor", "bakiyeIzin", "fazlaMesaiIzin", "holdingKalanIzin", "iseGelmeyenPersonelDagilimi", "izinKagidi", "izinOnay", "personelKalanIzin");
 	private List<String> izinIslemler = Arrays.asList("izinIslemleri", "izinERPAktarim", "izinHakedisHakkiTanimlama", "onayimaGelenIzinler", "personelIzinKopyala", "sskIzinGirisi", "personelIzinGirisi");
-	private List<String> ekranIK = Arrays.asList("pdksVardiyaTanimlama", "personelTanimlama");
+	private List<String> ekranIK = Arrays.asList("pdksVardiyaTanimlama", "personelTanimlama", "tatilTanimlama", "parameter", "tanim");
 
 	private User currentUser;
 	private String newPassword1, newPassword2, passwordHash, oldUserName;
@@ -363,7 +363,13 @@ public class UserHome extends EntityHome<User> implements Serializable {
 							sonuc = adminRole || getSonuc(target);
 						else if (yetkiliRollerim != null) {
 							boolean ikRole = PdksUtil.getIkRole(authenticatedUser);
+							if (ikRole && ekranIK.contains(target)) {
+								logger.debug("");
+							}
+							boolean ikEkran = ekranIK.contains(target);
 							for (Role role : yetkiliRollerim) {
+								if (role.getId() == null && ikEkran)
+									continue;
 								String roleName = role.getRolename();
 								if (roleName.equals(AccountPermission.ADMIN_ROLE)) {// admin
 									// herşeye
@@ -377,7 +383,7 @@ public class UserHome extends EntityHome<User> implements Serializable {
 									break;
 								}
 							}
-							if (sonuc == false && ikRole && ekranIK.contains(target) == false) {
+							if (sonuc == false && ikRole && ikEkran == false) {
 								key = startKey + "-" + Role.TIPI_IK + "-" + AccountPermission.DISCRIMINATOR_ROLE;
 								if (accountPermissionMap.containsKey(key)) {
 									sonuc = getSonuc(target);
