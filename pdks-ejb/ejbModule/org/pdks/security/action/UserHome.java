@@ -363,10 +363,11 @@ public class UserHome extends EntityHome<User> implements Serializable {
 							sonuc = adminRole || getSonuc(target);
 						else if (yetkiliRollerim != null) {
 							boolean ikRole = PdksUtil.getIkRole(authenticatedUser);
-							if (ikRole && ekranIK.contains(target)) {
+							boolean ikEkran = ekranIK.contains(target);
+							if (ikRole && ikEkran) {
 								logger.debug("");
 							}
-							boolean ikEkran = ekranIK.contains(target);
+							
 							for (Role role : yetkiliRollerim) {
 								if (role.getId() == null && ikEkran)
 									continue;
