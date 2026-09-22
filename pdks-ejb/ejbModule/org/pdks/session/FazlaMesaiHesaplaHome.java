@@ -5209,8 +5209,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					tekrarCalistir = userLogin.getLogin();
 					if (tekrarCalistir == false)
 						logger.info(vg.getVardiyaKeyStr() + " " + hareketKGS.getId());
-
-				}
+ 				}
 			}
 		}
 		if (flush)
