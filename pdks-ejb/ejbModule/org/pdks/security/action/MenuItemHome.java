@@ -253,8 +253,11 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 		idTreeList = null;
 
 		for (MenuItem tempMenuItemFromTree : selectedMenuItemFromTreeList) {
-			tempMenuItemFromTree.setStatus(Boolean.FALSE);
-			tempMenuItemFromTree.setTopMenu(Boolean.FALSE);
+			if (tempMenuItemFromTree.getTopMenu() == false) {
+				tempMenuItemFromTree.setStatus(Boolean.FALSE);
+				tempMenuItemFromTree.setTopMenu(Boolean.FALSE);
+			}
+
 			// Secili menuItemin parenti bulunur. Parentin child listesinden
 			// Secili menuItem çıkarılır.
 			if (tempMenuItemFromTree.getParentMenuItem() != null) {
@@ -317,9 +320,9 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 		if (!menuItem.getChildMenuItemList().isEmpty()) {
 			for (Iterator iterator = menuItem.getChildMenuItemListSirali().iterator(); iterator.hasNext();) {
 				MenuItem tempMenuItem = (MenuItem) iterator.next();
-				tempMenuItem.setStatus(Boolean.FALSE);
-				tempMenuItem.setTopMenu(Boolean.FALSE);
-				deleteMenuItemList.add(tempMenuItem);
+				if (tempMenuItem.getTopMenu() == false)  
+					tempMenuItem.setStatus(Boolean.FALSE);
+ 				deleteMenuItemList.add(tempMenuItem);
 				deleteMenuItemNameList.add(tempMenuItem.getName());
 
 				if (!tempMenuItem.getChildMenuItemList().isEmpty()) {
@@ -365,7 +368,7 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct M.* from " + MenuItem.TABLE_NAME + " M " + PdksEntityController.getSelectLOCK());
 		sb.append(" inner join " + MenuIliski.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on M." + MenuItem.COLUMN_NAME_ID + " in (I." + MenuIliski.COLUMN_NAME_MENU_ITEM + ", I." + MenuIliski.COLUMN_NAME_CHILD_MENU_ITEM + " )");
-		sb.append(" where  M." + MenuItem.COLUMN_NAME_DURUM + " = 0 and M."+MenuItem.COLUMN_NAME_TOP_MENU+" = 0");
+		sb.append(" where  M." + MenuItem.COLUMN_NAME_DURUM + " = 0 and M." + MenuItem.COLUMN_NAME_TOP_MENU + " = 0");
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<MenuItem> pasifMenuList = pdksEntityController.getObjectBySQLList(sb, fields, MenuItem.class);
@@ -450,6 +453,8 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 		if (map1.isEmpty() == false) {
 			for (Iterator iterator = allTreeMenuItemList.iterator(); iterator.hasNext();) {
 				MenuItem mi = (MenuItem) iterator.next();
+				if (mi.getTopMenu())
+					continue;
 				if (map1.containsKey(mi.getId())) {
 					mi.setStatus(Boolean.FALSE);
 					pdksEntityController.saveOrUpdate(session, entityManager, mi);
@@ -667,10 +672,9 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 			FacesContext.getCurrentInstance().addMessage("", facesMessage);
 		} else {
 			MenuItem item = getInstance();
-			if (item.getTopMenu())
-				item.setStatus(Boolean.TRUE);
-			else
-				item.setStatus(Boolean.FALSE);
+
+			item.setStatus(item.getTopMenu());
+
 			Tanim description = item.getDescription();
 			description.setDurum(Boolean.TRUE);
 			description.setTipi(Tanim.TIPI_MENU_BILESENI);
