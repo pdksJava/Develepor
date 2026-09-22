@@ -107,7 +107,12 @@
 									<h:outputText value="The role search returned no results." rendered="#{empty menuItemHome.freeMenuItemList}" />
 									<rich:dataTable rowClasses="acik,koyu" style="rich-panel-header" height="40px" width="537px" id="menuItemDataTable"
 										rendered="#{not empty menuItemHome.freeMenuItemList}" value="#{menuItemHome.freeMenuItemList}" var="menuItem">
-
+										<rich:column width="200px">
+											<f:facet name="header">
+												<h:outputText styleClass="headerText" value="ID" />
+											</f:facet>
+											<h:outputText value="#{menuItem.id}" />
+										</rich:column>
 										<rich:column width="200px" id="aciklama">
 											<f:facet name="header">
 												<h:outputText styleClass="headerText" value="Ağaca Yerleştirilecek Menü Bileşeni" />
