@@ -562,8 +562,8 @@ public class VardiyaGun extends BaseObject {
 
 	@Transient
 	public boolean addHareket(HareketKGS hareket, boolean hareketDuzelt) {
-		boolean durum = Boolean.FALSE;
-		boolean devam = Boolean.TRUE;
+		boolean durum = Boolean.FALSE, devam = Boolean.TRUE;
+		Date zaman1 = PdksUtil.tariheGunEkleCikar(this.getVardiyaDate(), -2);
 		try {
 			Date tarihHareket = PdksUtil.getDate(PdksUtil.tariheGunEkleCikar(hareket.getZaman(), -1)), sonCalismaTarihi = PdksUtil.getDate(hareket.getPersonel().getPdksPersonel().getSskCikisTarihi());
 			devam = PdksUtil.tarihKarsilastirNumeric(sonCalismaTarihi, tarihHareket) != -1;
@@ -575,8 +575,7 @@ public class VardiyaGun extends BaseObject {
 		if (!devam) {
 			logger.debug("");
 		}
-		if (devam) {
-
+		if (devam && hareket.getOrjinalZaman().after(zaman1)) {
 			if (this.getIslemVardiya() == null)
 				setVardiyaZamani();
 			Kapi kapi = null;

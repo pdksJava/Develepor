@@ -171,7 +171,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	private boolean adminRole, hareketIptalEt = false, brutUcretGoster = Boolean.FALSE, ikRole, personelHareketDurum, personelFazlaMesaiDurum, vardiyaPlaniDurum, personelIzinGirisiDurum, fazlaMesaiTalepOnayliDurum = Boolean.FALSE;
 	private Boolean izinCalismayanMailGonder = Boolean.FALSE, bakiyeSifirlaDurum = Boolean.FALSE, isAramaGoster = Boolean.FALSE, hatalariAyikla = Boolean.FALSE, kismiOdemeGoster = Boolean.FALSE, icapciSaatGoster = Boolean.FALSE, yasalFazlaCalismaAsanSaat = Boolean.FALSE, userLoginOldu;
 	private boolean topluGuncelle = false, yarimYuvarla = true, resmiTatilKanunenEklenenSureGoster = false, istifaGoster = false, sadeceFazlaMesai = true, saatlikCalismaGoster = false, izinBordoroGoster = false, bordroPuantajEkranindaGoster = false, planOnayDurum, eksikCalismaGoster,
-			eksikMaasGoster = false;
+			eksikMaasGoster = false, tekrarCalistir = false;
 	private int ay, yil, maxYil, sonDonem, pageSize;
 	private String manuelGirisGoster = "", kapiGirisSistemAdi = "", birdenFazlaKGSSirketSQL = "";
 
@@ -220,6 +220,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	private List<HareketKGS> hareketler = new ArrayList<HareketKGS>();
 	private List<Long> userIkIdList;
 	private TreeMap<String, Tatil> tatilGunleriMap;
+	private Tanim mukerrerHareketIptalNeden;
 	private Date bugun;
 	private User userLogin;
 	private Session session;
@@ -329,7 +330,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 */
 	private void adminRoleDurum() {
 		adminRole = userLogin.isAdmin() || userLogin.isSistemYoneticisi() || userLogin.isIKAdmin();
- 		ikRole = PdksUtil.getIkRole(userLogin);
+		ikRole = PdksUtil.getIkRole(userLogin);
 	}
 
 	/**
@@ -1264,8 +1265,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			denklestirmeDonemi.setLoginUser(getPdksUser());
 			denklestirmeDonemi.setDenklestirmeAy(denklestirmeAy);
 			setTopluGuncelle(false);
+			tekrarCalistir = false;
 			fillPersonelDenklestirmeDevam(inputPersonelNo, aylikPuantaj, denklestirmeDonemi);
-
+			if (tekrarCalistir)
+				fillPersonelDenklestirmeDevam(inputPersonelNo, aylikPuantaj, denklestirmeDonemi);
 		} else if (userLogin.getLogin())
 			PdksUtil.addMessageWarn("İlgili döneme ait fazla mesai bulunamadı!");
 
@@ -1903,7 +1906,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						HashMap<String, KapiView> manuelKapiMap = ortakIslemler.getManuelKapiMap(null, session);
 						KapiView manuelGiris = manuelKapiMap.get(Kapi.TIPI_KODU_GIRIS);
 						KapiView manuelCikis = manuelKapiMap.get(Kapi.TIPI_KODU_CIKIS);
-						Tanim mukerrerHareketIptalNeden = denklestirmeAyDurum ? ortakIslemler.getMukerrerHareketIptalNeden(session) : null;
+						mukerrerHareketIptalNeden = denklestirmeAyDurum ? ortakIslemler.getMukerrerHareketIptalNeden(session) : null;
 						User guncelleyen = null;
 						if (mukerrerHareketIptalNeden != null)
 							guncelleyen = ortakIslemler.getSistemAdminUser(session);
@@ -3272,8 +3275,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						if (testDurum)
 							logger.info("fillPersonelDenklestirmeDevam 7000 " + PdksUtil.getCurrentTimeStampStr());
 						if (uyariHaftaTatilMesai) {
-							if (userLogin.getLogin())
+							if (userLogin.getLogin()) {
+								tekrarCalistir = true;
 								PdksUtil.addMessageWarn("Hafta tatil günleri güncellendi, 'Fazla Mesai Getir' tekrar çalıştırın.");
+							}
 						}
 
 						if (denklestirilmeyenDevredenVar && userLogin.getLogin()) {
@@ -3734,10 +3739,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			}
 			sessionFlush();
 			if (uyariMesai)
-				if (userLogin.getLogin())
+				if (userLogin.getLogin()) {
+					tekrarCalistir = true;
 					PdksUtil.addMessageWarn(offVardiya.getAciklama() + " günler güncellendi, 'Fazla Mesai Getir' tekrar çalıştırın.");
+				}
 		}
-
 	}
 
 	/**
@@ -3806,8 +3812,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				}
 			}
 			if (flush) {
-				if (authenticatedUser != null && userLogin.getLogin())
+				if (authenticatedUser != null && userLogin.getLogin()) {
 					PdksUtil.addMessageWarn("Hafta tatilleri güncellendi, 'Fazla Mesai Getir' tekrar çalıştırın.");
+					tekrarCalistir = true;
+				}
 				sessionFlush();
 			}
 
@@ -4467,16 +4475,15 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			cikisHareketleri = new ArrayList(vGun.getCikisHareketleri());
 		boolean goster = false;
 		List<String> idList = null;
-
 		boolean ilkGunTatil = vGun.getTatil() != null && key1.endsWith("01");
 		if (ilkGunTatil)
 			idList = new ArrayList<String>();
-
+		if (key1.endsWith("0831"))
+			logger.debug("");
 		if (hareketler != null) {
 			List<String> hareketIdList = new ArrayList<String>();
 			if (girisHareketleri != null)
 				ciftKayitlariAyikla(ciftHareketMap, vGun, girisHareketleri, hareketIdList);
-
 			if (cikisHareketleri != null)
 				ciftKayitlariAyikla(ciftHareketMap, vGun, cikisHareketleri, hareketIdList);
 			for (Iterator iterator = hareketler.iterator(); iterator.hasNext();) {
@@ -5107,7 +5114,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @param hareketIdList
 	 */
 	private void ciftKayitlariAyikla(HashMap<String, HareketKGS> ciftHareketMap, VardiyaGun vg, List<HareketKGS> hareketler, List<String> hareketIdList) {
-
 		if (hareketler.size() > 1) {
 			HareketKGS hareketOnceki = null;
 			LinkedHashMap<String, HareketKGS> ayiklaMap = new LinkedHashMap<String, HareketKGS>();
@@ -5148,8 +5154,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 			}
 			if (denklestirmeAyDurum && hareketler.size() > ayiklaMap.size()) {
+				if (mukerrerHareketIptalNeden != null && vg.isAyinGunu())
+					mukerrerGirisIptal(vg, hareketler, ayiklaMap);
+
 				hareketler.clear();
 				List<HareketKGS> list = new ArrayList<HareketKGS>(ayiklaMap.values());
+
 				hareketler.addAll(list);
 				list = null;
 			}
@@ -5160,6 +5170,45 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				hareketIdList.add(hareketKGS.getId());
 		}
 
+	}
+
+	/**
+	 * @param vg
+	 * @param hareketler
+	 * @param ayiklaMap
+	 */
+	@Transactional
+	private void mukerrerGirisIptal(VardiyaGun vg, List<HareketKGS> hareketler, LinkedHashMap<String, HareketKGS> ayiklaMap) {
+		boolean flush = false;
+		User guncelleyen = null;
+		for (Iterator iterator = hareketler.iterator(); iterator.hasNext();) {
+			HareketKGS hareketKGS = (HareketKGS) iterator.next();
+			if (ayiklaMap.containsKey(hareketKGS.getId()) == false) {
+				if (guncelleyen == null)
+					guncelleyen = ortakIslemler.getSistemAdminUser(session);
+				String aciklama = hareketKGS.getId().substring(1) + " " + hareketKGS.getKapiKGS().getKapi().getAciklama() + " geçiş iptal";
+				long kgsId = 0L, pdksId = 0l;
+				if (hareketKGS.getId().startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS))
+					kgsId = hareketKGS.getHareketTableId();
+				else if (hareketKGS.getId().startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_PDKS))
+					pdksId = hareketKGS.getHareketTableId();
+				Long id = pdksEntityController.hareketSil(kgsId, pdksId, guncelleyen, mukerrerHareketIptalNeden.getId(), aciklama, hareketKGS.getKgsSirketId(), session);
+				if (id != null && hareketKGS.getHareketTableId().equals(id)) {
+					flush = true;
+					tekrarCalistir = userLogin.getLogin();
+					if (tekrarCalistir == false)
+						logger.info(vg.getVardiyaKeyStr() + " " + hareketKGS.getId());
+
+				}
+			}
+		}
+		if (flush)
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 
 	/**

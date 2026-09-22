@@ -25551,7 +25551,7 @@ public class OrtakIslemler implements Serializable {
 							}
 							try {
 								hareket.setDenklestirmeAyDurum(denklestirmeAyDurum);
-								if (vardiyaGun.addHareket(hareket, Boolean.TRUE)) {
+ 								if (vardiyaGun.addHareket(hareket, Boolean.TRUE)) {
 									// TODO isOtomatikFazlaCalismaOnaylansinmi GETİR
 									List<HareketKGS> vardiyaHareketler = null;
 									hareket.setOrjinalZamanGetir(vardiyaGun.getVardiya().isCalisma() == false);
