@@ -365,7 +365,7 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct M.* from " + MenuItem.TABLE_NAME + " M " + PdksEntityController.getSelectLOCK());
 		sb.append(" inner join " + MenuIliski.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on M." + MenuItem.COLUMN_NAME_ID + " in (I." + MenuIliski.COLUMN_NAME_MENU_ITEM + ", I." + MenuIliski.COLUMN_NAME_CHILD_MENU_ITEM + " )");
-		sb.append(" where  M." + MenuItem.COLUMN_NAME_DURUM + " = 0 ");
+		sb.append(" where  M." + MenuItem.COLUMN_NAME_DURUM + " = 0 and M."+MenuItem.COLUMN_NAME_TOP_MENU+" = 0");
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<MenuItem> pasifMenuList = pdksEntityController.getObjectBySQLList(sb, fields, MenuItem.class);
