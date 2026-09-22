@@ -27,7 +27,7 @@
 							<h:selectOneMenu value="#{denklestirmeBordroRaporuHome.ay}" required="true" requiredMessage="Başlangıç ay seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{denklestirmeBordroRaporuHome.aylar}" />
-								<a4j:support event="onchange" action="#{denklestirmeBordroRaporuHome.fillSirketList()}" reRender="denklestirmeDonemiTable,anaForm" />
+								<a4j:support event="onchange" action="#{denklestirmeBordroRaporuHome.yilDegisti()}" reRender="denklestirmeDonemiTable,anaForm" />
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml"

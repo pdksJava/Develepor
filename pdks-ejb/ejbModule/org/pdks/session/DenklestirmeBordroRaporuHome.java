@@ -1035,7 +1035,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		setTesisList(selectItems);
 	}
 
-	public void yilDegisti() {
+	public String yilDegisti() {
 		if (yil > 0) {
 			aylar = ortakIslemler.getSelectItemList("ay", getPdksUser());
 			ay = fazlaMesaiOrtakIslemler.aylariDoldurDurum(yil, ay, aylar, fazlaMesaiHesaplaDurum == false, session);
@@ -1043,7 +1043,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			if (!aylar.isEmpty())
 				fillSirketList();
 		}
-
+		return "";
 	}
 
 	public void fillSirketList() {
