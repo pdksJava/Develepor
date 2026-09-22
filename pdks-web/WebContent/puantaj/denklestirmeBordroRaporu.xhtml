@@ -19,8 +19,7 @@
 							<ui:define name="label">#{ortakIslemler.yilAciklama()}</ui:define>
 							<rich:inputNumberSpinner styleClass="size10" inputStyle="width:20px" minValue="#{denklestirmeBordroRaporuHome.minYil}"
 								maxValue="#{denklestirmeBordroRaporuHome.maxYil}" inputSize="1" value="#{denklestirmeBordroRaporuHome.yil}">
-								<a4j:support event="onchange" action="#{denklestirmeBordroRaporuHome.yilDegisti()}" ajaxSingle="true"
-									reRender="denklestirmeDonemiTable,anaForm" />
+								<a4j:support event="onchange" action="#{denklestirmeBordroRaporuHome.yilDegisti()}" reRender="denklestirmeDonemiTable,anaForm" />
 							</rich:inputNumberSpinner>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml" rendered="#{denklestirmeBordroRaporuHome.aylar != null}">
@@ -28,8 +27,7 @@
 							<h:selectOneMenu value="#{denklestirmeBordroRaporuHome.ay}" required="true" requiredMessage="Başlangıç ay seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{denklestirmeBordroRaporuHome.aylar}" />
-								<a4j:support event="onchange" action="#{denklestirmeBordroRaporuHome.fillSirketList()}" ajaxSingle="true"
-									reRender="denklestirmeDonemiTable,anaForm" />
+								<a4j:support event="onchange" action="#{denklestirmeBordroRaporuHome.fillSirketList()}" reRender="denklestirmeDonemiTable,anaForm" />
 							</h:selectOneMenu>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml"
@@ -39,8 +37,7 @@
 								requiredMessage="#{ortakIslemler.firmaKaynagiAciklama()} seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{denklestirmeBordroRaporuHome.departmanList}" />
-								<a4j:support event="onchange" action="#{denklestirmeBordroRaporuHome.fillSirketList()}" ajaxSingle="true"
-									reRender="denklestirmeDonemiTable,anaForm" />
+								<a4j:support event="onchange" action="#{denklestirmeBordroRaporuHome.fillSirketList()}" reRender="denklestirmeDonemiTable,anaForm" />
 							</h:selectOneMenu>
 
 
@@ -48,8 +45,7 @@
 						<s:decorate template="/layout/edit.xhtml"
 							rendered="#{(authenticatedUser.admin or authenticatedUser.IK) and (not empty denklestirmeBordroRaporuHome.sirketler)}">
 							<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
-							<h:selectOneMenu id="sirketSec" value="#{denklestirmeBordroRaporuHome.sirketId}" required="true"
-								requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz">
+							<h:selectOneMenu id="sirketSec" value="#{denklestirmeBordroRaporuHome.sirketId}" requiredMessage="#{ortakIslemler.sirketAciklama()} seçiniz">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{denklestirmeBordroRaporuHome.sirketler}" />
 								<a4j:support event="onchange" action="#{denklestirmeBordroRaporuHome.fillTesisList()}" ajaxSingle="true"
@@ -64,7 +60,7 @@
 							<h:selectOneMenu value="#{denklestirmeBordroRaporuHome.tesisId}" disabled="#{denklestirmeBordroRaporuHome.tesisList.size() == 1}">
 								<f:selectItem itemLabel="Lütfen seçiniz" />
 								<f:selectItems value="#{denklestirmeBordroRaporuHome.tesisList}" />
-								<a4j:support event="onchange" action="#{denklestirmeBordroRaporuHome.personelDenklestirmeList.clear()}" ajaxSingle="true"
+								<a4j:support event="onchange" action="#{denklestirmeBordroRaporuHome.personelDenklestirmeList.clear()}"
 									reRender="denklestirmeDonemiTable,anaForm" />
 							</h:selectOneMenu>
 						</s:decorate>
