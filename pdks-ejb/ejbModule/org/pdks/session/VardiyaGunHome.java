@@ -5398,7 +5398,13 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		boolean onayliVar = false;
 		boolean ustYonetici = getPdksUser().getPdksPersonel().getUstYonetici();
 		String yoneticiPuantajKontrolStr = ortakIslemler.getParameterKey("yoneticiPuantajKontrol");
-		boolean yoneticiKontrolEtme = loginUser.isAdmin() || loginUser.isSistemYoneticisi() || PdksUtil.hasStringValue(yoneticiPuantajKontrolStr) == false;
+		boolean yoneticiKontrolEtme = false;
+		try {
+			yoneticiKontrolEtme = loginUser == null || loginUser.isAdmin() || loginUser.isSistemYoneticisi() || PdksUtil.hasStringValue(yoneticiPuantajKontrolStr) == false;
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		if (!yoneticiKontrolEtme)
 			yoneticiKontrolEtme = yoneticiPuantajKontrolStr.equals("1") || ortakIslemler.yoneticiRolKontrol(session);
 

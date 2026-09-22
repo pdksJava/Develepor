@@ -1065,7 +1065,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 												}
 												donemBitti = hataYok;
 											}
-											if (eksikCalismaSure < 0 || vList.isEmpty())
+											if ((eksikCalismaSure != null && eksikCalismaSure < 0) || (vList != null && vList.isEmpty()))
 												aylikPuantaj.setEksikCalismaSure(eksikCalismaSure);
 											aylikPuantaj.setDonemBitti(donemBitti);
 										}
@@ -1775,7 +1775,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						if (vardiyaGun.isIzinli()) {
 
 							// calisiyor = true;
-							
+
 							if (vardiyalIzin != null) {
 								Long gunFark = PdksUtil.tarihFarki(vardiyalIzin.getBaslangicZamani(), vardiyalIzin.getBitisZamani());
 								if (gunFark.longValue() == izinSuresi.longValue())
@@ -2115,7 +2115,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						pdksEntityController.sessionFlush(session);
 					} catch (Exception e) {
 						logger.error("flush : " + personelDenklestirme.getId() + " " + personel.getPdksSicilNo() + personel.getAdSoyad() + " " + (authenticatedUser != null ? " [ " + authenticatedUser.getAdSoyad() + " ]" : "") + "\n" + e);
-//						e.printStackTrace();
+						// e.printStackTrace();
 					}
 				}
 
