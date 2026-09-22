@@ -36,6 +36,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Session;
 import org.hibernate.validator.InvalidStateException;
 import org.hibernate.validator.InvalidValue;
+import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
@@ -44,6 +45,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Out;
 import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.annotations.web.RequestParameter;
+import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.faces.Renderer;
 import org.jboss.seam.framework.EntityHome;
 import org.pdks.entity.AylikPuantaj;
@@ -1232,6 +1234,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @return
 	 */
 	public String fillPersonelDenklestirmeList(String inputPersonelNo) {
+		tekrarCalistir = false;
 		componentState.setSeciliTab("tab1");
 		aksamGun = Boolean.FALSE;
 		aksamSaat = Boolean.FALSE;
@@ -1267,8 +1270,16 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			setTopluGuncelle(false);
 			tekrarCalistir = false;
 			fillPersonelDenklestirmeDevam(inputPersonelNo, aylikPuantaj, denklestirmeDonemi);
-			if (tekrarCalistir)
+			if (tekrarCalistir) {
+				FacesMessages facesMessages = (FacesMessages) Component.getInstance("facesMessages");
+				try {
+					if (facesMessages != null && pdksUser.getLogin())
+						facesMessages.clear();
+				} catch (Exception e) {
+				}
 				fillPersonelDenklestirmeDevam(inputPersonelNo, aylikPuantaj, denklestirmeDonemi);
+			}
+
 		} else if (userLogin.getLogin())
 			PdksUtil.addMessageWarn("İlgili döneme ait fazla mesai bulunamadı!");
 
