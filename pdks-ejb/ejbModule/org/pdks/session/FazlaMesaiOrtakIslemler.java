@@ -473,8 +473,6 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			if (personel.getIsAramaGunlukSaat() > 0.0d || personel.isGebelikSutIzinVar())
 				perIdList.add(personel.getId());
 			for (VardiyaGun vg : ap.getVardiyalar()) {
-				if (vg.isGuncellendi())
-					logger.debug(vg.getVardiyaDateStr());
 				vardiyaGunMap.put(vg.getVardiyaKeyStr(), vg);
 			}
 		}

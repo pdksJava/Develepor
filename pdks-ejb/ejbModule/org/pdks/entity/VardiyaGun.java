@@ -2697,6 +2697,11 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	@Transient
+	public boolean isIslemVardiyaVar() {
+		return islemVardiya != null && islemVardiya.getId() != null;
+	}
+
+	@Transient
 	public boolean isCihazZamanSaniyeSifirla() {
 		return cihazZamanSaniyeSifirla;
 	}
