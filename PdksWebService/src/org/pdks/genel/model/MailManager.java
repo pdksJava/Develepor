@@ -269,7 +269,7 @@ public class MailManager implements Serializable {
 			mailParametreMap.putAll(parameterMap);
 		MailStatu mailStatu = new MailStatu();
 		Properties props = null;
-		boolean uyariServisMailGonder = false;
+		boolean uyariServisMailGonder = false, testDurum = mailParametreMap.containsKey("testDurum");
 		if (mailParametreMap.containsKey("uyariServisMailGonder")) {
 			try {
 				uyariServisMailGonder = ((String) mailParametreMap.get("uyariServisMailGonder")).equals("1");
@@ -434,16 +434,13 @@ public class MailManager implements Serializable {
 				mailMap.put("to", mailObject.getToList());
 				mailMap.put("cc", mailObject.getCcList());
 			}
-			if (PdksUtil.isSistemDestekVar()) {
+			if (PdksUtil.isSistemDestekVar() && testDurum == false) {
 				addMailAdresCC(mailObject, "ccAdres", mailParametreMap);
 				addMailAdresCC(mailObject, "ccEntegrasyonAdres", mailParametreMap);
-			}
-			if (PdksUtil.isSistemDestekVar()) {
 				addMailAdresBCC(mailObject, "bccAdres", mailParametreMap);
 				addMailAdresBCC(mailObject, "bccEntegrasyonAdres", mailParametreMap);
 			}
-
-			mailMap.put("bcc", mailObject.getBccList());
+ 			mailMap.put("bcc", mailObject.getBccList());
 			for (String key : mailMap.keySet()) {
 				List<MailPersonel> mailList = mailMap.get(key);
 				for (Iterator iterator = mailList.iterator(); iterator.hasNext();) {
