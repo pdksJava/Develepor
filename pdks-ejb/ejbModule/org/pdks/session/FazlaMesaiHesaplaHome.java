@@ -2510,8 +2510,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 													else
 														vardiyaSaat.setCalismaSuresi(-vg.getId().doubleValue());
 													vardiyaSaat.setGuncellendi(true);
-
-													vg.setVardiyaSaat(vardiyaSaat);
+ 													vg.setVardiyaSaat(vardiyaSaat);
 													addSaveList(keyList, saveList, vardiyaSaat);
 													addSaveList(keyList, saveList, vg);
 												}
