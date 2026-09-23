@@ -580,7 +580,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 					userFieldList = new ArrayList<String>();
 				}
 				String fieldName = "rn";
-				sb.append(" inner join " + User.TABLE_NAME + " U " + PdksVeriOrtakAktar.getJoinLOCK() + " on U." + User.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_USER + " and U." + User.COLUMN_NAME_DURUM + " = 1 ");
+				sb.append(" inner join " + User.TABLE_NAME + " U " + PdksVeriOrtakAktar.getJoinLOCK() + " on U." + User.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_USER);
+				sb.append(" and U." + User.COLUMN_NAME_DURUM + " = 1 and U " + PdksVeriOrtakAktar.getJoinLOCK() + " on U." + User.COLUMN_NAME_ENTEGRASYON_MAIL_DURUM + " = 1 ");
 				if (!userFieldList.isEmpty()) {
 					sb.append(" and U." + alanAdi + " :" + fieldName);
 					rolMap.put(fieldName, userFieldList);
