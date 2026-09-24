@@ -11845,6 +11845,7 @@ public class OrtakIslemler implements Serializable {
 									try {
 										updateUserMenuItem(menuItemTime, parametreJSON, sessionId, spName, session);
 										flush = true;
+										pdksEntityController.sessionRefresh(session, null, menuItemTime);
 									} catch (Exception e) {
 										// TODO: handle exception
 									}
@@ -11857,7 +11858,7 @@ public class OrtakIslemler implements Serializable {
 					if (flush)
 						try {
 							pdksEntityController.sessionFlush(session);
-							pdksEntityController.sessionRefresh(session, null, menuItemTime);
+							
 							authenticatedUser.setMenuItemTime(menuItemTime);
 						} catch (Exception e) {
 							logger.error(e);
