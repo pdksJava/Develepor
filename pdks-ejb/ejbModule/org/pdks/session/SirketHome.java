@@ -161,19 +161,20 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 		tesisList = null;
 		tesisId = null;
 		tesis = null;
-		if (sirket.getId() != null && sirket.isErp()) {
+		setSeciliSirket(sirket);
+		if (seciliSirket.getId() != null && seciliSirket.isErp()) {
 			boolean tableERPOku = ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.getParametrePersonelERPTableView());
 
 			if ((authenticatedUser.isIK() || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()))
 				updateValue = tableERPOku || ortakIslemler.getParameterKeyHasStringValue(PersonelERPGuncelleme.PARAMETER_KEY + "Update");
 
-			if (sirket.isTesisDurumu()) {
+			if (seciliSirket.isTesisDurumu()) {
 				HashMap fields = new HashMap();
 				StringBuilder sb = new StringBuilder();
 				sb.append("select distinct T.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
 				sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_TESIS);
 				sb.append(" where P." + Personel.COLUMN_NAME_SIRKET + " = :s and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :t");
-				fields.put("s", sirket.getId());
+				fields.put("s", seciliSirket.getId());
 				fields.put("t", PdksUtil.tariheAyEkleCikar(new Date(), -2));
 				if (session != null)
 					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -196,7 +197,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 				}
 			}
 		}
-		setSeciliSirket(sirket);
+		
 		return "";
 	}
 
