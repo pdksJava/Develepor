@@ -580,7 +580,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 					userFieldList = new ArrayList<String>();
 				}
 				String fieldName = "rn";
-				sb.append(" inner join " + User.TABLE_NAME + " U " + PdksVeriOrtakAktar.getJoinLOCK() + " on U." + User.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_USER + " and U." + User.COLUMN_NAME_DURUM + " = 1 ");
+				sb.append(" inner join " + User.TABLE_NAME + " U " + PdksVeriOrtakAktar.getJoinLOCK() + " on U." + User.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_USER);
+				sb.append(" and U." + User.COLUMN_NAME_DURUM + " = 1 and U." + User.COLUMN_NAME_ENTEGRASYON_MAIL_DURUM + " = 1 ");
 				if (!userFieldList.isEmpty()) {
 					sb.append(" and U." + alanAdi + " :" + fieldName);
 					rolMap.put(fieldName, userFieldList);
@@ -621,7 +622,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				HashMap<String, List<UserRoles>> araMap = new HashMap<String, List<UserRoles>>();
 				for (UserRoles userRoles : pdksRoles) {
 					User user = userRoles.getUser();
-					if (user != null && user.isDurum() && user.getPdksPersonel().isCalisiyor()) {
+					if (user != null && user.isDurum() && user.isEntegrasyonMailDurum() && user.getPdksPersonel().isCalisiyor()) {
 						String roleAdi = userRoles.getRole().getRolename();
 						if (userTesisMap.containsKey(user.getId()))
 							roleAdi = Role.TIPI_IK_Tesis;
@@ -876,7 +877,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				try {
 					// mailAdresKontrol(mailObject, null);
 
-					if (PdksUtil.isSistemDestekVar()) {
+					if (PdksUtil.isSistemDestekVar() && testDurum == false) {
 
 						MailManager.addMailAdresBCC(mailObject, "bccAdres", mailMap);
 
@@ -1047,7 +1048,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 				HashMap fields = new HashMap();
 				sb.append("select U.* from " + Role.TABLE_NAME + " R " + PdksVeriOrtakAktar.getSelectLOCK() + " ");
 				sb.append(" inner join " + UserRoles.TABLE_NAME + " UR " + PdksVeriOrtakAktar.getJoinLOCK() + " on UR." + UserRoles.COLUMN_NAME_ROLE + " = R." + Role.COLUMN_NAME_ID);
-				sb.append(" inner join " + User.TABLE_NAME + " U " + PdksVeriOrtakAktar.getJoinLOCK() + " on U." + User.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_USER + " and U." + User.COLUMN_NAME_DURUM + " = 1 ");
+				sb.append(" inner join " + User.TABLE_NAME + " U " + PdksVeriOrtakAktar.getJoinLOCK() + " on U." + User.COLUMN_NAME_ID + " = UR." + UserRoles.COLUMN_NAME_USER);
+				sb.append(" and U." + User.COLUMN_NAME_DURUM + " = 1 and U." + User.COLUMN_NAME_ENTEGRASYON_MAIL_DURUM + " = 1 ");
 				sb.append(" inner join " + Departman.TABLE_NAME + " D " + PdksVeriOrtakAktar.getJoinLOCK() + " on D." + Departman.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_DEPARTMAN + " and D." + Departman.COLUMN_NAME_ADMIN_DURUM + " = 1 and D." + Departman.COLUMN_NAME_DURUM + " = 1 ");
 				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksVeriOrtakAktar.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = U." + User.COLUMN_NAME_PERSONEL + " and P." + Personel.COLUMN_NAME_DURUM + " = 1 and P." + Personel.COLUMN_NAME_ISTEN_AYRILIS_TARIHI + " > "
 						+ sqlSistemTarihi);
@@ -1071,7 +1073,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			List<String> list = new ArrayList<String>();
 			for (Iterator iterator = userList.iterator(); iterator.hasNext();) {
 				User user = (User) iterator.next();
-				if (list.contains(user.getEmail()))
+				if (list.contains(user.getEmail()) || user.isEntegrasyonMailDurum() == false)
 					continue;
 				list.add(user.getEmail());
 				MailPersonel mailPersonel = new MailPersonel();
@@ -1101,11 +1103,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			}
 		}
 		sb = new StringBuffer();
-		// try {
-		// mailAdresKontrol(mailObject, sb);
-		// } catch (Exception e) {
-		// logger.error(e);
-		// }
+
 		sb = null;
 
 		mailDataMap.put("mailObject", mailService);
@@ -1169,6 +1167,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 			else
 				hataListesi.clear();
 			mailGonderildi = false;
+			boolean td = getTestDurum();
+			if (td)
+				mailMap.put("testDurum", Boolean.TRUE);
 			HashMap<String, Parameter> pmMap = new HashMap<String, Parameter>();
 			islemYapan = getSistemAdminUser(dao);
 			try {
@@ -1546,10 +1547,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 	 * @throws Exception
 	 */
 	protected void mailAdresKontrol(MailObject mailObject, StringBuffer pasifPersonelSB) throws Exception {
-		if (PdksUtil.isSistemDestekVar()) {
+		if (PdksUtil.isSistemDestekVar() && testDurum == false) {
 			MailManager.addMailAdresCC(mailObject, "ccAdres", mailMap);
 			MailManager.addMailAdresBCC(mailObject, "bccAdres", mailMap);
-			if (PdksUtil.isSistemDestekVar()) {
+			if (PdksUtil.isSistemDestekVar() && testDurum == false) {
 				MailManager.addMailAdresCC(mailObject, "ccEntegrasyonAdres", mailMap);
 				MailManager.addMailAdresBCC(mailObject, "bccEntegrasyonAdres", mailMap);
 			}
@@ -1572,6 +1573,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 			List<User> userList = pdksDAO.getObjectByInnerObjectList(map, User.class);
 			List<String> pasifList = new ArrayList<String>();
 			for (User user : userList) {
+				if (user.isEntegrasyonMailDurum() == false)
+					continue;
 				if (user.isDurum() && user.getPdksPersonel().isCalisiyor())
 					userMap.put(user.getEmail(), user);
 				else
@@ -1900,12 +1903,14 @@ public class PdksVeriOrtakAktar implements Serializable {
 								Tanim tesis = veriUserMap.containsKey("tesis") ? (Tanim) veriUserMap.get("tesis") : null;
 								sirket = veriUserMap.containsKey("sirket") ? (Sirket) veriUserMap.get("sirket") : null;
 								MailObject mailObject = new MailObject();
-								if (PdksUtil.isSistemDestekVar()) {
+								if (PdksUtil.isSistemDestekVar() && testDurum == false) {
 									mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
 									mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
 								}
 
 								for (User user : userList) {
+									if (user.getId() != null && user.isEntegrasyonMailDurum() == false)
+										continue;
 									MailPersonel mailPersonel = new MailPersonel();
 									mailPersonel.setAdiSoyadi(user.getPdksPersonel().getAdSoyad());
 									String ePosta = testDurum == false ? user.getEmail() : "hasansayar58@gmail.com";
@@ -2297,7 +2302,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				LinkedHashMap<String, Object> fileMap = new LinkedHashMap<String, Object>();
 				fileMap.put("saveIzinHakedisler.xml", PdksUtil.getJsonToXML(jsonStr, "saveIzinHakedisler", "izinHakedis"));
 				mailMap.put("fileMap", fileMap);
-				if (PdksUtil.isSistemDestekVar()) {
+				if (PdksUtil.isSistemDestekVar() && testDurum == false) {
 					mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
 					mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
 				}
@@ -3185,7 +3190,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					mailMap.put("mailIcerik", sb.toString());
 					if (testDurum)
 						mailMap.put(KEY_IK_MAIL_IPTAL, testDurum);
-					if (PdksUtil.isSistemDestekVar()) {
+					if (PdksUtil.isSistemDestekVar() && testDurum == false) {
 						mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
 						mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
 					}
@@ -3351,7 +3356,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 									sb.append("<p></p>");
 									sb.append("<p>Saygılarımla</p>");
 									mailMap.put("mailIcerik", sb.toString());
-									if (PdksUtil.isSistemDestekVar()) {
+									if (PdksUtil.isSistemDestekVar() && testDurum == false) {
 										mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
 										mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
 									}
@@ -3536,6 +3541,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 			List<UserRoles> userRolesList = pdksDAO.getNativeSQLList(fields, sb, UserRoles.class);
 			longList = null;
 			for (UserRoles userRoles : userRolesList) {
+				User user1 = userRoles.getUser();
+				if (user1.isEntegrasyonMailDurum() == false)
+					continue;
 				Role role = userRoles.getRole();
 				Personel personel = userRoles.getUser().getPdksPersonel();
 				String key = role.getRolename();
@@ -6110,7 +6118,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 						fileMap.put("saveIzinler.xml", str);
 						mailMap.put("fileMap", fileMap);
 					}
-					if (PdksUtil.isSistemDestekVar()) {
+					if (PdksUtil.isSistemDestekVar() && testDurum == false) {
 						mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
 						mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
 					}
@@ -6283,7 +6291,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				String xml = getJsonToXML(jsonStr, "personel", PERSONEL_PROP_ORDER, "savePersoneller");
 				fileMap.put("savePersoneller.xml", xml);
 				mailMap.put("fileMap", fileMap);
-				if (PdksUtil.isSistemDestekVar()) {
+				if (PdksUtil.isSistemDestekVar() && testDurum == false) {
 					mailMapGuncelle("ccEntegrasyon", "ccEntegrasyonAdres");
 					mailMapGuncelle("bccEntegrasyon", "bccEntegrasyonAdres");
 				}
@@ -6302,7 +6310,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 			mailMap.remove("invalidAddresses");
 			for (Iterator iterator2 = userList.iterator(); iterator2.hasNext();) {
 				User user = (User) iterator2.next();
-				if (invalidAddresses.contains(user.getEmail()))
+				if (invalidAddresses.contains(user.getEmail()) || user.isEntegrasyonMailDurum() == false)
 					iterator2.remove();
 			}
 			invalidAddresses = null;

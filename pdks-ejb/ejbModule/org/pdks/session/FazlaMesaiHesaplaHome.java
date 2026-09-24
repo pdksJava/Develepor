@@ -1954,7 +1954,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							double negatifBakiyeDenkSaat = 0.0;
 							offIzinliGunler.clear();
 							puantaj.setEksikGunVar(false);
-							PersonelDenklestirme personelDenklestirme = null;
+							PersonelDenklestirme personelDenklestirme = puantaj.getPersonelDenklestirme();
 							puantaj.setDonemBitti(Boolean.FALSE);
 							puantaj.setAyrikHareketVar(false);
 							puantaj.setFiiliHesapla(true);
@@ -1964,8 +1964,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								updateMap.clear();
 							Personel personel = puantaj.getPdksPersonel();
 							perCalismaModeli = personel.getCalismaModeli();
-							if (puantaj.getPersonelDenklestirme() != null && puantaj.getPersonelDenklestirme().getCalismaModeliAy() != null)
-								perCalismaModeli = puantaj.getPersonelDenklestirme().getCalismaModeli();
+							if (personelDenklestirme != null) {
+								if (session.contains(personelDenklestirme) == false)
+									personelDenklestirme = (PersonelDenklestirme) pdksEntityController.sessionRefresh(session, entityManager, personelDenklestirme);
+								if (personelDenklestirme.getCalismaModeliAy() != null)
+									perCalismaModeli = personelDenklestirme.getCalismaModeli();
+							}
 
 							Boolean tarihGecti = Boolean.TRUE;
 							Boolean gebemi = Boolean.FALSE, calisiyor = Boolean.FALSE;
@@ -2009,7 +2013,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									if (sonVardiyaBitZaman == null || islemVardiya.getVardiyaTelorans1BitZaman().after(sonVardiyaBitZaman))
 										sonVardiyaBitZaman = islemVardiya.getVardiyaTelorans1BitZaman();
 								}
-								personelDenklestirme = puantaj.getPersonelDenklestirme();
+
 								if (denklestirmeAyDurum && personelDenklestirme.getId() != null) {
 									PersonelDenklestirme pd = null;
 									if (session.contains(personelDenklestirme) == false)
@@ -2511,7 +2515,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 													else
 														vardiyaSaat.setCalismaSuresi(-vg.getId().doubleValue());
 													vardiyaSaat.setGuncellendi(true);
- 													vg.setVardiyaSaat(vardiyaSaat);
+													vg.setVardiyaSaat(vardiyaSaat);
 													addSaveList(keyList, saveList, vardiyaSaat);
 													addSaveList(keyList, saveList, vg);
 												}
@@ -3256,7 +3260,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									veriMap.clear();
 								}
 								if (flushVardiya)
-									pdksEntityController.sessionFlush(session);
+									flush = true;
 								veriMap = null;
 							}
 							saveVardiyaGunMap = null;
