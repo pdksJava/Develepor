@@ -32,7 +32,8 @@ public class PersonelERPDB implements Serializable, Cloneable {
 	public static final String COLUMN_NAME_GUNCELLEME_TARIHI = "GUNCELLEME_TARIHI";
 	public static final String COLUMN_NAME_PERSONEL_NO = "PERSONEL_NO";
 	public static final String COLUMN_NAME_SIRKET_KODU = "SIRKET_KODU";
-
+	public static final String COLUMN_NAME_TESIS_KODU = "TESIS_KODU";
+ 	
 	static Logger logger = Logger.getLogger(PersonelERPDB.class);
 
 	private String personelNo;

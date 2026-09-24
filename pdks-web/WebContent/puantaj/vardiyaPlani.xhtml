@@ -586,7 +586,7 @@
 						<ui:define name="label">#{ortakIslemler.calismaModeliAciklama()}</ui:define>
 						<h:selectOneMenu value="#{vardiyaGunHome.personelDenklestirme.calismaModeliAy}" id="perCalismaModeli"
 							disabled="#{vardiyaGunHome.denklestirmeAyDurum == false}" styleClass="size10" required="true" style="width:85px"
-							requiredMessage="Çalışma Şekli Seciniz">
+							requiredMessage="#{ortakIslemler.calismaModeliAciklama()} Seçiniz">
 							<s:selectItems var="comp" value="#{vardiyaGunHome.modelList}" label="#{comp.calismaModeli.aciklama}" noSelectionLabel="Lutfen Seciniz" />
 							<s:convertEntity />
 							<a4j:support event="onchange" action="#{vardiyaGunHome.modelDegisti()}" reRender="digerIslemler,secimler" />
