@@ -31,8 +31,12 @@ import org.pdks.entity.PersonelView;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.SirketEntegrasyon;
 import org.pdks.entity.Tanim;
+import org.pdks.erp.entity.PersonelERPDB;
+import org.pdks.quartz.PersonelERPGuncelleme;
 import org.pdks.security.action.StartupAction;
 import org.pdks.security.entity.User;
+
+import com.pdks.webservice.PersonelERP;
 
 @Name("sirketHome")
 public class SirketHome extends EntityHome<Sirket> implements Serializable {
@@ -62,13 +66,14 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 	private List<Departman> departmanList = new ArrayList<Departman>();
 	private List<Sirket> sirketList = new ArrayList<Sirket>();
 	private List<PersonelView> personelList;
-	private Boolean istenAyrilanlariEkle, sirketEklenebilir, sirketGrupGoster, erpDatabaseDurum, apiGuncelle;
+	private Boolean istenAyrilanlariEkle, sirketEklenebilir, sirketGrupGoster, erpDatabaseDurum, apiGuncelle, updateValue;
 	private HashMap<String, List<Tanim>> ekSahaListMap;
 	private TreeMap<String, Tanim> ekSahaTanimMap;
 	private String bolumAciklama;
-	private List<SelectItem> sirketGrupList;
-	private List<SelectItem> mediaTyepList;
+	private List<SelectItem> sirketGrupList, mediaTyepList, tesisList;
 	private Sirket seciliSirket;
+	private Long tesisId;
+	private Tanim tesis;
 
 	private SirketEntegrasyon seciliSirketEntegrasyon;
 	private Session session;
@@ -115,6 +120,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 			mediaTyepList = new ArrayList<SelectItem>();
 		else
 			mediaTyepList.clear();
+
 		fillBagliOlduguDepartmanTanimList();
 		sirketGrupList = ortakIslemler.getTanimSelectItem("sirketGrup", ortakIslemler.getTanimList(Tanim.TIPI_SIRKET_GRUP, session));
 		if (sirket == null) {
@@ -151,7 +157,100 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 			personelList.clear();
 		else
 			personelList = new ArrayList<PersonelView>();
+		updateValue = false;
+		tesisList = null;
+		tesisId = null;
+		tesis = null;
+		if (sirket.getId() != null && sirket.isErp()) {
+			boolean tableERPOku = ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.getParametrePersonelERPTableView());
+
+			if ((authenticatedUser.isIK() || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()))
+				updateValue = tableERPOku || ortakIslemler.getParameterKeyHasStringValue(PersonelERPGuncelleme.PARAMETER_KEY + "Update");
+
+			if (sirket.isTesisDurumu()) {
+				HashMap fields = new HashMap();
+				StringBuilder sb = new StringBuilder();
+				sb.append("select distinct T.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
+				sb.append(" inner join " + Tanim.TABLE_NAME + " T " + PdksEntityController.getJoinLOCK() + " on T." + Tanim.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_TESIS);
+				sb.append(" where P." + Personel.COLUMN_NAME_SIRKET + " = :s and P." + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " >= :t");
+				fields.put("s", sirket.getId());
+				fields.put("t", PdksUtil.tariheAyEkleCikar(new Date(), -2));
+				if (session != null)
+					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+				List<Tanim> list = null;
+				try {
+					list = pdksEntityController.getObjectBySQLList(sb, fields, Tanim.class);
+				} catch (Exception e) {
+					logger.error(e);
+				}
+
+				if (list != null) {
+					if (list.isEmpty() == false) {
+						list = PdksUtil.sortTanimList(null, list);
+						tesisList = new ArrayList<SelectItem>();
+						for (Tanim tanim : list)
+							tesisList.add(new SelectItem(tanim.getId(), tanim.getAciklama()));
+						if (tesisList.size() == 1)
+							tesisId = list.get(0).getId();
+					}
+				}
+			}
+		}
 		setSeciliSirket(sirket);
+		return "";
+	}
+
+	@Transactional
+	public String personelERPDBGuncelle() {
+		tesis = null;
+		String parameterName = ortakIslemler.getParametrePersonelERPTableView();
+		String personelERPTableViewAdi = ortakIslemler.getParameterKey(parameterName);
+		if (PdksUtil.hasStringValue(personelERPTableViewAdi)) {
+			if (tesisId != null)
+				tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, tesisId, Tanim.class, session);
+			HashMap fields = new HashMap();
+			StringBuilder sb = new StringBuilder();
+			sb.append(" select V." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " from " + personelERPTableViewAdi + " V " + PdksEntityController.getSelectLOCK());
+			sb.append(" where V." + PersonelERPDB.COLUMN_NAME_SIRKET_KODU + " = :s ");
+			fields.put("s", seciliSirket.getErpKodu());
+			if (tesis != null) {
+				sb.append(" and V." + PersonelERPDB.COLUMN_NAME_TESIS_KODU + " = :t ");
+				fields.put("t", tesis.getErpKodu());
+			}
+			if (istenAyrilanlariEkle == null || istenAyrilanlariEkle.booleanValue() == false) {
+				sb.append(" and V." + PersonelERPDB.COLUMN_NAME_ISTEN_AYRILMA_TARIHI + " >= :d ");
+				fields.put("d", PdksUtil.getDate(new Date()));
+			}
+			sb.append(" order by V." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO);
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			try {
+				List<String> yeniNoList = pdksEntityController.getObjectBySQLList(sb, fields, null);
+				List<PersonelERP> updateList = null;
+				if (yeniNoList != null && yeniNoList.isEmpty() == false)
+					updateList = ortakIslemler.personelERPDBGuncelle(false, yeniNoList, session);
+				if (updateList != null) {
+					for (Iterator iterator = updateList.iterator(); iterator.hasNext();) {
+						PersonelERP personelERP = (PersonelERP) iterator.next();
+						if (personelERP.getYazildi() == false)
+							iterator.remove();
+
+					}
+					if (updateList.isEmpty())
+						PdksUtil.addMessageInfo(" güncellendi");
+					else {
+						for (PersonelERP personelERP : updateList) {
+							if (!personelERP.getHataList().isEmpty()) {
+								for (String mesaj : personelERP.getHataList())
+									PdksUtil.addMessageAvailableWarn(personelERP.getPersonelNo() + " " + personelERP.getAdi() + " " + personelERP.getSoyadi() + " --> " + mesaj);
+							}
+						}
+					}
+				}
+			} catch (Exception e) {
+				logger.error(e);
+			}
+		}
 		return "";
 	}
 
@@ -290,6 +389,8 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 		}
 
 		parametreMap.put("pdksPersonel.sirket.id=", sirket.getId());
+		if (tesisId != null)
+			parametreMap.put("pdksPersonel.tesis.id=", tesisId);
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		try {
@@ -484,6 +585,38 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 
 	public void setApiGuncelle(Boolean apiGuncelle) {
 		this.apiGuncelle = apiGuncelle;
+	}
+
+	public Boolean getUpdateValue() {
+		return updateValue;
+	}
+
+	public void setUpdateValue(Boolean updateValue) {
+		this.updateValue = updateValue;
+	}
+
+	public List<SelectItem> getTesisList() {
+		return tesisList;
+	}
+
+	public void setTesisList(List<SelectItem> tesisList) {
+		this.tesisList = tesisList;
+	}
+
+	public Long getTesisId() {
+		return tesisId;
+	}
+
+	public void setTesisId(Long tesisId) {
+		this.tesisId = tesisId;
+	}
+
+	public Tanim getTesis() {
+		return tesis;
+	}
+
+	public void setTesis(Tanim tesis) {
+		this.tesis = tesis;
 	}
 
 }
