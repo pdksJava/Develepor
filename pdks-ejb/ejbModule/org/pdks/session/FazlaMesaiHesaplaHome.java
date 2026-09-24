@@ -2343,6 +2343,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 												}
 												// if (spVardiyaGuncellemeVar)
+												vardiyaGun.setGuncellendi(true);
 												saveVardiyaGunMap.put(vardiyaGun.getId(), vardiyaGun);
 												// else
 												// addSaveList(keyList, saveList, vardiyaGun);

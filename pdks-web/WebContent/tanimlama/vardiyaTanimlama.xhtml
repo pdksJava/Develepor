@@ -41,7 +41,7 @@
 								<f:facet name="header">
 									<h:outputText value="Vardiyalar" />
 								</f:facet>
-								<rich:column>
+								<rich:column rendered="#{authenticatedUser.admin}">
 									<f:facet name="header">
                        		 İşlemler
                			 </f:facet>
@@ -120,13 +120,13 @@
 									</ui:fragment>
 
 								</rich:column>
-								<rich:column>
+								<rich:column rendered="#{authenticatedUser.admin}">
 									<f:facet name="header">
 										<h:outputText value="Toplam Saat" />
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vardiya.calismaSaati)}" id="calismaSaati" />
 								</rich:column>
-								<rich:column>
+								<rich:column rendered="#{authenticatedUser.admin}">
 									<f:facet name="header">
 										<h:outputText value="Çalışma Şekli" />
 									</f:facet>
@@ -149,7 +149,7 @@
 									</rich:toolTip>
 
 								</rich:column>
-								<rich:column>
+								<rich:column rendered="#{authenticatedUser.admin}">
 									<f:facet name="header">
 										<h:outputText value="Arife Normal Çalışma Süresi" />
 									</f:facet>
@@ -157,7 +157,7 @@
 										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(vardiya.arifeNormalCalismaDakika)}" />
 									</ui:fragment>
 
-								</rich:column>
+								</rich:column rendered="#{authenticatedUser.admin}">
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="Gün Sayısı" />
@@ -210,36 +210,15 @@
 									<h:outputText rendered="#{vardiya.calisma}" value="#{authenticatedUser.sayiFormatliGoster(vardiya.cikisMolaSaat)}" />
 								</rich:column>
 
-								<rich:column>
-									<f:facet name="header">
-										<h:outputText value="Akşam #{ortakIslemler.vardiyaAciklama()}" />
-									</f:facet>
-									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.aksamVardiya)}" />
-								</rich:column>
-								<rich:column rendered="#{authenticatedUser.admin or authenticatedUser.IKAdmin}">
-									<f:facet name="header">
-										<h:outputText value="Genel" />
-									</f:facet>
-									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.genel)}" />
-								</rich:column>
+
 								<rich:column rendered="#{vardiyaHome.icapVardiyaGoster and (authenticatedUser.admin or authenticatedUser.IKAdmin)}">
 									<f:facet name="header">
 										<h:outputText value="İcap #{ortakIslemler.vardiyaAciklama()}" />
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.icapVardiya)}" />
 								</rich:column>
-								<rich:column rendered="#{authenticatedUser.admin or authenticatedUser.IKAdmin}">
-									<f:facet name="header">
-										<h:outputText value="Max Çalışma Ödenir" />
-									</f:facet>
-									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.aksamVardiyaMaxCalismaDurum)}" />
-								</rich:column>
-								<rich:column rendered="#{vardiyaHome.suaGoster and (authenticatedUser.admin or authenticatedUser.IKAdmin)}">
-									<f:facet name="header">
-										<h:outputText value="Şua #{ortakIslemler.vardiyaAciklama()}" />
-									</f:facet>
-									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.sua)}" />
-								</rich:column>
+
+
 
 
 								<rich:column rendered="#{vardiyaHome.gebelikGoster and (authenticatedUser.admin or authenticatedUser.IKAdmin)}">
@@ -254,47 +233,73 @@
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.sutIzni)}" />
 								</rich:column>
-								<rich:column>
-									<f:facet name="header">
-										<h:outputText value="FÇS Ödenir" />
-									</f:facet>
-									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.fcsDahil)}" />
-								</rich:column>
+								<c:if test="#{authenticatedUser.admin}">
+									<rich:column rendered="#{authenticatedUser.admin or authenticatedUser.IKAdmin}">
+										<f:facet name="header">
+											<h:outputText value="Max Çalışma Ödenir" />
+										</f:facet>
+										<h:outputText value="#{authenticatedUser.getYesNo(vardiya.aksamVardiyaMaxCalismaDurum)}" />
+									</rich:column>
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="Akşam #{ortakIslemler.vardiyaAciklama()}" />
+										</f:facet>
+										<h:outputText value="#{authenticatedUser.getYesNo(vardiya.aksamVardiya)}" />
+									</rich:column>
+									<rich:column rendered="#{authenticatedUser.admin or authenticatedUser.IKAdmin}">
+										<f:facet name="header">
+											<h:outputText value="Genel" />
+										</f:facet>
+										<h:outputText value="#{authenticatedUser.getYesNo(vardiya.genel)}" />
+									</rich:column>
+									<rich:column rendered="#{vardiyaHome.suaGoster and (authenticatedUser.admin or authenticatedUser.IKAdmin)}">
+										<f:facet name="header">
+											<h:outputText value="Şua #{ortakIslemler.vardiyaAciklama()}" />
+										</f:facet>
+										<h:outputText value="#{authenticatedUser.getYesNo(vardiya.sua)}" />
+									</rich:column>
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="FÇS Ödenir" />
+										</f:facet>
+										<h:outputText value="#{authenticatedUser.getYesNo(vardiya.fcsDahil)}" />
+									</rich:column>
 
-								<rich:column>
-									<f:facet name="header">
-										<h:outputText value="Mesai Ödenir" />
-									</f:facet>
-									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.mesaiOdenir)}" />
-								</rich:column>
-								<rich:column rendered="#{vardiyaHome.pasifGoster}">
-									<f:facet name="header">
-										<h:outputText value="Aktif" />
-									</f:facet>
-									<h:outputText value="#{authenticatedUser.getYesNo(vardiya.durum)}" />
-								</rich:column>
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="Mesai Ödenir" />
+										</f:facet>
+										<h:outputText value="#{authenticatedUser.getYesNo(vardiya.mesaiOdenir)}" />
+									</rich:column>
+									<rich:column rendered="#{vardiyaHome.pasifGoster}">
+										<f:facet name="header">
+											<h:outputText value="Aktif" />
+										</f:facet>
+										<h:outputText value="#{authenticatedUser.getYesNo(vardiya.durum)}" />
+									</rich:column>
 
 
-								<rich:column>
-									<f:facet name="header">
-										<h:outputText value="Son İşlem Yapan" />
-									</f:facet>
-									<h:outputText value="#{vardiya.sonIslemYapan.adSoyad}" />
-								</rich:column>
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="Son İşlem Yapan" />
+										</f:facet>
+										<h:outputText value="#{vardiya.sonIslemYapan.adSoyad}" />
+									</rich:column>
 
-								<rich:column>
-									<f:facet name="header">
-										<h:outputText value="Son İşlem Tarihi" />
-									</f:facet>
-									<h:outputText value="#{vardiya.sonIslemTarihiStr}" />
-								</rich:column>
+									<rich:column>
+										<f:facet name="header">
+											<h:outputText value="Son İşlem Tarihi" />
+										</f:facet>
+										<h:outputText value="#{vardiya.sonIslemTarihiStr}" />
+									</rich:column>
+								</c:if>
 
 								<f:facet name="footer">
 									<rich:datascroller renderIfSinglePage="false" maxPages="5" />
 								</f:facet>
 							</rich:dataTable>
-							<a4j:commandButton status="ajaxStatus" value="#{ortakIslemler.vardiyaAciklama()} Ekle" action="#{vardiyaHome.kayitGuncelle(null)}"
-								oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
+							<a4j:commandButton status="ajaxStatus" value="#{ortakIslemler.vardiyaAciklama()} Ekle" rendered="#{authenticatedUser.admin}"
+								action="#{vardiyaHome.kayitGuncelle(null)}" oncomplete="#{rich:component('editPanel')}.show()" reRender="editPanel">
 								<f:setPropertyActionListener value="#{vardiya}" target="#{vardiyaHome.seciliVardiya}">
 									<s:convertEntity />
 								</f:setPropertyActionListener>
