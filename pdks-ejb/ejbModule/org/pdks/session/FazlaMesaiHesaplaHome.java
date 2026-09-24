@@ -613,7 +613,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			}
 
 			if (hareketDoldur == false) {
-				if (!userLogin.isAdmin() && !userLogin.isIK() && !userLogin.isYoneticiKontratli()) {
+				if (!userLogin.isAdmin() && !ikRole && !userLogin.isYoneticiKontratli()) {
 					sirket = userLogin.getPdksPersonel().getSirket();
 					sirketId = sirket.getId();
 				}
