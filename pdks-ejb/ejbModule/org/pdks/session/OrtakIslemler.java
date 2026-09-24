@@ -11853,12 +11853,13 @@ public class OrtakIslemler implements Serializable {
 							if (flush)
 								pdksEntityController.sessionRefresh(session, null, menuItemTime);
 						}
-						authenticatedUser.setMenuItemTime(menuItemTime);
+					
 
 					}
 					if (flush)
 						try {
 							pdksEntityController.sessionFlush(session);
+							authenticatedUser.setMenuItemTime(menuItemTime);
 						} catch (Exception e) {
 							logger.error(e);
 							e.printStackTrace();
