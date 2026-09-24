@@ -7579,12 +7579,7 @@ public class OrtakIslemler implements Serializable {
 							pdksEntityController.saveOrUpdate(session, null, menuItemTime);
 							flush = true;
 						} else {
-							pdksEntityController.startTransaction(session);
-							LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-							veriMap.put("j", parametreJSON);
-							veriMap.put("s", sessionId != null ? sessionId : menuItemTime.getSessionId());
-							veriMap.put("mt", menuItemTime.getId());
-							pdksEntityController.execSP(session, veriMap, spName);
+							updateUserMenuItem(menuItemTime, parametreJSON, sessionId, spName, session);
 						}
 						if (flush)
 							pdksEntityController.sessionFlush(session);
@@ -7602,6 +7597,24 @@ public class OrtakIslemler implements Serializable {
 
 		}
 
+	}
+
+	/**
+	 * @param menuItemTime
+	 * @param parametreJSON
+	 * @param sessionId
+	 * @param spName
+	 * @param session
+	 * @throws Exception
+	 */
+	@Transactional
+	private void updateUserMenuItem(UserMenuItemTime menuItemTime, String parametreJSON, String sessionId, String spName, Session session) throws Exception {
+		pdksEntityController.startTransaction(session);
+		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+		veriMap.put("j", parametreJSON);
+		veriMap.put("s", sessionId);
+		veriMap.put("mt", menuItemTime.getId());
+		pdksEntityController.execSP(session, veriMap, spName);
 	}
 
 	/**
@@ -11814,17 +11827,31 @@ public class OrtakIslemler implements Serializable {
 								map = new LinkedHashMap<String, Object>();
 							if (!menuItemTime.getSessionId().equals(sessionId) || map.isEmpty()) {
 								pdksEntityController.startTransaction(session);
+								String spName = "SP_UPDATE_USER_MENUITEM_TIME_IPTAL";
+								String parametreJSON = menuItemTime.getParametreJSON();
 								if (map.isEmpty()) {
 									map.put("kullanici", authenticatedUser.getAdSoyad());
 									map.put("menuAdi", getMenuAdi(menuAdi));
-									menuItemTime.setParametreJSON(gson.toJson(map));
+									parametreJSON = gson.toJson(map);
+									menuItemTime.setParametreJSON(parametreJSON);
 								}
 								menuItemTime.setLastTime(lastTime);
 								menuItemTime.addUseCount();
-								menuItemTime.setSessionId(mySession.getId());
-								pdksEntityController.saveOrUpdate(session, null, menuItemTime);
-								flush = true;
+								menuItemTime.setSessionId(sessionId);
+								if (isExisStoreProcedure(spName, session) == false) {
+									pdksEntityController.saveOrUpdate(session, null, menuItemTime);
+									flush = true;
+								} else
+									try {
+										updateUserMenuItem(menuItemTime, parametreJSON, sessionId, spName, session);
+										flush = true;
+									} catch (Exception e) {
+										// TODO: handle exception
+									}
+
 							}
+							if (flush)
+								pdksEntityController.sessionRefresh(session, null, menuItemTime);
 						}
 						authenticatedUser.setMenuItemTime(menuItemTime);
 
@@ -25551,7 +25578,7 @@ public class OrtakIslemler implements Serializable {
 							}
 							try {
 								hareket.setDenklestirmeAyDurum(denklestirmeAyDurum);
- 								if (vardiyaGun.addHareket(hareket, Boolean.TRUE)) {
+								if (vardiyaGun.addHareket(hareket, Boolean.TRUE)) {
 									// TODO isOtomatikFazlaCalismaOnaylansinmi GETİR
 									List<HareketKGS> vardiyaHareketler = null;
 									hareket.setOrjinalZamanGetir(vardiyaGun.getVardiya().isCalisma() == false);
