@@ -187,17 +187,19 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 
 				if (list != null) {
 					if (list.isEmpty() == false) {
-						list = PdksUtil.sortTanimList(null, list);
+						if (tesisList.size() == 1)
+							tesisId = list.get(0).getId();
+						else
+							list = PdksUtil.sortTanimList(null, list);
 						tesisList = new ArrayList<SelectItem>();
 						for (Tanim tanim : list)
 							tesisList.add(new SelectItem(tanim.getId(), tanim.getAciklama()));
-						if (tesisList.size() == 1)
-							tesisId = list.get(0).getId();
 					}
+					list = null;
 				}
 			}
 		}
-		
+
 		return "";
 	}
 
