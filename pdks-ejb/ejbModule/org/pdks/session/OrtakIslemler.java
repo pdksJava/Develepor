@@ -6089,6 +6089,16 @@ public class OrtakIslemler implements Serializable {
 					boolean tesisEkle = false;
 					if (tipi.equalsIgnoreCase("D") || tipi.equalsIgnoreCase("S") || tipi.equalsIgnoreCase("T")) {
 						tesisEkle = true;
+						try {
+							if (tipi.equalsIgnoreCase("T") && loginUser.isSirketSuperVisor() && sirket != null && loginUser != null) {
+								Sirket personelSirket = loginUser.getPdksPersonel() != null ? loginUser.getPdksPersonel().getSirket() : null;
+								if (personelSirket != null)
+									tesisEkle = personelSirket.getId().equals(sirket.getId()) == false;
+							}
+						} catch (Exception e) {
+							logger.error(e);
+						}
+
 						if (tesisYetki && loginUser.getId() != null && (loginUser.isIK() || loginUser.isTesisSuperVisor()) && (loginUser.getYetkiliTesisler() == null || loginUser.getYetkiliTesisler().isEmpty())) {
 							setUserTesisler(loginUser, false, session);
 						}
@@ -11858,7 +11868,7 @@ public class OrtakIslemler implements Serializable {
 					if (flush)
 						try {
 							pdksEntityController.sessionFlush(session);
-							
+
 							authenticatedUser.setMenuItemTime(menuItemTime);
 						} catch (Exception e) {
 							logger.error(e);
