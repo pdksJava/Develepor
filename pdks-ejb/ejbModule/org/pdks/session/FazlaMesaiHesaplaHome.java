@@ -1955,6 +1955,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							offIzinliGunler.clear();
 							puantaj.setEksikGunVar(false);
 							PersonelDenklestirme personelDenklestirme = puantaj.getPersonelDenklestirme();
+							PersonelDenklestirme pdYedek = (PersonelDenklestirme) personelDenklestirme.clone();
+							pdYedek.setGuncellendi(false);
 							puantaj.setDonemBitti(Boolean.FALSE);
 							puantaj.setAyrikHareketVar(false);
 							puantaj.setFiiliHesapla(true);
@@ -3088,7 +3090,31 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 										if (sonDurum != null)
 											personelDenklestirme.setDurum(sonDurum);
-										saveOrUpdate(personelDenklestirme);
+										if (personelDenklestirme.isGuncellendi()) {
+											pdYedek.setGuncellendi(false);
+											pdYedek.setAksamVardiyaSayisi(personelDenklestirme.getAksamVardiyaSaatSayisi());
+
+											pdYedek.setDevredenSure(personelDenklestirme.getDevredenSure());
+
+											pdYedek.setDurum(personelDenklestirme.getDurum());
+											pdYedek.setEgitimSuresiAksamGunSayisi(null);
+
+											pdYedek.setEksikCalismaSure(personelDenklestirme.getEksikCalismaSure());
+
+											pdYedek.setFazlaMesaiSure(personelDenklestirme.getFazlaMesaiSure());
+											pdYedek.setHaftaCalismaSuresi(personelDenklestirme.getHaftaCalismaSuresi());
+
+											pdYedek.setHesaplananSure(personelDenklestirme.getHesaplananSure());
+											pdYedek.setKesilenSure(personelDenklestirme.getKesilenSure());
+
+											pdYedek.setOdenenSure(personelDenklestirme.getOdenenSure());
+
+											pdYedek.setPlanlanSure(personelDenklestirme.getPlanlanSure());
+											pdYedek.setResmiTatilSure(personelDenklestirme.getResmiTatilSure());
+											if (pdYedek.isGuncellendi())
+												saveOrUpdate(personelDenklestirme);
+										}
+
 										flush = Boolean.TRUE;
 									}
 								}
