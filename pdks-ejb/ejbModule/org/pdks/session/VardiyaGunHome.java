@@ -346,6 +346,16 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		session.clear();
 	}
 
+	public boolean getOnayDurum(AylikPuantaj ap) {
+		boolean onayDurum = adminRole || ikRole;
+		if (onayDurum == false) {
+			if ((kullaniciPersonel == false || calismaPlanKilit != null) && (yoneticiERP1Kontrol == false || ap.getYonetici().getId() != null || ap.getPdksPersonel().getSanalPersonel()))
+				onayDurum = true;
+
+		}
+		return onayDurum;
+	}
+
 	/**
 	 * @param tanim
 	 * @return
@@ -410,7 +420,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (user == null)
 			user = getPdksUser();
 		adminRole = user != null && (user.isAdmin() || user.isSistemYoneticisi() || user.isIKAdmin());
-		ikRole = user != null &&  PdksUtil.getIkRole(user) ;
+		ikRole = user != null && PdksUtil.getIkRole(user);
 		fazlaMesaiTalepDurum = Boolean.FALSE;
 		aylikPuantajListClear();
 		if (fazlaMesaiTalepler != null)

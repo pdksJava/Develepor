@@ -3027,7 +3027,7 @@ public class PdksUtil implements Serializable {
 	 */
 	private static List<Role> setUserYetkiler(User user, List<Role> roller) {
 		List<String> yoneticiYetkiliRoller = Arrays.asList(new String[] { Role.TIPI_YONETICI_KONTRATLI, Role.TIPI_SUPER_VISOR, Role.TIPI_DIREKTOR_SUPER_VISOR, Role.TIPI_PROJE_MUDURU, Role.TIPI_MUDUR, Role.TIPI_TESIS_SUPER_VISOR, Role.TIPI_SIRKET_SUPER_VISOR });
-		List<String> ikYetkiliRoller = Arrays.asList(new String[] { Role.TIPI_ANAHTAR_KULLANICI, Role.TIPI_IK_Tesis, Role.TIPI_IK_SIRKET, Role.TIPI_IK_DIREKTOR, Role.TIPI_SISTEM_YONETICI, Role.TIPI_GENEL_MUDUR });
+		List<String> ikYetkiliRoller = Arrays.asList(new String[] { Role.TIPI_ADMIN, Role.TIPI_ANAHTAR_KULLANICI, Role.TIPI_IK_Tesis, Role.TIPI_IK_SIRKET, Role.TIPI_IK_DIREKTOR, Role.TIPI_SISTEM_YONETICI, Role.TIPI_GENEL_MUDUR });
 		List<Role> digerRoller = new ArrayList<Role>();
 		Personel pdksPersonel = user.getPdksPersonel();
 		HashMap<String, Role> roleMap = new HashMap<String, Role>();

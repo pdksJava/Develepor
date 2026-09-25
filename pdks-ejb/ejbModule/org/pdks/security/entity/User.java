@@ -267,8 +267,10 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 		return pdksPersonel != null && pdksPersonel.getSirket() != null && pdksPersonel.getSirket().isErp();
 	}
 
-	public void setIK(Boolean ik) {
-		IK = ik;
+	public void setIK(Boolean value) {
+		if (value == null || value.booleanValue() == false)
+			logger.debug("");
+		IK = value;
 	}
 
 	@Transient

@@ -3138,10 +3138,15 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						iterator.remove();
 					} else {
 						if (tesisIdList != null) {
-							if (pdksPersonel.getTesis() == null || tesisIdList.contains(pdksPersonel.getTesis().getId()) == false) {
-								iterator.remove();
-								continue;
+							try {
+								if (pdksPersonel == null || pdksPersonel.getTesis() == null || tesisIdList.contains(pdksPersonel.getTesis().getId()) == false) {
+									iterator.remove();
+									continue;
+								}
+							} catch (Exception e) {
+								logger.error(e);
 							}
+
 						}
 
 						Sirket sirket = pdksPersonel != null ? pdksPersonel.getSirket() : null;
