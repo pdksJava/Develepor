@@ -332,7 +332,7 @@
 								</h:selectBooleanCheckbox>
 							</s:decorate>
 
-							<ui:fragment rendered="#{authenticatedUser.admin or authenticatedUser.IKAdmin}">
+							<ui:fragment rendered="#{authenticatedUser.admin or authenticatedUser.IK}">
 								<a4j:commandButton status="ajaxStatus" value="Kaydet" action="#{vardiyaTanimlaHome.kaydet()}"
 									oncomplete="if (#{facesContext.maximumSeverity == null}) #{rich:component('editPanel')}.hide();" reRender="vardiyaPanel,vardiyaTable,sss" />
 							</ui:fragment>
