@@ -3047,16 +3047,17 @@ public class PdksUtil implements Serializable {
 				user.setAdmin(Boolean.TRUE);
 			else if (rolAdi.equals(Role.TIPI_ANAHTAR_KULLANICI))
 				user.setAnahtarKullanici(Boolean.TRUE);
-			else if (rolAdi.equals(Role.TIPI_SISTEM_YONETICI))
+			else if (rolAdi.equals(Role.TIPI_SISTEM_YONETICI)) {
 				user.setSistemYoneticisi(Boolean.TRUE);
-			else if (rolAdi.equals(Role.TIPI_IK))
+				user.setIK(Boolean.TRUE);
+			} else if (rolAdi.equals(Role.TIPI_IK))
 				user.setIK(Boolean.TRUE);
 			else if (rolAdi.equals(Role.TIPI_IK_SIRKET)) {
 				user.setIKSirket(Boolean.TRUE);
-				// user.setIK(Boolean.TRUE);
+				user.setIK(Boolean.TRUE);
 			} else if (rolAdi.equals(Role.TIPI_IK_Tesis)) {
 				user.setIK_Tesis(Boolean.TRUE);
-				// user.setIK(Boolean.TRUE);
+				user.setIK(Boolean.TRUE);
 			} else if (rolAdi.equals(Role.TIPI_IK_DIREKTOR))
 				user.setIKDirektor(Boolean.TRUE);
 			else if (rolAdi.equals(Role.TIPI_YONETICI))

@@ -428,8 +428,8 @@
 													</f:facet>
 													<ui:fragment rendered="#{hareketler.islem.onaylayanUser != null}">
 												#{hareketler.islem.onaylayanUser.adSoyad}   
-												<h:outputText value=" #{hareketler.islem.onayDurumAciklama}" rendered="#{hareketler.durum != 0}" />
-														<h:outputText value=" (İptal Edildi : #{authenticatedUser.dateTimeLongFormatla(hareketler.islem.olusturmaZamani)})" rendered="#{hareketler.durum == 0}" />
+														<h:outputText value=" #{hareketler.islem.onayDurumAciklama}" rendered="#{hareketler.durum != 0}" />
+	 													<h:outputText value=" (İptal Edildi : #{authenticatedUser.dateTimeLongFormatla(hareketler.islem.olusturmaZamani)})" rendered="#{hareketler.durum == 0}" />
 													</ui:fragment>
 												</rich:column>
 												<rich:column rendered="#{personelHareketHome.kgsUpdateGoster}">
