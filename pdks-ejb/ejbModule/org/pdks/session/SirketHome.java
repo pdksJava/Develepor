@@ -31,11 +31,12 @@ import org.pdks.entity.PersonelView;
 import org.pdks.entity.Sirket;
 import org.pdks.entity.SirketEntegrasyon;
 import org.pdks.entity.Tanim;
+import org.pdks.erp.entity.IzinERPDB;
 import org.pdks.erp.entity.PersonelERPDB;
-import org.pdks.quartz.PersonelERPGuncelleme;
 import org.pdks.security.action.StartupAction;
 import org.pdks.security.entity.User;
 
+import com.pdks.webservice.IzinERP;
 import com.pdks.webservice.PersonelERP;
 
 @Name("sirketHome")
@@ -66,7 +67,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 	private List<Departman> departmanList = new ArrayList<Departman>();
 	private List<Sirket> sirketList = new ArrayList<Sirket>();
 	private List<PersonelView> personelList;
-	private Boolean istenAyrilanlariEkle, sirketEklenebilir, sirketGrupGoster, erpDatabaseDurum, apiGuncelle, updateValue;
+	private Boolean istenAyrilanlariEkle, sirketEklenebilir, sirketGrupGoster, erpDatabaseDurum, apiGuncelle, updatePersonelValue, updateIzinValue;
 	private HashMap<String, List<Tanim>> ekSahaListMap;
 	private TreeMap<String, Tanim> ekSahaTanimMap;
 	private String bolumAciklama;
@@ -157,18 +158,22 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 			personelList.clear();
 		else
 			personelList = new ArrayList<PersonelView>();
-		updateValue = false;
+
+		updatePersonelValue = false;
+		updateIzinValue = false;
 		tesisList = null;
 		tesisId = null;
 		tesis = null;
 		setSeciliSirket(sirket);
-		if (seciliSirket.getId() != null && seciliSirket.isErp()) {
-			boolean tableERPOku = ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.getParametrePersonelERPTableView());
+		if (seciliSirket.getId() != null && seciliSirket.isErp() && seciliSirket.getPdks()) {
 
-			if ((authenticatedUser.isIK() || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()))
-				updateValue = tableERPOku || ortakIslemler.getParameterKeyHasStringValue(PersonelERPGuncelleme.PARAMETER_KEY + "Update");
+			if ((authenticatedUser.isIK() || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi())) {
+				updatePersonelValue = ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.getParametrePersonelERPTableView());
+				updateIzinValue = ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.getParametreIzinERPTableView());
 
-			if (seciliSirket.isTesisDurumu()) {
+			}
+
+			if (seciliSirket.isTesisDurumu() && updatePersonelValue) {
 				HashMap fields = new HashMap();
 				StringBuilder sb = new StringBuilder();
 				sb.append("select distinct T.* from " + Personel.TABLE_NAME + " P " + PdksEntityController.getSelectLOCK());
@@ -187,7 +192,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 
 				if (list != null) {
 					if (list.isEmpty() == false) {
-						if (tesisList.size() == 1)
+						if (list.size() == 1)
 							tesisId = list.get(0).getId();
 						else
 							list = PdksUtil.sortTanimList(null, list);
@@ -204,7 +209,7 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 	}
 
 	@Transactional
-	public String personelERPDBGuncelle() {
+	public String personelERPDBGuncelle(boolean personel) {
 		tesis = null;
 		String parameterName = ortakIslemler.getParametrePersonelERPTableView();
 		String personelERPTableViewAdi = ortakIslemler.getParameterKey(parameterName);
@@ -213,7 +218,12 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 				tesis = (Tanim) pdksEntityController.getSQLParamByFieldObject(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, tesisId, Tanim.class, session);
 			HashMap fields = new HashMap();
 			StringBuilder sb = new StringBuilder();
-			sb.append(" select V." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " from " + personelERPTableViewAdi + " V " + PdksEntityController.getSelectLOCK());
+			sb.append(" select distinct V." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " from " + personelERPTableViewAdi + " V " + PdksEntityController.getSelectLOCK());
+			if (personel == false) {
+				parameterName = ortakIslemler.getParametreIzinERPTableView();
+				String izinERPTableViewAdi = ortakIslemler.getParameterKey(parameterName);
+				sb.append(" inner join " + izinERPTableViewAdi + " I " + PdksEntityController.getJoinLOCK() + " on I." + IzinERPDB.COLUMN_NAME_PERSONEL_NO + " = V." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO);
+			}
 			sb.append(" where V." + PersonelERPDB.COLUMN_NAME_SIRKET_KODU + " = :s ");
 			fields.put("s", seciliSirket.getErpKodu());
 			if (tesis != null) {
@@ -229,27 +239,53 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			try {
 				List<String> yeniNoList = pdksEntityController.getObjectBySQLList(sb, fields, null);
-				List<PersonelERP> updateList = null;
-				if (yeniNoList != null && yeniNoList.isEmpty() == false)
-					updateList = ortakIslemler.personelERPDBGuncelle(false, yeniNoList, session);
-				if (updateList != null) {
-					for (Iterator iterator = updateList.iterator(); iterator.hasNext();) {
-						PersonelERP personelERP = (PersonelERP) iterator.next();
-						if (personelERP.getYazildi() == false)
-							iterator.remove();
+				if (yeniNoList != null && yeniNoList.isEmpty() == false) {
+					if (personel) {
+						List<PersonelERP> updateList = ortakIslemler.personelERPDBGuncelle(false, yeniNoList, session);
+						if (updateList != null) {
+							for (Iterator iterator = updateList.iterator(); iterator.hasNext();) {
+								PersonelERP personelERP = (PersonelERP) iterator.next();
+								if (personelERP.getYazildi() == false)
+									iterator.remove();
 
-					}
-					if (updateList.isEmpty())
-						PdksUtil.addMessageInfo(" güncellendi");
-					else {
-						for (PersonelERP personelERP : updateList) {
-							if (!personelERP.getHataList().isEmpty()) {
-								for (String mesaj : personelERP.getHataList())
-									PdksUtil.addMessageAvailableWarn(personelERP.getPersonelNo() + " " + personelERP.getAdi() + " " + personelERP.getSoyadi() + " --> " + mesaj);
+							}
+							if (updateList.isEmpty())
+								PdksUtil.addMessageInfo(" güncellendi");
+							else {
+								for (PersonelERP personelERP : updateList) {
+									if (!personelERP.getHataList().isEmpty()) {
+										for (String mesaj : personelERP.getHataList())
+											PdksUtil.addMessageAvailableWarn(personelERP.getPersonelNo() + " " + personelERP.getAdi() + " " + personelERP.getSoyadi() + " --> " + mesaj);
+									}
+								}
+							}
+						}
+					} else {
+						HashMap<String, List<String>> veriMap = new HashMap<String, List<String>>();
+						veriMap.put("P", yeniNoList);
+						List<IzinERP> updateList = null;
+						updateList = ortakIslemler.izinERPDBGuncelle(false, veriMap, session);
+						if (updateList != null) {
+							for (Iterator iterator = updateList.iterator(); iterator.hasNext();) {
+								IzinERP izinERP = (IzinERP) iterator.next();
+								if (izinERP.getYazildi() != null && izinERP.getYazildi() == false)
+									iterator.remove();
+							}
+							if (updateList.isEmpty())
+								PdksUtil.addMessageInfo(" güncellendi");
+							else {
+								for (IzinERP izinERP : updateList) {
+									if (!izinERP.getHataList().isEmpty()) {
+										for (String mesaj : izinERP.getHataList())
+											PdksUtil.addMessageAvailableWarn(izinERP.getPersonelNo() + " --> " + mesaj);
+									}
+								}
 							}
 						}
 					}
+
 				}
+
 			} catch (Exception e) {
 				logger.error(e);
 			}
@@ -590,14 +626,6 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 		this.apiGuncelle = apiGuncelle;
 	}
 
-	public Boolean getUpdateValue() {
-		return updateValue;
-	}
-
-	public void setUpdateValue(Boolean updateValue) {
-		this.updateValue = updateValue;
-	}
-
 	public List<SelectItem> getTesisList() {
 		return tesisList;
 	}
@@ -620,6 +648,22 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 
 	public void setTesis(Tanim tesis) {
 		this.tesis = tesis;
+	}
+
+	public Boolean getUpdatePersonelValue() {
+		return updatePersonelValue;
+	}
+
+	public void setUpdatePersonelValue(Boolean updatePersonelValue) {
+		this.updatePersonelValue = updatePersonelValue;
+	}
+
+	public Boolean getUpdateIzinValue() {
+		return updateIzinValue;
+	}
+
+	public void setUpdateIzinValue(Boolean updateIzinValue) {
+		this.updateIzinValue = updateIzinValue;
 	}
 
 }
