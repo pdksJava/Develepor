@@ -15,7 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
 
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
@@ -162,7 +161,7 @@ public class PersonelDenklestirme extends BaseObject {
 		this.setOnaylandi(pd.isOnaylandi());
 	}
 
-	@Version
+	 // @Version
 	@Column(name = "VERSION")
 	public Integer getVersion() {
 		return version;
