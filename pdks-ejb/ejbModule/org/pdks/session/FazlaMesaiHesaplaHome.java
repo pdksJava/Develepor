@@ -1775,6 +1775,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						aylikPuantajSablon.setIsAramaDurum(false);
 						boolean denkDurum = denklestirmeAy.getDurum();
 						List<AylikPuantaj> puantajList = denkDurum && (adminRole || ikRole) ? new ArrayList<AylikPuantaj>() : null;
+						HashMap<Long, PersonelDenklestirme> pdMap = new HashMap<Long, PersonelDenklestirme>();
 						for (Iterator iterator1 = list.iterator(); iterator1.hasNext();) {
 							PersonelDenklestirmeTasiyici denklestirmeTasiyici = (PersonelDenklestirmeTasiyici) iterator1.next();
 							AylikPuantaj puantaj = (AylikPuantaj) aylikPuantajSablon.clone();
@@ -1784,6 +1785,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								iterator1.remove();
 								continue;
 							}
+							pdMap.put(pd.getId(), (PersonelDenklestirme) pd.clone());
 							if (puantajList != null) {
 								CalismaModeliAy cma = pd.getCalismaModeliAy();
 								if (pd.isOnaylandi() == false && cma != null && cma.isHareketKaydiVardiyaBulsunmu())
@@ -1955,6 +1957,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							offIzinliGunler.clear();
 							puantaj.setEksikGunVar(false);
 							PersonelDenklestirme personelDenklestirme = puantaj.getPersonelDenklestirme();
+							PersonelDenklestirme pdYedek = pdMap.containsKey(personelDenklestirme.getId()) ? pdMap.get(personelDenklestirme.getId()) : (PersonelDenklestirme) personelDenklestirme.clone();
 							puantaj.setDonemBitti(Boolean.FALSE);
 							puantaj.setAyrikHareketVar(false);
 							puantaj.setFiiliHesapla(true);
@@ -3085,11 +3088,28 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 												}
 											}
 										}
-
-										if (sonDurum != null)
-											personelDenklestirme.setDurum(sonDurum);
-										saveOrUpdate(personelDenklestirme);
-										flush = Boolean.TRUE;
+										if (sonDurum == null)
+											sonDurum = puantaj.isFazlaMesaiHesapla();
+										personelDenklestirme.setDurum(sonDurum);
+										if (personelDenklestirme.isGuncellendi()) {
+											pdYedek.setGuncellendi(false);
+											pdYedek.setAksamVardiyaSayisi(personelDenklestirme.getAksamVardiyaSaatSayisi());
+											pdYedek.setDevredenSure(personelDenklestirme.getDevredenSure());
+											pdYedek.setDurum(personelDenklestirme.getDurum());
+											pdYedek.setEgitimSuresiAksamGunSayisi(null);
+											pdYedek.setEksikCalismaSure(personelDenklestirme.getEksikCalismaSure());
+											pdYedek.setFazlaMesaiSure(personelDenklestirme.getFazlaMesaiSure());
+											pdYedek.setHaftaCalismaSuresi(personelDenklestirme.getHaftaCalismaSuresi());
+											pdYedek.setHesaplananSure(personelDenklestirme.getHesaplananSure());
+											pdYedek.setKesilenSure(personelDenklestirme.getKesilenSure());
+											pdYedek.setOdenenSure(personelDenklestirme.getOdenenSure());
+											pdYedek.setPlanlanSure(personelDenklestirme.getPlanlanSure());
+											pdYedek.setResmiTatilSure(personelDenklestirme.getResmiTatilSure());
+											if (pdYedek.isGuncellendi()) {
+												saveOrUpdate(personelDenklestirme);
+												flush = Boolean.TRUE;
+											}
+										}
 									}
 								}
 							}
