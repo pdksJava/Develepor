@@ -329,8 +329,7 @@
 
 										<table>
 											<TR>
-												<ui:fragment
-													rendered="#{vardiyaGunHome.getOnayDurum(aylikPuantaj) or (vardiyaGunHome.kullaniciPersonel == false or vardiyaGunHome.calismaPlanKilit != null) and (vardiyaGunHome.yoneticiERP1Kontrol == false or aylikPuantaj.yonetici.id != null or aylikPuantaj.pdksPersonel.sanalPersonel)}">
+												<ui:fragment rendered="#{vardiyaGunHome.getOnayDurum(aylikPuantaj)}">
 
 													<TD><h:selectBooleanCheckbox value="#{aylikPuantaj.onayDurum}" disabled="#{vardiyaGunHome.calismaPlanKilit != null}">
 															<a4j:support event="onclick" />
