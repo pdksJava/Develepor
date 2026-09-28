@@ -5284,7 +5284,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		User guncelleyen = null;
 		for (Iterator iterator = hareketler.iterator(); iterator.hasNext();) {
 			HareketKGS hareketKGS = (HareketKGS) iterator.next();
-			if (ayiklaMap.containsKey(hareketKGS.getId()) == false) {
+			boolean devam = false;
+			if (hareketKGS.getId() != null)
+				devam = hareketKGS.getId().startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_KGS) || hareketKGS.getId().startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_PDKS);
+			if (devam && ayiklaMap.containsKey(hareketKGS.getId()) == false) {
 				if (guncelleyen == null)
 					guncelleyen = ortakIslemler.getSistemAdminUser(session);
 				String aciklama = hareketKGS.getId().substring(1) + " " + hareketKGS.getKapiKGS().getKapi().getAciklama() + " geçiş iptal";
@@ -5293,13 +5296,19 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					kgsId = hareketKGS.getHareketTableId();
 				else if (hareketKGS.getId().startsWith(HareketKGS.GIRIS_ISLEM_YAPAN_SIRKET_PDKS))
 					pdksId = hareketKGS.getHareketTableId();
-				Long id = pdksEntityController.hareketSil(kgsId, pdksId, guncelleyen, mukerrerHareketIptalNeden.getId(), aciklama, hareketKGS.getKgsSirketId(), session);
-				if (id != null && hareketKGS.getHareketTableId().equals(id)) {
-					flush = true;
-					tekrarCalistir = userLogin.getLogin();
-					if (tekrarCalistir == false)
-						logger.info(vg.getVardiyaKeyStr() + " " + hareketKGS.getId());
+				try {
+
+					Long id = pdksEntityController.hareketSil(kgsId, pdksId, guncelleyen, mukerrerHareketIptalNeden.getId(), aciklama, hareketKGS.getKgsSirketId(), session);
+					if (id != null && hareketKGS.getHareketTableId().equals(id)) {
+						flush = true;
+						tekrarCalistir = userLogin.getLogin();
+						if (tekrarCalistir == false)
+							logger.info(vg.getVardiyaKeyStr() + " " + hareketKGS.getId());
+					}
+				} catch (Exception e) {
+					logger.error(e);
 				}
+
 			}
 		}
 		if (flush)
