@@ -954,6 +954,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		} catch (Exception e) {
 		}
 		setDonusAdres(map.containsKey("host") ? map.get("host") : "");
+		String mailAdres = "http://" + donusAdres;
+		String str = ortakIslemler.getMobilWebAdres();
+		if (str != null)
+			mailAdres = str;
 		boolean test = donusAdres.indexOf("localhost:") >= 0;
 		if (toList == null)
 			toList = new ArrayList<User>();
@@ -1002,8 +1006,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				mail.setSubject(mailKonu);
 				StringBuilder body = new StringBuilder(mailIcerik);
 				body.append("<p><TABLE style=\"width: 270px;\"><TR>");
-				body.append("<td width=\"90px\"><a style=\"font-size: 16px;\" href=\"http://" + donusAdres + "/mesaiTalepLinkOnay?id=" + getOnayId(String.valueOf(FazlaMesaiTalep.ONAY_DURUM_ONAYLANDI)) + "\"><b>Onay</b></a></td>");
-				body.append("<td width=\"90px\"><a style=\"font-size: 16px;\" href=\"http://" + donusAdres + "/mesaiTalepLinkOnay?id=" + getOnayId(String.valueOf(FazlaMesaiTalep.ONAY_DURUM_RED)) + "\"><b>Red</b></a></td>");
+				body.append("<td width=\"90px\"><a style=\"font-size: 16px;\" href=\"" + mailAdres + "/mesaiTalepLinkOnay?id=" + getOnayId(String.valueOf(FazlaMesaiTalep.ONAY_DURUM_ONAYLANDI)) + "\"><b>Onay</b></a></td>");
+				body.append("<td width=\"90px\"><a style=\"font-size: 16px;\" href=\"" + mailAdres + "/mesaiTalepLinkOnay?id=" + getOnayId(String.valueOf(FazlaMesaiTalep.ONAY_DURUM_RED)) + "\"><b>Red</b></a></td>");
 				body.append("</TR></TABLE></p>");
 				mail.setBody(body.toString());
 				body = null;
@@ -10884,7 +10888,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	public void sayfaGirisAction() throws Exception {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
-		topluGuncelleme = false;
+ 		topluGuncelleme = false;
 		setPdksUser(authenticatedUser);
 		userLoginOldu = authenticatedUser != null;
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);

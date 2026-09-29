@@ -9,9 +9,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -411,7 +411,7 @@ public class OrtakIslemler implements Serializable {
 		byte[] pngData = null;
 		try {
 			txt = URLEncoder.encode(txt, StandardCharsets.UTF_8.toString());
-		} catch (UnsupportedEncodingException e1) {
+		} catch (Exception e1) {
 		}
 
 		String path = "$path$/rest/servicesKGS/generateQR?text=" + (PdksUtil.hasStringValue(txt) ? txt : "");
@@ -4075,6 +4075,39 @@ public class OrtakIslemler implements Serializable {
 		}
 
 		return service;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getMobilWebAdres() {
+		String str = null;
+		File file = new File("/opt/sertifika/mobilWeb.txt");
+		if (file != null && file.exists()) {
+			try {
+				str = new String(PdksUtil.getFileByteArray(file));
+				if (str != null) {
+					if (str.indexOf("http") < 0) {
+						HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+						if (req != null) {
+ 							InetAddress localHost = InetAddress.getLocalHost();
+							String serverIP = localHost.getHostAddress();
+							int pos = serverIP.indexOf(">");
+							if (pos > 0)
+								serverIP = serverIP.substring(pos + 1);
+ 							int port = req.getServerPort();
+							str = "http://" + serverIP + (port != 80 ? ":" + port : "");
+						}
+
+					}
+				}
+
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+
+		}
+		return str;
 	}
 
 	/**
