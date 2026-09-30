@@ -958,7 +958,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		String str = ortakIslemler.getMobilWebAdres();
 		if (str != null)
 			mailAdres = str;
-		boolean test = donusAdres.indexOf("localhost:") >= 0;
+		boolean test = mailAdres.indexOf("localhost:") >= 0;
 		if (toList == null)
 			toList = new ArrayList<User>();
 		else
