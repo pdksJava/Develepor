@@ -1678,11 +1678,14 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			}
 			if (bordroDetayMap == null)
 				bordroDetayMap = new TreeMap<String, PersonelDenklestirmeBordroDetay>();
+			String spAylikOrganizasyon = "SP_UPDATE_PERS_DENK_ORG_DETAY";
+			boolean spAylikOrganizasyonVar = ortakIslemler.isExisStoreProcedure(spAylikOrganizasyon, session);
 
 			for (AylikPuantaj ap : puantajList) {
 				PersonelDenklestirme personelDenklestirme = ap.getPersonelDenklestirme();
 				if (!(personelDenklestirme.getDurum() || fazlaMesaiHesapla == false))
 					continue;
+				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 				boolean flush = false;
 				PersonelDenklestirmeDinamikAlan devamPrim = null;
 				Personel personel = personelDenklestirme.getPdksPersonel();
@@ -2092,10 +2095,25 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 										organizasyonDetay.setDeger(pda.getTanimDeger());
 										if (organizasyonDetay.getId() != null || organizasyonDetay.getDeger() != null) {
 											if (organizasyonDetay.isDegisti() || organizasyonDetay.getId() == null) {
-												try {
+												if (denklestirmeOrganizasyon.getId() == null) {
+													pdksEntityController.sessionRefresh(session, null, denklestirmeOrganizasyon);
+													flush = true;
+												}
+												if (spAylikOrganizasyonVar == false) {
 													pdksEntityController.saveOrUpdate(session, null, organizasyonDetay);
 													flush = true;
-												} catch (Exception e) {
+												} else {
+													veriMap.put("id", denklestirmeOrganizasyon.getId());
+													veriMap.put("alan", organizasyonDetay.getAlan().getId());
+													veriMap.put("deger", organizasyonDetay.getDeger() != null ? organizasyonDetay.getDeger().getId() : null);
+													try {
+														List<PersonelDenklestirmeOrganizasyonDetay> detayList = pdksEntityController.execSPList(session, veriMap, spAylikOrganizasyon, PersonelDenklestirmeOrganizasyonDetay.class);
+														if (detayList != null && detayList.isEmpty() == false)
+															flush = true;
+													} catch (Exception e) {
+ 														e.printStackTrace();
+													}
+													veriMap.clear();
 												}
 
 											}
@@ -2112,7 +2130,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					try {
 						pdksEntityController.sessionFlush(session);
 					} catch (Exception e) {
-						logger.error("flush : " + personelDenklestirme.getId() + " " + personel.getPdksSicilNo() + personel.getAdSoyad() + " " + (authenticatedUser != null ? " [ " + authenticatedUser.getAdSoyad() + " ]" : "") + "\n" + e);
+						logger.error("flush : " + personelDenklestirme.getId() + " " + personel.getPdksSicilNo() + " " + personel.getAdSoyad() + " " + (authenticatedUser != null ? " [ " + authenticatedUser.getAdSoyad() + " ]" : "") + "\n" + e);
 						// e.printStackTrace();
 					}
 				}
