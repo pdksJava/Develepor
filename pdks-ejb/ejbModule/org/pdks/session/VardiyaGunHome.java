@@ -998,7 +998,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		sb.append("<p>Sayın " + fmt.getGuncelleyenUser().getAdSoyad() + ",</p>");
 		sb.append("<p>" + ortakAciklama + " " + getPdksUser().dateTimeFormatla(fmt.getBaslangicZamani()) + getTarihArasiBitisZamanString(fmt.getBaslangicZamani(), fmt.getBitisZamani()) + " arası " + getPdksUser().sayiFormatliGoster(fmt.getMesaiSuresi()) + " saat ");
 		sb.append((fmt.getMesaiNeden() != null ? "<b>\"" + fmt.getMesaiNeden().getAciklama() + (PdksUtil.hasStringValue(fmt.getAciklama()) ? " ( Açıklama : " + fmt.getAciklama().trim() + " ) " : "") + "\"</b> nedeniyle " : "") + " fazla mesai yapacaktır." + "</p>");
-		mailIcerik = PdksUtil.replaceAll(sb.toString(), "  ", " ");
+		if (str != null)  
+			sb.append("<p><b>Not : </b>Mobil cihaz'dan onaylamak için VPN uygulaması açık olması gerekebilir!</p>");
+ 		mailIcerik = PdksUtil.replaceAll(sb.toString(), "  ", " ");
 		try {
 			MailStatu mailStatu = null;
 			try {
@@ -10888,7 +10890,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	public void sayfaGirisAction() throws Exception {
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
- 		topluGuncelleme = false;
+		topluGuncelleme = false;
 		setPdksUser(authenticatedUser);
 		userLoginOldu = authenticatedUser != null;
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
