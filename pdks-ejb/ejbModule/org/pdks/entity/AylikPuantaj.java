@@ -1330,7 +1330,8 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	}
 
 	public boolean isFazlaMesaiDurum() {
-		Boolean fazlaMesaiDurum = sirket != null && sirket.isFazlaMesaiTalepGirer();
+		boolean fazlaMesaiVar = calismaModeli != null && calismaModeli.isFazlaMesaiVarMi();
+		Boolean fazlaMesaiDurum = fazlaMesaiVar && sirket != null && sirket.isFazlaMesaiTalepGirer();
 		if (vardiyalar != null && fazlaMesaiDurum) {
 			fazlaMesaiDurum = false;
 			for (VardiyaGun vg : vardiyalar) {
