@@ -998,8 +998,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		sb.append("<p>Sayın " + fmt.getGuncelleyenUser().getAdSoyad() + ",</p>");
 		sb.append("<p>" + ortakAciklama + " " + getPdksUser().dateTimeFormatla(fmt.getBaslangicZamani()) + getTarihArasiBitisZamanString(fmt.getBaslangicZamani(), fmt.getBitisZamani()) + " arası " + getPdksUser().sayiFormatliGoster(fmt.getMesaiSuresi()) + " saat ");
 		sb.append((fmt.getMesaiNeden() != null ? "<b>\"" + fmt.getMesaiNeden().getAciklama() + (PdksUtil.hasStringValue(fmt.getAciklama()) ? " ( Açıklama : " + fmt.getAciklama().trim() + " ) " : "") + "\"</b> nedeniyle " : "") + " fazla mesai yapacaktır." + "</p>");
-		if (str != null)  
-			sb.append("<p><b>Not : </b>Mobil cihaz'dan onaylamak için VPN uygulaması açık olması gerekebilir!</p>");
  		mailIcerik = PdksUtil.replaceAll(sb.toString(), "  ", " ");
 		try {
 			MailStatu mailStatu = null;
@@ -1011,6 +1009,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				body.append("<td width=\"90px\"><a style=\"font-size: 16px;\" href=\"" + mailAdres + "/mesaiTalepLinkOnay?id=" + getOnayId(String.valueOf(FazlaMesaiTalep.ONAY_DURUM_ONAYLANDI)) + "\"><b>Onay</b></a></td>");
 				body.append("<td width=\"90px\"><a style=\"font-size: 16px;\" href=\"" + mailAdres + "/mesaiTalepLinkOnay?id=" + getOnayId(String.valueOf(FazlaMesaiTalep.ONAY_DURUM_RED)) + "\"><b>Red</b></a></td>");
 				body.append("</TR></TABLE></p>");
+				if (str != null)  
+					body.append("<p><b>Not : </b>Mobil cihaz'dan onaylamak için VPN uygulaması açık olması gerekebilir!</p>");
 				mail.setBody(body.toString());
 				body = null;
 				ortakIslemler.addMailPersonelUserList(toList, mail.getToList());
