@@ -998,7 +998,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		sb.append("<p>Sayın " + fmt.getGuncelleyenUser().getAdSoyad() + ",</p>");
 		sb.append("<p>" + ortakAciklama + " " + getPdksUser().dateTimeFormatla(fmt.getBaslangicZamani()) + getTarihArasiBitisZamanString(fmt.getBaslangicZamani(), fmt.getBitisZamani()) + " arası " + getPdksUser().sayiFormatliGoster(fmt.getMesaiSuresi()) + " saat ");
 		sb.append((fmt.getMesaiNeden() != null ? "<b>\"" + fmt.getMesaiNeden().getAciklama() + (PdksUtil.hasStringValue(fmt.getAciklama()) ? " ( Açıklama : " + fmt.getAciklama().trim() + " ) " : "") + "\"</b> nedeniyle " : "") + " fazla mesai yapacaktır." + "</p>");
- 		mailIcerik = PdksUtil.replaceAll(sb.toString(), "  ", " ");
+		mailIcerik = PdksUtil.replaceAll(sb.toString(), "  ", " ");
 		try {
 			MailStatu mailStatu = null;
 			try {
@@ -1009,7 +1009,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				body.append("<td width=\"90px\"><a style=\"font-size: 16px;\" href=\"" + mailAdres + "/mesaiTalepLinkOnay?id=" + getOnayId(String.valueOf(FazlaMesaiTalep.ONAY_DURUM_ONAYLANDI)) + "\"><b>Onay</b></a></td>");
 				body.append("<td width=\"90px\"><a style=\"font-size: 16px;\" href=\"" + mailAdres + "/mesaiTalepLinkOnay?id=" + getOnayId(String.valueOf(FazlaMesaiTalep.ONAY_DURUM_RED)) + "\"><b>Red</b></a></td>");
 				body.append("</TR></TABLE></p>");
-				if (str != null)  
+				if (str != null)
 					body.append("<p><b>Not : </b>Mobil cihaz'dan onaylamak için VPN uygulaması açık olması gerekebilir!</p>");
 				mail.setBody(body.toString());
 				body = null;
@@ -6615,7 +6615,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 									guncelleyenUser = ortakIslemler.getSistemAdminUser(session);
 								vg.setGuncellemeTarihi(guncellemeTarihi);
 								vg.setGuncelleyenUser(guncelleyenUser);
-								pdksEntityController.saveOrUpdate(session, entityManager, vg);
+								saveOrUpdate(vg);
 								flush = true;
 							}
 						} else if (vg.isVardiyaOnay()) {
@@ -6631,7 +6631,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 									guncelleyenUser = ortakIslemler.getSistemAdminUser(session);
 								vg.setGuncellemeTarihi(guncellemeTarihi);
 								vg.setGuncelleyenUser(guncelleyenUser);
-								pdksEntityController.saveOrUpdate(session, entityManager, vg);
+								saveOrUpdate(vg);
 								flush = true;
 
 							}
@@ -6651,7 +6651,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							guncelleyenUser = ortakIslemler.getSistemAdminUser(session);
 						vg.setGuncellemeTarihi(guncellemeTarihi);
 						vg.setGuncelleyenUser(guncelleyenUser);
-						pdksEntityController.saveOrUpdate(session, entityManager, vg);
+						saveOrUpdate(vg);
 						flush = true;
 					}
 				}
@@ -9080,7 +9080,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					CalismaModeli cm = cma.getCalismaModeli();
 					if (cm.getFazlaMesaiVar()) {
 						cma.setDurum(Boolean.TRUE);
-						pdksEntityController.saveOrUpdate(session, authenticatedUser != null ? entityManager : null, cma);
+						saveOrUpdate(cma);
 						idList.add(cma.getId());
 					}
 				}
