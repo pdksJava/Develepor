@@ -196,7 +196,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			veriMap.put("vardiya", vardiyaId);
 			veriMap.put("saat", saatId);
 			veriMap.put("durum", vg.getDurum() ? 1 : 0);
-			veriMap.put("vardiyaOnayli", vg.getVardiyaOnayli() != null && vg.getVardiyaOnayli() ? 1 : 0);
+			veriMap.put("vardiyaOnayli", vg.getDurum() || (vg.getVardiyaOnayli() != null && vg.getVardiyaOnayli()) ? 1 : 0);
 			veriMap.put("guncelleyen", user != null ? user.getId() : null);
 			List<VardiyaGun> list = null;
 			Gson gson = new Gson();
