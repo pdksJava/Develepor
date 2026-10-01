@@ -34,6 +34,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.validator.InvalidStateException;
 import org.hibernate.validator.InvalidValue;
 import org.jboss.seam.Component;
@@ -164,6 +165,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	private Sirket sirket;
 
 	private DenklestirmeAy denklestirmeAy, gecenAy = null;
+	private boolean spPersonelDenklestirmeGuncelleVar = false;
 
 	private Boolean hataYok, calisiyor = Boolean.FALSE, fazlaMesaiIzinKullan = Boolean.FALSE, fazlaMesaiOde = Boolean.FALSE, fazlaMesaiTalepSil = Boolean.FALSE, yetkili = Boolean.FALSE, resmiTatilVar = Boolean.FALSE, haftaTatilVar = Boolean.FALSE, kaydetDurum = Boolean.FALSE;
 	private Boolean sutIzniGoster = Boolean.FALSE, suaGoster, gebeGoster = Boolean.FALSE, partTimeGoster = Boolean.FALSE, onayla, hastaneSuperVisor = Boolean.FALSE, sirketIzinGirisDurum = Boolean.FALSE;
@@ -252,10 +254,24 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @param object
 	 */
 
-	private void saveOrUpdate(Object object) {
+	public boolean saveOrUpdate(Object object) {
+		boolean islem = false;
 		if (object != null) {
-			pdksEntityController.saveOrUpdate(session, authenticatedUser != null ? entityManager : null, object);
+			pdksEntityController.startTransaction(session);
+			if (object instanceof PersonelDenklestirme && spPersonelDenklestirmeGuncelleVar) {
+				PersonelDenklestirme pd = (PersonelDenklestirme) object;
+				if (pd.getId() != null)
+					islem = fazlaMesaiOrtakIslemler.updatePersonelDenklestirmeStoreProcedure(pd, getPdksUser(), session);
+				if (islem)
+					session.refresh(object);
+			}
+			if (islem == false) {
+				pdksEntityController.saveOrUpdate(session, entityManager, object);
+				islem = true;
+			}
+
 		}
+		return islem;
 
 	}
 
@@ -1688,7 +1704,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						sirketIdMap = null;
 						kontratliPerIdList = null;
 						perMap = null;
-						boolean flush = Boolean.FALSE;
 						List<String> gunList = new ArrayList<String>();
 						for (Iterator iterator = aylikPuantajDefault.getAyinVardiyalari().iterator(); iterator.hasNext();) {
 							VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
@@ -1932,12 +1947,16 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						boolean donemGeldi = denklestirmeAy.getDonem() <= simdikiDonem;
 						User adminUser = null;
 						String spVardiyaGuncelleme = FazlaMesaiOrtakIslemler.SP_CALISMA_PLANI_GUNCELLEME_ADI;
+						spPersonelDenklestirmeGuncelleVar = ortakIslemler.isExisStoreProcedure(FazlaMesaiOrtakIslemler.SP_UPDATE_PERSONEL_DENKLESME_GUNCELLEME, session);
 						boolean spCalismaSaatGuncelleVar = ortakIslemler.isExisStoreProcedure(FazlaMesaiOrtakIslemler.SP_CALISMA_PLANI_GUNCELLEME_ADI, session);
 						boolean spVardiyaGuncellemeVar = ortakIslemler.isExisStoreProcedure(spVardiyaGuncelleme, session);
 						boolean ekle = (denklestirmeAyDurum || (bakiyeGuncelle != null && bakiyeGuncelle));
 
 						for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 							AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
+							boolean flushPuantaj = Boolean.FALSE;
+
+							Transaction ts = pdksEntityController.startTransaction(session);
 							LinkedHashMap<Long, VardiyaGun> saveVardiyaGunMap = new LinkedHashMap<Long, VardiyaGun>();
 							int yarimYuvarla = puantaj.getYarimYuvarla();
 							Integer ucmYuvarla = yarimYuvarla, rtYuvarla = yarimYuvarla;
@@ -2241,9 +2260,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 															oncekiVardiyaGun.setVardiyaOnayli(Boolean.FALSE);
 															vardiyaGun2.setVardiya(haftaVardiya);
 															vardiyaGun2.setVardiyaOnayli(Boolean.TRUE);
-															saveOrUpdate(oncekiVardiyaGun);
-															saveOrUpdate(vardiyaGun2);
-															flush = true;
+															boolean updateDurum = saveOrUpdate(oncekiVardiyaGun);
+															boolean updateDurum1 = saveOrUpdate(vardiyaGun2);
+															if (updateDurum || updateDurum1)
+																flushPuantaj = Boolean.TRUE;
 															uyariHaftaTatilMesai = true;
 															logger.debug(oncekiVardiyaGun.getVardiyaKeyStr() + " " + haftaVardiya.getAdi() + " " + vardiyaGun2.getVardiyaKeyStr() + " " + calismaVardiya.getAdi());
 															break;
@@ -2429,12 +2449,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								if (!saveList.isEmpty()) {
 									for (Iterator iterator = saveList.iterator(); iterator.hasNext();) {
 										Object object = (Object) iterator.next();
-										saveOrUpdate(object);
-										flush = true;
+										boolean updateDurum = saveOrUpdate(object);
+										if (updateDurum)
+											flushPuantaj = Boolean.TRUE;
 										iterator.remove();
 									}
-									sessionFlush();
-									flush = false;
+
 								}
 								keyList.clear();
 							}
@@ -2512,7 +2532,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 												if (islemVardiya != null && vg.getIzin() == null && islemVardiya.isCalisma())
 													normalSure = islemVardiya.getNetCalismaSuresi();
-												VardiyaSaat vardiyaSaat = vg.getVardiyaSaat();
+												VardiyaSaat vardiyaSaat = vg.getVardiyaSaatDB();
+												if (vardiyaSaat != null)
+													vardiyaSaat.setGuncellendi(false);
 												if (vardiyaSaat == null) {
 													vardiyaSaat = new VardiyaSaat();
 													if (vg.getCalismaSuresi() > 0.0d || vg.getDurum())
@@ -2523,10 +2545,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 													vg.setVardiyaSaat(vardiyaSaat);
 													addSaveList(keyList, saveList, vardiyaSaat);
 													addSaveList(keyList, saveList, vg);
-												}
+												}  
 												vardiyaSaat.setGuncellendi(vardiyaSaat.getId() == null);
-												vardiyaSaat.setNormalSure(normalSure);
 												if (vg.getDurum()) {
+													vardiyaSaat.setNormalSure(normalSure);
 													double saat = vg.ucretiOdenenMesaiHesapla();
 													if (saat > 0.0d)
 														ucretiOdenenMesaiSure += saat;
@@ -2571,8 +2593,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 															vardiyaSaat.setGuncellemeTarihi(bugun);
 														if (ekSaat != null && ekSaat.isGuncellendi())
 															addSaveList(keyList, saveList, ekSaat);
-
-														addSaveList(keyList, saveList, vardiyaSaat);
+														if (vardiyaSaat.isGuncellendi())
+															addSaveList(keyList, saveList, vardiyaSaat);
 														if (vardiyaSaat.getId() == null)
 															addSaveList(keyList, saveList, vg);
 														if (vg.getVardiyaSaat() == null) {
@@ -2623,14 +2645,22 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									puantaj.setUcretiOdenenMesaiSure(ucretiOdenenMesaiSure);
 									if (!yasalFazlaCalismaAsanSaat && personelDenklestirme.getCalismaModeliAy().isGunMaxCalismaOdenir())
 										yasalFazlaCalismaAsanSaat = calismaModeli.isFazlaMesaiVarMi() && ucretiOdenenMesaiSure > 0.0d;
-									flush = false;
+
 									if (!saveList.isEmpty()) {
 										for (Iterator iterator = saveList.iterator(); iterator.hasNext();) {
 											Object object = (Object) iterator.next();
-											saveOrUpdate(object);
-											flush = true;
+											boolean updateDurum = saveOrUpdate(object);
+											if (updateDurum)
+												flushPuantaj = Boolean.TRUE;
 										}
 
+									}
+									if (flushPuantaj) {
+										sessionFlush();
+										flushPuantaj = false;
+										if (ts != null && ts.isActive())
+											ts.commit();
+										ts = pdksEntityController.startTransaction(session);
 									}
 									keyList.clear();
 									puantaj.setFazlaMesaiHesapla(hesapla);
@@ -2683,9 +2713,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									updateMap.clear();
 
 								}
-								if (flush)
-									sessionFlush();
-								flush = false;
+
 								saveList.clear();
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -2782,8 +2810,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									if (pdg != null) {
 										if (pdg.getDurum().booleanValue() == false) {
 											pdg.setDurum(Boolean.TRUE);
-											pdksEntityController.saveOrUpdate(session, entityManager, pdg);
-											flush = true;
+											boolean updateDurum = saveOrUpdate(pdg);
+											if (updateDurum)
+												flushPuantaj = true;
 										}
 									}
 								}
@@ -3075,7 +3104,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									}
 								}
 								if (personelDenklestirme.isGuncellendi()) {
-									if ((bakiyeGuncelle != null && bakiyeGuncelle) || puantaj.isFazlaMesaiHesapla() != personelDenklestirme.getDurum() || (gecenAy != null && gecenAy.getDurum().equals(Boolean.FALSE))) {
+									if ((bakiyeGuncelle != null && bakiyeGuncelle) || puantaj.isFazlaMesaiHesapla() != pdYedek.getDurum() || (gecenAy != null && gecenAy.getDurum().equals(Boolean.FALSE))) {
 										Boolean sonDurum = null;
 										if (puantaj.isFazlaMesaiHesapla() != personelDenklestirme.getDurum())
 											sonDurum = donemGeldi && puantaj.isFazlaMesaiHesapla();
@@ -3107,8 +3136,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 											pdYedek.setResmiTatilSure(personelDenklestirme.getResmiTatilSure());
 											pdYedek.setDurum(personelDenklestirme.getDurum());
 											if (pdYedek.isGuncellendi()) {
-												saveOrUpdate(personelDenklestirme);
-												flush = Boolean.TRUE;
+												boolean islemDurum = saveOrUpdate(personelDenklestirme);
+												if (islemDurum)
+													flushPuantaj = Boolean.TRUE;
 											}
 										}
 									}
@@ -3132,13 +3162,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 											if (devamsizList.contains(personel.getId()) || !personelDenklestirme.getDurum()) {
 												if (denklestirmeDinamikAlan.getIslemDurum() == null || denklestirmeDinamikAlan.getIslemDurum().equals(Boolean.TRUE) || !personelDenklestirme.getDurum()) {
 													denklestirmeDinamikAlan.setIslemDurum(Boolean.FALSE);
-													saveOrUpdate(denklestirmeDinamikAlan);
-													flush = true;
+													boolean updateDurum = saveOrUpdate(denklestirmeDinamikAlan);
+													if (updateDurum)
+														flushPuantaj = Boolean.TRUE;
 												}
 											} else {
 												boolean flushDurum = devamlilikPrimiHesapla(puantaj, denklestirmeDinamikAlan);
-												if (!flush)
-													flush = flushDurum;
+												if (!flushPuantaj)
+													flushPuantaj = flushDurum;
 											}
 
 										} catch (Exception ed) {
@@ -3168,8 +3199,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								puantaj.setFazlaMesaiHesapla(Boolean.FALSE);
 								if (personelDenklestirme.getDurum()) {
 									personelDenklestirme.setDurum(Boolean.FALSE);
-									saveOrUpdate(personelDenklestirme);
-									flush = true;
+									boolean updateDurum = saveOrUpdate(personelDenklestirme);
+									if (updateDurum)
+										flushPuantaj = Boolean.TRUE;
 								}
 								if (ikRole) {
 									if (userLogin.getLogin())
@@ -3226,8 +3258,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								}
 
 								if (savePersonelDenklestirme) {
-									saveOrUpdate(personelDenklestirme);
-									flush = true;
+									boolean updateDurum = saveOrUpdate(personelDenklestirme);
+									if (updateDurum)
+										flushPuantaj = Boolean.TRUE;
 								}
 							}
 							if (personelDenklestirme.getDurum() && personelDenklestirme.isOnaylandi()) {
@@ -3282,14 +3315,16 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 											}
 										}
 										if (update == false) {
-											pdksEntityController.saveOrUpdate(session, entityManager, vg);
-											flushVardiya = true;
+											boolean updateDurum = saveOrUpdate(vg);
+											if (updateDurum)
+												flushVardiya = true;
 										}
 									}
 									veriMap.clear();
+									if (flushVardiya)
+										flushPuantaj = true;
 								}
-								if (flushVardiya)
-									flush = true;
+
 								veriMap = null;
 							}
 							saveVardiyaGunMap = null;
@@ -3301,8 +3336,13 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								}
 
 							}
+							if (flushPuantaj)
+								sessionFlush();
 
+							if (ts != null && ts.isActive())
+								ts.commit();
 						}
+						boolean flush = Boolean.FALSE;
 						if (gecersizHareketler.isEmpty() == false && mukerrerHareketIptalNeden != null) {
 							List<Long> idler = new ArrayList<Long>();
 							for (HareketKGS hareketKGS : gecersizHareketler) {
@@ -3438,9 +3478,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						paramsMap = null;
 						if (!saveGenelList.isEmpty()) {
 							for (Object obj : saveGenelList) {
-								saveOrUpdate(obj);
+								boolean updateDurum = saveOrUpdate(obj);
+								if (updateDurum)
+									flush = Boolean.TRUE;
 							}
-							flush = true;
 						}
 						if (aylikPuantajList.isEmpty() && userLogin.getLogin()) {
 							if (kayitVar == false)
@@ -3914,9 +3955,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							vardiyaGun.setVardiyaOnayli(Boolean.FALSE);
 							vardiyaCalismaGun.setVardiya(vardiyaHafta);
 							vardiyaCalismaGun.setVardiyaOnayli(Boolean.TRUE);
-							saveOrUpdate(vardiyaGun);
-							saveOrUpdate(vardiyaCalismaGun);
-							flush = true;
+							boolean updateDurum = saveOrUpdate(vardiyaGun);
+							boolean updateDurum1 = saveOrUpdate(vardiyaCalismaGun);
+							if (updateDurum || updateDurum1)
+								flush = Boolean.TRUE;
 						}
 					}
 				}
@@ -4221,8 +4263,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		logger.debug(aylikPuantaj.getPersonelDenklestirme().getPersonel().getAdSoyad() + " " + islemDurum);
 		if (!islemDurum.equals(denklestirmeDinamikAlan.getIslemDurum())) {
 			denklestirmeDinamikAlan.setIslemDurum(islemDurum);
-			saveOrUpdate(denklestirmeDinamikAlan);
-			flush = Boolean.TRUE;
+			boolean updateDurum = saveOrUpdate(denklestirmeDinamikAlan);
+			if (updateDurum)
+				flush = Boolean.TRUE;
 		}
 
 		return flush;
@@ -7312,8 +7355,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		}
 		List<HareketKGS> orjinalHareketler = vg.getOrjinalHareketler();
 		if (orjinalHareketler != null) {
-//			if (denklestirmeAyDurum)
-//				ortakIslemler.setUpdateKGSHareket(orjinalHareketler, session);
+			// if (denklestirmeAyDurum)
+			// ortakIslemler.setUpdateKGSHareket(orjinalHareketler, session);
 			int hareketAdet = vg.getOrjinalHareketler().size();
 			if (denklestirmeAyDurum && hareketAdet > 2 && vg.getFazlaMesaiOnayla() == null && vg.getHareketDurum() == false) {
 				if (aylikPuantajList.size() < 10 || hareketAdet == 3)

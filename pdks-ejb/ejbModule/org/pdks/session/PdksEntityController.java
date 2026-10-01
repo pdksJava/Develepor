@@ -699,7 +699,7 @@ public class PdksEntityController implements Serializable {
 	/**
 	 * @param session
 	 */
-	public void startTransaction(Session session) {
+	public Transaction startTransaction(Session session) {
 		Transaction t = null;
 		if (session != null) {
 			try {
@@ -713,6 +713,7 @@ public class PdksEntityController implements Serializable {
 		}
 		if (t != null && t.isActive())
 			logger.debug("");
+		return t;
 	}
 
 	/**
@@ -854,9 +855,10 @@ public class PdksEntityController implements Serializable {
 			if (sessinYok)
 				sessionClose(session);
 		} catch (Exception e) {
-			Gson gson = new Gson();
-			logger.error(sp.toString() + (veriMap != null && !veriMap.isEmpty() ? "\n" + gson.toJson(veriMap) : "") + "\n" + e);
-			gson = null;
+			StringBuffer sb = getExecStringSP(veriMap, sp);
+
+			logger.error(sb.toString() + "\n" + e);
+			sb = null;
 			throw new Exception(e);
 		}
 		if (manuelReadUnCommitted)
@@ -864,6 +866,31 @@ public class PdksEntityController implements Serializable {
 
 		return sonucList;
 
+	}
+
+	/**
+	 * @param veriMap
+	 * @param sp
+	 * @return
+	 */
+	private StringBuffer getExecStringSP(LinkedHashMap<String, Object> veriMap, String sp) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("exec " + sp + " ");
+		if (veriMap != null) {
+			for (Iterator iterator = veriMap.keySet().iterator(); iterator.hasNext();) {
+				String key = (String) iterator.next();
+ 				Object value = veriMap.get(key);
+				if (value == null)
+					sb.append(" null ");
+				else if (value instanceof String)
+					sb.append("'" + value.toString().replace("'", "''") + "'");
+				else
+					sb.append(String.valueOf(value));
+				if (iterator.hasNext())
+					sb.append(", ");
+			}
+		}
+		return sb;
 	}
 
 	/**
@@ -897,10 +924,9 @@ public class PdksEntityController implements Serializable {
 			if (sessinYok)
 				sessionClose(session);
 		} catch (Exception e) {
-			Gson gson = new Gson();
-			logger.error(sp.toString() + (veriMap != null && !veriMap.isEmpty() ? "\n" + gson.toJson(veriMap) : "") + "\n" + e);
-			gson = null;
-		}
+			StringBuffer sb = getExecStringSP(veriMap, sp);
+ 			logger.error(sb.toString() + "\n" + e);
+			sb = null;		}
 		if (manuelReadUnCommitted)
 			veriMap.put("readUnCommitted", true);
 		return sonuc;
