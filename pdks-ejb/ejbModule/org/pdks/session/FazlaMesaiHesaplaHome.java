@@ -7312,8 +7312,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		}
 		List<HareketKGS> orjinalHareketler = vg.getOrjinalHareketler();
 		if (orjinalHareketler != null) {
-			if (denklestirmeAyDurum)
-				ortakIslemler.setUpdateKGSHareket(orjinalHareketler, session);
+//			if (denklestirmeAyDurum)
+//				ortakIslemler.setUpdateKGSHareket(orjinalHareketler, session);
 			int hareketAdet = vg.getOrjinalHareketler().size();
 			if (denklestirmeAyDurum && hareketAdet > 2 && vg.getFazlaMesaiOnayla() == null && vg.getHareketDurum() == false) {
 				if (aylikPuantajList.size() < 10 || hareketAdet == 3)

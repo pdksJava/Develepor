@@ -161,7 +161,7 @@ public class PersonelDenklestirme extends BaseObject {
 		this.setOnaylandi(pd.isOnaylandi());
 	}
 
-	 // @Version
+	// @Version
 	@Column(name = "VERSION")
 	public Integer getVersion() {
 		return version;
@@ -600,7 +600,7 @@ public class PersonelDenklestirme extends BaseObject {
 			Tatil tatil = vg.getTatil();
 			Vardiya vardiya = vg.getVardiya();
 			String key = vg.getVardiyaDateStr();
-			if (key.endsWith("0628"))
+			if (key.endsWith("0927"))
 				logger.debug("");
 
 			int gunHafta = PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK);
@@ -611,7 +611,6 @@ public class PersonelDenklestirme extends BaseObject {
 				else if (gunHafta == Calendar.SUNDAY)
 					gun = cm.getPazarSaat();
 			}
-
 			double gunPlanSure = gebePersonelDonemselDurum != null ? gun : cm.getSaat(gunHafta), sutIzniSure = 0.0d;
 			if (vg.isSutIzniVar()) {
 				sutIzniSure = gunPlanSure <= 9.0d ? sureGunlukSut : 7.5d;
@@ -687,7 +686,7 @@ public class PersonelDenklestirme extends BaseObject {
 		double aylikSutSure = calismaModeliAy != null && calismaModeliAy.getToplamIzinSure() > 0.0d ? calismaModeliAy.getToplamIzinSure() : denklestirmeAy.getToplamIzinSure();
 		if (calismaModeliAy != null && cm.getToplamGunGuncelle() && sutIzniSaatSayisi > 0)
 			aylikSure = sutIzniSaatSayisi;
-		else if (cm.isHaftaTatilSabitDegil() || sutIzniPersonelDonemselDurum != null || gebePersonelDonemselDurum != null) {
+		else if (cm.isSaatlikOdeme() || cm.isHaftaTatilSabitDegil() || sutIzniPersonelDonemselDurum != null || gebePersonelDonemselDurum != null) {
 			aylikSure = getPlananSureHesapla(cm, gebePersonelDonemselDurum, vardiyalar);
 			if (sutIzniPersonelDonemselDurum != null)
 				aylikSutSure = aylikSure;
