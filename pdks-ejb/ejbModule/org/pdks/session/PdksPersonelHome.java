@@ -1099,7 +1099,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 							pdksPersonel.setHareketMail(hareketMail);
 					}
 					if (mesajList.isEmpty()) {
-						if (kullanici.getId() != null || kullanici.getDurum())
+						if ((authenticatedUser.isIK() && authenticatedUser.isAdmin() == false) || kullanici.getId() != null || kullanici.getDurum())
 							pdksEntityController.startTransaction(session);
 						ortakIslemler.personelKaydet(pdksPersonel, session);
 						if (secGebe(pdksPersonel).booleanValue() == false)
