@@ -102,6 +102,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 	public static final String PERSONEL_TANIM_SECIM_MUDUR_ALT_SEVIYE = "mudurAltSeviye";
 	public static final String SP_CALISMA_PLANI_GUNCELLEME_ADI = "SP_UPDATE_CALISMA_PLANI_GUNCELLEME";
+	public static final String SP_UPDATE_PERSONEL_DENKLESME_GUNCELLEME = "SP_UPDATE_PERSONEL_DENKLESME_GUNCELLEME";
 
 	@In
 	Identity identity;
@@ -169,6 +170,16 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			}
 		}
 		return brutUcretGoster;
+
+	}
+
+	public boolean updatePersonelDenklestirmeStoreProcedure(PersonelDenklestirme pd, User user, Session session) {
+
+		boolean islem = false;
+		Long pdId = pd != null ? pd.getId() : null;
+		if (pdId != null) {
+		}
+		return islem;
 
 	}
 

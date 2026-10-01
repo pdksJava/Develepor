@@ -3097,8 +3097,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 											pdYedek.setGuncellendi(false);
 											pdYedek.setAksamVardiyaSayisi(personelDenklestirme.getAksamVardiyaSaatSayisi());
 											pdYedek.setDevredenSure(personelDenklestirme.getDevredenSure());
-											pdYedek.setDurum(personelDenklestirme.getDurum());
-											pdYedek.setEgitimSuresiAksamGunSayisi(null);
 											pdYedek.setEksikCalismaSure(personelDenklestirme.getEksikCalismaSure());
 											pdYedek.setFazlaMesaiSure(personelDenklestirme.getFazlaMesaiSure());
 											pdYedek.setHaftaCalismaSuresi(personelDenklestirme.getHaftaCalismaSuresi());
@@ -3107,6 +3105,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 											pdYedek.setOdenenSure(personelDenklestirme.getOdenenSure());
 											pdYedek.setPlanlanSure(personelDenklestirme.getPlanlanSure());
 											pdYedek.setResmiTatilSure(personelDenklestirme.getResmiTatilSure());
+											pdYedek.setDurum(personelDenklestirme.getDurum());
 											if (pdYedek.isGuncellendi()) {
 												saveOrUpdate(personelDenklestirme);
 												flush = Boolean.TRUE;
