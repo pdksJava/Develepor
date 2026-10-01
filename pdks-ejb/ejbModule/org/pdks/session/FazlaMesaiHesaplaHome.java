@@ -1931,9 +1931,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						long simdikiDonem = Long.parseLong(PdksUtil.convertToDateString(bugun, "yyyMM"));
 						boolean donemGeldi = denklestirmeAy.getDonem() <= simdikiDonem;
 						User adminUser = null;
-						String spVardiyaGuncelleme = "SP_UPDATE_VARDIYA_GUN";
+						String spVardiyaGuncelleme = FazlaMesaiOrtakIslemler.SP_CALISMA_PLANI_GUNCELLEME_ADI;
+						boolean spCalismaSaatGuncelleVar = ortakIslemler.isExisStoreProcedure(FazlaMesaiOrtakIslemler.SP_CALISMA_PLANI_GUNCELLEME_ADI, session);
 						boolean spVardiyaGuncellemeVar = ortakIslemler.isExisStoreProcedure(spVardiyaGuncelleme, session);
 						boolean ekle = (denklestirmeAyDurum || (bakiyeGuncelle != null && bakiyeGuncelle));
+
 						for (Iterator iterator1 = puantajDenklestirmeList.iterator(); iterator1.hasNext();) {
 							AylikPuantaj puantaj = (AylikPuantaj) iterator1.next();
 							LinkedHashMap<Long, VardiyaGun> saveVardiyaGunMap = new LinkedHashMap<Long, VardiyaGun>();
@@ -3254,20 +3256,28 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									VardiyaGun vg = saveVardiyaGunMap.get(key);
 									if (vg.isGuncellendi()) {
 										boolean update = false;
-										if (spVardiyaGuncellemeVar) {
-											VardiyaSaat vardiyaSaat = vg.getVardiyaSaat();
-											veriMap.put("id", vg.getId());
-											veriMap.put("saat", vardiyaSaat != null ? vardiyaSaat.getId() : null);
-											veriMap.put("durum", vg.getDurum() ? 1 : 0);
-											veriMap.put("vardiyaOnayli", vg.getVardiyaOnayli() ? 1 : 0);
+										if (spVardiyaGuncellemeVar || spCalismaSaatGuncelleVar) {
 											try {
-												pdksEntityController.execSP(session, veriMap, spVardiyaGuncelleme);
+												boolean islem = false;
+												if (spCalismaSaatGuncelleVar)
+													islem = fazlaMesaiOrtakIslemler.updateVardiyaGunStoreProcedure(vg, null, session);
+												if (spVardiyaGuncellemeVar && islem == false) {
+													VardiyaSaat vardiyaSaat = vg.getVardiyaSaat();
+													veriMap.put("id", vg.getId());
+													veriMap.put("saat", vardiyaSaat != null ? vardiyaSaat.getId() : null);
+													veriMap.put("durum", vg.getDurum() ? 1 : 0);
+													veriMap.put("vardiyaOnayli", vg.getVardiyaOnayli() ? 1 : 0);
+													pdksEntityController.execSP(session, veriMap, spVardiyaGuncelleme);
+													islem = true;
+												}
+
 												Vardiya islemVardiya = vg.getIslemVardiya();
 												pdksEntityController.sessionRefresh(session, entityManager, vg);
 												if (vg.isIslemVardiyaVar() == false)
 													vg.setIslemVardiya(islemVardiya);
 												flushVardiya = true;
-												update = true;
+												if (islem)
+													update = true;
 											} catch (Exception e) {
 												logger.error(e);
 											}

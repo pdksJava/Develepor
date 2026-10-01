@@ -83,6 +83,7 @@ import org.pdks.erp.action.PdksSap3Controller;
 import org.pdks.erp.action.PdksSapController;
 import org.pdks.security.entity.User;
 
+import com.google.gson.Gson;
 import com.pdks.mail.model.MailManager;
 
 /**
@@ -100,6 +101,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	static Logger logger = Logger.getLogger(FazlaMesaiOrtakIslemler.class);
 
 	public static final String PERSONEL_TANIM_SECIM_MUDUR_ALT_SEVIYE = "mudurAltSeviye";
+	public static final String SP_CALISMA_PLANI_GUNCELLEME_ADI = "SP_UPDATE_CALISMA_PLANI_GUNCELLEME";
 
 	@In
 	Identity identity;
@@ -168,6 +170,42 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		}
 		return brutUcretGoster;
 
+	}
+
+	/**
+	 * @param vg
+	 * @param user
+	 * @param session
+	 * @return
+	 */
+	public boolean updateVardiyaGunStoreProcedure(VardiyaGun vg, User user, Session session) {
+		boolean islem = false;
+		Long vardiyaId = vg.getVardiya() != null ? vg.getVardiya().getId() : null;
+		if (vardiyaId != null) {
+			if (user == null || user.isAdmin())
+				user = vg.getGuncelleyenUser();
+			Long saatId = vg.getVardiyaSaat() != null ? vg.getVardiyaSaat().getId() : null;
+			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+			veriMap.put("id", vg.getId());
+			veriMap.put("vardiya", vardiyaId);
+			veriMap.put("saat", saatId);
+			veriMap.put("durum", vg.getDurum() ? 1 : 0);
+			veriMap.put("vardiyaOnayli", vg.getVardiyaOnayli() != null && vg.getVardiyaOnayli() ? 1 : 0);
+			veriMap.put("guncelleyen", user != null ? user.getId() : null);
+			List<VardiyaGun> list = null;
+			Gson gson = new Gson();
+			try {
+				list = pdksEntityController.execSPList(session, veriMap, SP_CALISMA_PLANI_GUNCELLEME_ADI, VardiyaGun.class);
+			} catch (Exception e) {
+				logger.error(e + "\n" + SP_CALISMA_PLANI_GUNCELLEME_ADI + "\n" + gson.toJson(veriMap));
+ 			}
+			if (list != null) {
+				islem = list.isEmpty() == false;
+				list = null;
+			}
+			veriMap = null;
+		}
+		return islem;
 	}
 
 	/**
@@ -2111,7 +2149,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 														if (detayList != null && detayList.isEmpty() == false)
 															flush = true;
 													} catch (Exception e) {
- 														e.printStackTrace();
+														e.printStackTrace();
 													}
 													veriMap.clear();
 												}
