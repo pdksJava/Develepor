@@ -184,6 +184,12 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		if (vardiyaId != null) {
 			if (user == null || user.isAdmin())
 				user = vg.getGuncelleyenUser();
+			if (vg.getVardiyaSaat() == null && vg.isAyinGunu()) {
+				VardiyaSaat vs = new VardiyaSaat();
+				vs.setNormalSure(vg.getVardiya().getNetCalismaSuresi());
+				session.saveOrUpdate(vs);
+				vg.setVardiyaSaat(vs);
+			}
 			Long saatId = vg.getVardiyaSaat() != null ? vg.getVardiyaSaat().getId() : null;
 			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 			veriMap.put("id", vg.getId());
@@ -198,7 +204,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				list = pdksEntityController.execSPList(session, veriMap, SP_CALISMA_PLANI_GUNCELLEME_ADI, VardiyaGun.class);
 			} catch (Exception e) {
 				logger.error(e + "\n" + SP_CALISMA_PLANI_GUNCELLEME_ADI + "\n" + gson.toJson(veriMap));
- 			}
+			}
 			if (list != null) {
 				islem = list.isEmpty() == false;
 				list = null;
