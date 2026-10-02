@@ -23,7 +23,7 @@
 								<f:facet name="header">
 									<h:outputText value="Menü Bileşenleri Ağacı" />
 								</f:facet>
-								<h:outputText value="The role search returned no results." rendered="#{empty menuItemHome.treeNode}" />
+								<h:outputText value="Eklenecek menü ağacı bulunamadı!" rendered="#{empty menuItemHome.treeNode}" />
 								<a4j:outputPanel id="menuAgaci">
 									<rich:tree style="width:300px" id="menuItemTree" treeNodeVar="treeNode" switchType="client" value="#{menuItemHome.treeNode}" var="item"
 										ajaxKeys="#{null}" iconCollapsed="#{menuItemHome.iconLeaf}" iconExpanded="#{menuItemHome.iconLeaf}">
@@ -104,7 +104,7 @@
 							</rich:panel>
 							<rich:panel style=" border:0;">
 								<a4j:outputPanel id="menuItemDataTablePnl">
-									<h:outputText value="The role search returned no results." rendered="#{empty menuItemHome.freeMenuItemList}" />
+									<h:outputText value="Eklenecek menü ağacı bulunamadı!" rendered="#{empty menuItemHome.freeMenuItemList}" />
 									<rich:dataTable rowClasses="acik,koyu" style="rich-panel-header" height="40px" width="537px" id="menuItemDataTable"
 										rendered="#{not empty menuItemHome.freeMenuItemList}" value="#{menuItemHome.freeMenuItemList}" var="menuItem">
 										<rich:column width="200px">

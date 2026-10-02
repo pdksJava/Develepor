@@ -128,7 +128,7 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 	@Transactional
 	public String moveMenuItemsFromDataTable2Tree() {
 		ArrayList<String> targetListForDataTable = new ArrayList<String>();
-		MenuItem selectedMenuItemFromTree = null;
+		MenuItem seciliMenuItem = null;
 		FacesMessage facesMessage = new FacesMessage();
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
@@ -162,18 +162,17 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 		idDataList = null;
 		// Kontroller
 		if (selectedMenuItemFromTreeList.isEmpty()) {
-
 			facesMessage.setSummary("Ağaçtan Menü Bileşeni seçilmediğinden Data tabledan seçilen Menü Bileşeni üst bileşen olrak ayarlandı......");
 			facesMessage.setDetail("Ağaçtan Menü Bileşeni seçilmediğinden Data tabledan seçilen Menü Bileşeni üst bileşen olrak ayarlandı...");
 			facesMessage.setSeverity(FacesMessage.SEVERITY_INFO);
 			FacesContext.getCurrentInstance().addMessage("", facesMessage);
-		} else if (selectedMenuItemFromDataTableList.size() > 1) {
+		} else if (selectedMenuItemFromTreeList.size() > 1) {
 			facesMessage.setSummary("#{messages['pages.menuItemList.mesaj.birdenFazlaSecim']}");
 			facesMessage.setDetail("Birden fazla menü seçilemez");
 			facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
 			FacesContext.getCurrentInstance().addMessage("", facesMessage);
 		} else
-			selectedMenuItemFromTree = selectedMenuItemFromTreeList.get(0);
+			seciliMenuItem = selectedMenuItemFromTreeList.get(0);
 
 		if (selectedMenuItemFromDataTableList.isEmpty()) {
 			facesMessage.setSummary("Data tabledan Menü Bileşeni seçiniz...");
@@ -185,23 +184,27 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 		if (FacesContext.getCurrentInstance().getMaximumSeverity() == FacesMessage.SEVERITY_INFO || FacesContext.getCurrentInstance().getMaximumSeverity() == null) {
 			try {
 				// Data tabledan alınan menu Itemlerin ayarlanması
-				for (Iterator<MenuItem> iterator4DataTable = selectedMenuItemFromDataTableList.iterator(); iterator4DataTable.hasNext();) {
-					MenuItem tempMenuItemFromDataTable = (MenuItem) iterator4DataTable.next();
-					tempMenuItemFromDataTable.setStatus(Boolean.TRUE);
+				List<MenuItem> tempppp = new ArrayList<MenuItem>(seciliMenuItem.getChildMenuItemList());
+				seciliMenuItem.setChildMenuItemList(tempppp);
+				List<Long> idList = new ArrayList<Long>();
+				for (MenuItem freeMenuItem : selectedMenuItemFromDataTableList) {
+					if (idList.contains(freeMenuItem.getId()))
+						continue;
+					idList.add(freeMenuItem.getId());
+					freeMenuItem.setStatus(Boolean.TRUE);
 					if (selectedMenuItemFromDataTableList.isEmpty())
-						tempMenuItemFromDataTable.setTopMenu(Boolean.TRUE);
+						freeMenuItem.setTopMenu(Boolean.TRUE);
 					else {// CHILD MENU
-						targetListForDataTable.add(tempMenuItemFromDataTable.getName());
-						List<MenuItem> tempppp = new ArrayList<MenuItem>(selectedMenuItemFromTree.getChildMenuItemList());
-						tempppp.add(tempMenuItemFromDataTable);
-						selectedMenuItemFromTree.setChildMenuItemList(tempppp);
-
-					}
-					pdksEntityController.saveOrUpdate(session, entityManager, tempMenuItemFromDataTable);
+						targetListForDataTable.add(freeMenuItem.getName());
+						tempppp.add(freeMenuItem);
+ 					}
+					pdksEntityController.saveOrUpdate(session, entityManager, freeMenuItem);
 				}
-				if (selectedMenuItemFromTree != null)
-					pdksEntityController.saveOrUpdate(session, entityManager, selectedMenuItemFromTree);
-				pdksEntityController.sessionFlush(session);
+				if (idList.isEmpty() == false) {
+					if (seciliMenuItem != null)
+						pdksEntityController.saveOrUpdate(session, entityManager, seciliMenuItem);
+					pdksEntityController.sessionFlush(session);
+				}
 			} catch (Exception e) {
 				logger.error(e);
 				e.printStackTrace();
@@ -320,9 +323,9 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 		if (!menuItem.getChildMenuItemList().isEmpty()) {
 			for (Iterator iterator = menuItem.getChildMenuItemListSirali().iterator(); iterator.hasNext();) {
 				MenuItem tempMenuItem = (MenuItem) iterator.next();
-				if (tempMenuItem.getTopMenu() == false)  
+				if (tempMenuItem.getTopMenu() == false)
 					tempMenuItem.setStatus(Boolean.FALSE);
- 				deleteMenuItemList.add(tempMenuItem);
+				deleteMenuItemList.add(tempMenuItem);
 				deleteMenuItemNameList.add(tempMenuItem.getName());
 
 				if (!tempMenuItem.getChildMenuItemList().isEmpty()) {
