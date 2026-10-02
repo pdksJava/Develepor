@@ -2085,7 +2085,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (pdksPersonel.getKullanici() != null && pdksPersonel.getKullanici().getId() == null && departmanKullaniciList != null && departmanKullaniciList.size() == 1)
 			pdksPersonel.getKullanici().setDepartman(departmanTanimList.get(0));
 		tesisYetki = ortakIslemler.getParameterKey("tesisYetki").equals("1");
-		if (tesisYetki && authenticatedUser.isIK_Tesis())
+		if (tesisYetki && (authenticatedUser.isIK_Tesis() || authenticatedUser.isIKSirket()))
 			tesisYetki = authenticatedUser.getYetkiliTesisler() != null && authenticatedUser.getYetkiliTesisler().isEmpty() == false;
 		bolumYetki = ortakIslemler.getParameterKey("bolumYetki").equals("1");
 		fillDistinctRoleList();
@@ -2446,11 +2446,23 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (tesisYetki) {
 			Personel personel = getInstance();
 			if (personel.getKullanici() != null) {
-				List<Role> rolList = personel.getKullanici().getYetkiliRollerim();
+				User kullanici = personel.getKullanici();
+				List<Role> rolList = kullanici.getYetkiliRollerim();
 				if (rolList != null && rolList.isEmpty() == false) {
 					List<String> rolNameList = null;
 					String tesisYetkiliRoller = ortakIslemler.getParameterKey("tesisYetkiliRoller");
+					List<Tanim> tesisList = kullanici.getYetkiliTesisler();
+					if (tesisList == null || tesisList.isEmpty()) {
+						if (kullanici.isIK_Tesis() || kullanici.isTesisSuperVisor()) {
+							if (personel.getTesis() != null) {
+								if (tesisList == null)
+									tesisList = new ArrayList<Tanim>();
+								tesisList.add(personel.getTesis());
+							}
 
+						}
+					}
+					int adet = tesisList.size() + distinctTesisList.size();
 					if (PdksUtil.hasStringValue(tesisYetkiliRoller))
 						rolNameList = PdksUtil.getListStringTokenizer(tesisYetkiliRoller, null);
 					else
@@ -2462,8 +2474,12 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						}
 
 					}
+					if (goster)
+						goster = adet > 0;
 				}
+
 			}
+
 		}
 		return goster;
 
@@ -4906,18 +4922,20 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		if (allTesis == null)
 			allTesis = new ArrayList<Tanim>();
 		List<Tanim> yetkiliTesisler = authenticatedUser.getYetkiliTesisler();
-		if (yetkiliTesisler != null && yetkiliTesisler.isEmpty() == false) {
-			for (Iterator iterator = allTesis.iterator(); iterator.hasNext();) {
-				Tanim tanim = (Tanim) iterator.next();
-				boolean sil = false;
-				for (Tanim tesis : yetkiliTesisler) {
-					if (tesis.getId().equals(tanim.getId())) {
-						sil = tesis.isGuncellendi() == false;
-						break;
+		if (authenticatedUser.isAdmin() == false && authenticatedUser.isSistemYoneticisi()) {
+			if (yetkiliTesisler != null && yetkiliTesisler.isEmpty() == false) {
+				for (Iterator iterator = allTesis.iterator(); iterator.hasNext();) {
+					Tanim tanim = (Tanim) iterator.next();
+					boolean sil = false;
+					for (Tanim tesis : yetkiliTesisler) {
+						if (tesis.getId().equals(tanim.getId())) {
+							sil = tesis.isGuncellendi() == false;
+							break;
+						}
 					}
+					if (sil)
+						iterator.remove();
 				}
-				if (sil)
-					iterator.remove();
 			}
 		}
 

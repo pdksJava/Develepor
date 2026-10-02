@@ -180,7 +180,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public boolean updatePersonelDenklestirmeStoreProcedure(PersonelDenklestirme pd, User user, Session session) {
- 		boolean islem = false;
+		boolean islem = false;
 		Long pdId = pd != null ? pd.getId() : null;
 		if (pdId != null) {
 			if (pd.getGuncelleyenUser() != null)
@@ -2811,7 +2811,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		List<Tanim> list = null;
 		LinkedHashMap<String, Object> paramsMap = new LinkedHashMap<String, Object>();
 		Long tesisId = null;
-		if (sirket != null && (sirket.getId() == null || (sirket.isTesisDurumu()) || loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis())) {
+		boolean ikRole = PdksUtil.getIkRole(loginUser);
+		if (sirket != null && (sirket.getId() == null || (sirket.isTesisDurumu()) || ikRole || loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis())) {
 			if (loginUser.getYetkiliTesisler() == null || loginUser.getYetkiliTesisler().isEmpty()) {
 				if (loginUser.isTesisSuperVisor() || loginUser.isIK_Tesis()) {
 					Personel personel = loginUser.getPdksPersonel();
@@ -2819,6 +2820,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						tesisId = personel.getTesis().getId();
 				}
 			}
+			if (loginUser.isAdmin() || loginUser.isSistemYoneticisi())
+				sirket = null;
 			paramsMap.put("loginUser", loginUser);
 			paramsMap.put("sirket", sirket != null && sirket.getId() != null ? sirket : null);
 			paramsMap.put("tesisId", tesisId != null ? String.valueOf(tesisId) : null);

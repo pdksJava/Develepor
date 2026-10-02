@@ -1659,7 +1659,7 @@
 												<c:if test="#{pdksPersonelHome.tesisYetki}">
 													<ui:fragment rendered="#{pdksPersonelHome.tesisGoster()}">
 														<rich:simpleTogglePanel
-															rendered="#{pdksPersonelHome.instance.kullanici.yetkiliTesisler.size() + pdksPersonelHome.distinctTesisList.size() > 0}"
+															
 															label="#{ortakIslemler.tesisAciklama()}" height="110" switchType="client" opened="true">
 															<s:decorate>
 																<rich:listShuttle id="shuttle" sourceValue="#{pdksPersonelHome.distinctTesisList}" fastOrderControlsVisible="false"
