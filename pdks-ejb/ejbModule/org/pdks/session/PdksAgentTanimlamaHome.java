@@ -129,12 +129,15 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 		if (mailList == null)
 			mailList = getMailList(session);
 		if (mailList.isEmpty() == false) {
-
 			for (Iterator iterator = mailList.iterator(); iterator.hasNext();) {
-				ServiceData serviceData = (ServiceData) iterator.next();
-				mailGonderServisData(serviceData);
-			}
+				ServiceData sd = (ServiceData) iterator.next();
+				if (sd.getId() != null)
+					session.delete(sd);
+				MailStatu mailStatu = mailGonderServisData(sd);
+				if (mailStatu != null && mailStatu.getDurum())
+					iterator.remove();
 
+			}
 			try {
 				pdksEntityController.sessionFlush(session);
 			} catch (Exception e) {
@@ -149,7 +152,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 	 * @param sd
 	 */
 	@Transactional
-	public void mailGonderServisData(ServiceData sd) {
+	public MailStatu mailGonderServisData(ServiceData sd) {
 		Gson gson = new Gson();
 		MailStatu mailStatu = null;
 		int adet = 0;
@@ -164,7 +167,6 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 		} catch (Exception e) {
 		}
 		if (paramList == null && parametreJSON != null) {
-
 			paramList = new ArrayList<LinkedTreeMap<String, Object>>();
 			LinkedHashMap<String, Object> paramMap = gson.fromJson(parametreJSON, LinkedHashMap.class);
 			LinkedTreeMap<String, Object> params = new LinkedTreeMap<String, Object>();
@@ -187,8 +189,6 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 		} catch (Exception e) {
 		}
 		if (paramList != null && veriler != null) {
-			if (sd.getId() != null)
-				session.delete(sd);
 			try {
 				LinkedTreeMap<String, Object> params = paramList.get(0);
 				konu = (String) params.get("konu");
@@ -386,6 +386,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 
 			}
 		}
+		return mailStatu;
 	}
 
 	/**
