@@ -2860,8 +2860,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						tesisId = personel.getTesis().getId();
 				}
 			}
-			if (loginUser.isAdmin() || loginUser.isSistemYoneticisi())
-				sirket = null;
+//			if (loginUser.isAdmin() || loginUser.isSistemYoneticisi())
+//				sirket = null;
 			paramsMap.put("loginUser", loginUser);
 			paramsMap.put("sirket", sirket != null && sirket.getId() != null ? sirket : null);
 			paramsMap.put("tesisId", tesisId != null ? String.valueOf(tesisId) : null);
