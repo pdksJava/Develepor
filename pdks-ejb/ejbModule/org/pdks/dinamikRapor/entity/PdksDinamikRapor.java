@@ -2,15 +2,21 @@ package org.pdks.dinamikRapor.entity;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.pdks.dinamikRapor.enums.ENumAlanHizalaTipi;
 import org.pdks.dinamikRapor.enums.ENumDinamikRaporTipi;
 import org.pdks.dinamikRapor.enums.ENumEsitlik;
 import org.pdks.dinamikRapor.enums.ENumRaporAlanTipi;
 import org.pdks.entity.BasePDKSObject;
+import org.pdks.entity.MenuItem;
 import org.pdks.session.PdksUtil;
 
 @Entity(name = PdksDinamikRapor.TABLE_NAME)
@@ -23,6 +29,7 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 
 	public static final String TABLE_NAME = "PDKS_DINAMIK_RAPOR";
 
+	public static final String COLUMN_NAME_UST_MENU = "UST_MENU_ID";
 	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 	public static final String COLUMN_NAME_DB_TANIM = "DB_TANIM";
 	public static final String COLUMN_NAME_RAPOR_TIPI = "RAPOR_TIPI";
@@ -38,6 +45,8 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 	private ENumDinamikRaporTipi raporTipi;
 
 	private Integer sira, raporTipiId;
+
+	private MenuItem ustMenu;
 
 	private Boolean durum = Boolean.TRUE, goruntulemeDurum = Boolean.FALSE;
 
@@ -70,6 +79,17 @@ public class PdksDinamikRapor extends BasePDKSObject implements Serializable {
 
 	public void setSira(Integer sira) {
 		this.sira = sira;
+	}
+
+	@ManyToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = COLUMN_NAME_UST_MENU)
+	@Fetch(FetchMode.JOIN)
+	public MenuItem getUstMenu() {
+		return ustMenu;
+	}
+
+	public void setUstMenu(MenuItem ustMenu) {
+		this.ustMenu = ustMenu;
 	}
 
 	@Column(name = COLUMN_NAME_RAPOR_TIPI)

@@ -34,6 +34,9 @@ public class MenuItem extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_MENU_ADI = "MENU_ADI";
 	public static final String COLUMN_NAME_DURUM = "STATUS";
 	public static final String COLUMN_NAME_TOP_MENU = "TOPMENU";
+	public static final String COLUMN_NAME_SIRA = "ORDERNO" ;
+	  
+
 
 	private String name = "", parametre = "";
 	private List<MenuItem> childMenuItemList = new ArrayList<MenuItem>();;
@@ -180,7 +183,7 @@ public class MenuItem extends BasePDKSObject implements Serializable {
 			return false;
 	}
 
-	@Column(name = "ORDERNO")
+	@Column(name = COLUMN_NAME_SIRA)
 	public int getOrderNo() {
 		return orderNo;
 	}

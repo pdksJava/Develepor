@@ -82,6 +82,12 @@
               		 	 </f:facet>
 							<h:outputText value="#{rapor.sira}" />
 						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+                      		 Bağlı Menü
+              		 	 </f:facet>
+							<h:outputText value="#{rapor.ustMenu.description.aciklama}" />
+						</rich:column>
 						<rich:column style="text-align:center">
 							<f:facet name="header">
                       		Aktif
@@ -164,7 +170,8 @@
 								</s:decorate>
 								<s:decorate template="/layout/edit.xhtml" rendered="#{not empty dinamikRaporTanimlamaHome.dinamikRaporBagliAlanList}">
 									<ui:define name="label">Bağlı Rapor Alan</ui:define>
-									<h:selectOneMenu value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.bagliDinamikAlan}" required="false" requiredMessage="Bağlı Rapor Alan seçiniz">
+									<h:selectOneMenu value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRaporParametre.bagliDinamikAlan}" required="false"
+										requiredMessage="Bağlı Rapor Alan seçiniz">
 										<s:selectItems var="comp" value="#{dinamikRaporTanimlamaHome.dinamikRaporBagliAlanList}" label="#{comp.aciklama}"
 											noSelectionLabel="Lütfen seçiniz" />
 										<s:convertEntity />
@@ -518,12 +525,23 @@
 									</h:inputText>
 								</s:decorate>
 							</c:if>
+
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Menü Sıra</ui:define>
 								<h:inputText id="sira2" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.sira}" size="2" maxlength="5" required="true"
 									requiredMessage="Menü sıra giriniz">
 									<a4j:support event="onchange" reRender="sira" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
 								</h:inputText>
+							</s:decorate>
+							<s:decorate template="/layout/edit.xhtml" id="ustMenu">
+								<ui:define name="label">Bağlı Menü</ui:define>
+								<h:selectOneMenu value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.ustMenu}">
+									<s:selectItems var="comp" value="#{dinamikRaporTanimlamaHome.raporMenuList}" label="#{comp.description.aciklama}"
+										noSelectionLabel="Lütfen seçiniz" />
+									<s:convertEntity />
+									<a4j:support event="onchange" reRender="ustMenu" status="ajaxStatus" ajaxSingle="true" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+								</h:selectOneMenu>
+
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">Aktif</ui:define>

@@ -7,9 +7,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.el.MethodExpression;
 import javax.faces.application.Application;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
 
@@ -144,6 +146,19 @@ public class MenuLoaderActionBean implements Serializable {
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<PdksDinamikRapor> raporlar = pdksEntityController.getObjectBySQLList(sb, fields, PdksDinamikRapor.class);
 		if (!raporlar.isEmpty() && raporIslemleri.getChildren() != null) {
+			HashMap<String, List<PdksDinamikRapor>> bagliRaporMap = new HashMap<String, List<PdksDinamikRapor>>();
+			for (Iterator iterator = raporlar.iterator(); iterator.hasNext();) {
+				PdksDinamikRapor pdksDinamikRapor = (PdksDinamikRapor) iterator.next();
+				if (pdksDinamikRapor.getUstMenu() != null) {
+					String key = pdksDinamikRapor.getUstMenu().getName();
+					List<PdksDinamikRapor> list1 = bagliRaporMap.containsKey(key) ? bagliRaporMap.get(key) : new ArrayList<PdksDinamikRapor>();
+					if (list1.isEmpty())
+						bagliRaporMap.put(key, list1);
+					list1.add(pdksDinamikRapor);
+					iterator.remove();
+				}
+
+			}
 			List list = new ArrayList();
 			for (Iterator iterator = raporIslemleri.getChildren().iterator(); iterator.hasNext();) {
 				Object object = (Object) iterator.next();
@@ -152,6 +167,52 @@ public class MenuLoaderActionBean implements Serializable {
 					HtmlMenuGroup raporGrup = (HtmlMenuGroup) object;
 					if (raporGrup.getId().equals(menuAdi))
 						ekle = false;
+					else {
+						if (bagliRaporMap.containsKey(raporGrup.getId())) {
+							List<PdksDinamikRapor> list1 = bagliRaporMap.get(raporGrup.getId());
+							List<UIComponent> childrenList = raporGrup.getChildren();
+							for (PdksDinamikRapor pdksDinamikRapor : list1) {
+								MenuItem dinamikMenu = (MenuItem) dinamikRaporMenu.cloneEmpty();
+								dinamikMenu.setName(dinamikRaporMenu.getName());
+								// dinamikMenu.setTopMenu(true);
+								HtmlMenuItem rapor = new HtmlMenuItem();
+								rapor.setData(pdksDinamikRapor.getSira());
+								dinamikMenu.setParametre("id=" + PdksUtil.getEncodeStringByBase64("id=" + pdksDinamikRapor.getId() + "&userId=" + authenticatedUser.getId() + "&time=" + new Date().getTime()));
+								rapor.setValue(pdksDinamikRapor.getAciklama() + (authenticatedUser.isAdmin() == false ? "" : " [ Dinamik ]"));
+								rapor.setId(raporGrup.getId() + "_" + menuAdi + pdksDinamikRapor.getId());
+								MethodExpression me = null;
+								try {
+									me = startAction(dinamikMenu);
+								} catch (Exception e) {
+									System.err.println(e);
+								}
+
+								if (me != null) {
+									rapor.setActionExpression(me);
+
+								}
+								childrenList.add(rapor);
+							}
+							if (childrenList.size() > 1) {
+								TreeMap<Long, HtmlMenuItem> map = new TreeMap<Long, HtmlMenuItem>();
+								for (UIComponent child : childrenList) {
+									if (child instanceof HtmlMenuItem) {
+										HtmlMenuItem item = (HtmlMenuItem) child;
+										Long key = Long.parseLong(item.getData() == null ? "0" : item.getData().toString());
+										map.put(key, item);
+
+									}
+								}
+
+								raporGrup.getChildren().clear();
+								for (Long key : map.keySet()) {
+									raporGrup.getChildren().add(map.get(key));
+								}
+
+							}
+
+						}
+					}
 
 				} else if (object instanceof HtmlMenuItem) {
 					HtmlMenuItem rapor = (HtmlMenuItem) object;
@@ -235,6 +296,7 @@ public class MenuLoaderActionBean implements Serializable {
 							hmiHomePage = new HtmlMenuItem();
 							String subAciklama = ortakIslemler.getMenuAciklamaERP(subMenu);
 							hmiHomePage.setValue(subAciklama);
+							hmiHomePage.setData(subMenu.getOrderNo());
 							hmiHomePage.setId(subMenu.getName());
 							hmiHomePage.setActionExpression(this.startAction(subMenu));
 							// hmiHomePage.setRendered(userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW));
@@ -279,6 +341,7 @@ public class MenuLoaderActionBean implements Serializable {
 					hmiHomePage = new HtmlMenuItem();
 					String aciklama = ortakIslemler.getMenuAciklamaERP(subMenu);
 					hmiHomePage.setValue(aciklama);
+					hmiHomePage.setData(subMenu.getOrderNo());
 					hmiHomePage.setActionExpression(startAction(subMenu));
 					// hmiHomePage.setRendered(userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW));
 					if (hmiHomePage.getActionExpression() != null)
@@ -299,6 +362,7 @@ public class MenuLoaderActionBean implements Serializable {
 
 	private MethodExpression startAction(MenuItem menuItem) {
 		String menuName = "", firstCharMenuName = "", action = "";
+
 		menuName = menuItem.getName().trim();
 		firstCharMenuName = menuName.substring(0, 1);
 		menuName = menuName.substring(1);
@@ -310,6 +374,7 @@ public class MenuLoaderActionBean implements Serializable {
 		}
 		if (action == null)
 			return null;
+
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		Application app = ctx.getApplication();
 		if (PdksUtil.hasStringValue(menuItem.getParametre()))

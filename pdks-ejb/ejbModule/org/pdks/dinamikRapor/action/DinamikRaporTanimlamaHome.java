@@ -28,6 +28,9 @@ import org.pdks.dinamikRapor.enums.ENumAlanHizalaTipi;
 import org.pdks.dinamikRapor.enums.ENumDinamikRaporTipi;
 import org.pdks.dinamikRapor.enums.ENumEsitlik;
 import org.pdks.dinamikRapor.enums.ENumRaporAlanTipi;
+import org.pdks.entity.MenuIliski;
+import org.pdks.entity.MenuItem;
+import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.Role;
 import org.pdks.security.entity.User;
 import org.pdks.session.ComponentState;
@@ -57,7 +60,11 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	ComponentState componentState;
 
 	public static String sayfaURL = "dinamikRaporTanimlama";
+	/**
+	 * 
+	 */
 	private List<PdksDinamikRapor> dinamikRaporList;
+	private List<MenuItem> raporMenuList;
 	private PdksDinamikRapor seciliPdksDinamikRapor;
 	private PdksDinamikRaporAlan seciliPdksDinamikRaporAlan;
 	private PdksDinamikRaporParametre seciliPdksDinamikRaporParametre;
@@ -170,9 +177,12 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 				dinamikRaporAlanGuncelle(null);
 			else if (tip.equals("P"))
 				dinamikRaporParametreGuncelle(null);
-			else
+			else {
+				fillRaporMenuList();
 				fillDinamikRapoRoleList();
-		}
+			}
+ 		}
+
 		return "";
 
 	}
@@ -422,6 +432,27 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 
 	}
 
+	/**
+	 * 
+	 */
+	private void fillRaporMenuList() {
+		HashMap fields = new HashMap();
+		StringBuilder sb = new StringBuilder();
+		sb.append("select distinct M.* from " + MenuItem.TABLE_NAME + " U " + PdksEntityController.getSelectLOCK());
+		sb.append(" inner join " + MenuIliski.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on I." + MenuIliski.COLUMN_NAME_MENU_ITEM + " = U." + MenuItem.COLUMN_NAME_ID);
+		sb.append(" inner join " + MenuItem.TABLE_NAME + " M " + PdksEntityController.getJoinLOCK() + " on I." + MenuIliski.COLUMN_NAME_CHILD_MENU_ITEM + " = M." + MenuItem.COLUMN_NAME_ID);
+		sb.append(" inner join " + MenuIliski.TABLE_NAME + " B " + PdksEntityController.getJoinLOCK() + " on B." + MenuIliski.COLUMN_NAME_MENU_ITEM + " = M." + MenuItem.COLUMN_NAME_ID);
+		sb.append(" where U." + MenuItem.COLUMN_NAME_ADI + " = :m");
+		sb.append(" order by M." + MenuItem.COLUMN_NAME_SIRA);
+		fields.put("m", MenuItemConstant.raporIslemleri);
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		raporMenuList = pdksEntityController.getObjectBySQLList(sb, fields, MenuItem.class);
+	}
+
+	/**
+	 * 
+	 */
 	private void fillDinamikRaporAlanList() {
 		dinamikRaporAlanList = pdksEntityController.getSQLParamByFieldList(PdksDinamikRaporAlan.TABLE_NAME, PdksDinamikRaporAlan.COLUMN_NAME_DINAMIK_RAPOR, seciliPdksDinamikRapor.getId(), PdksDinamikRaporAlan.class, session);
 		if (dinamikRaporAlanList.size() > 1)
@@ -674,5 +705,13 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 
 	public void setDinamikRaporBagliAlanList(List<PdksDinamikRaporAlan> dinamikRaporBagliAlanList) {
 		this.dinamikRaporBagliAlanList = dinamikRaporBagliAlanList;
+	}
+
+	public List<MenuItem> getRaporMenuList() {
+		return raporMenuList;
+	}
+
+	public void setRaporMenuList(List<MenuItem> raporMenuList) {
+		this.raporMenuList = raporMenuList;
 	}
 }
