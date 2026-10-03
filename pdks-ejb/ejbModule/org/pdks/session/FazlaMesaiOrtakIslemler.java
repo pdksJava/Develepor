@@ -230,8 +230,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			boolean spCalismaSaatGuncelleVar = veriMap.containsKey("spCalismaSaatGuncelleVar") ? (Boolean) veriMap.get("spCalismaSaatGuncelleVar") : Boolean.FALSE;
 			boolean spPersonelDenklestirmeGuncelleVar = veriMap.containsKey("spPersonelDenklestirmeGuncelleVar") ? (Boolean) veriMap.get("spPersonelDenklestirmeGuncelleVar") : Boolean.FALSE;
 			boolean planEkran = veriMap.containsKey("planEkran") ? (Boolean) veriMap.get("planEkran") : Boolean.FALSE;
-			if (planEkran == false)
-				pdksEntityController.startTransaction(session);
+//			if (planEkran == false)
+//				pdksEntityController.startTransaction(session);
 			if (object instanceof VardiyaGun) {
 				if (spCalismaSaatGuncelleVar) {
 					VardiyaGun vg = (VardiyaGun) object;
