@@ -197,7 +197,7 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 					else {// CHILD MENU
 						targetListForDataTable.add(freeMenuItem.getName());
 						tempppp.add(freeMenuItem);
- 					}
+					}
 					pdksEntityController.saveOrUpdate(session, entityManager, freeMenuItem);
 				}
 				if (idList.isEmpty() == false) {
@@ -363,6 +363,7 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 		return "";
 	}
 
+	@Transactional
 	private void menuItemGiris() {
 		rootNode = null;
 		if (PdksUtil.isSessionKapali(session))

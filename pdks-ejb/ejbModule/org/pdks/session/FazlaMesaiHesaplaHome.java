@@ -2638,7 +2638,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 										yasalFazlaCalismaAsanSaat = calismaModeli.isFazlaMesaiVarMi() && ucretiOdenenMesaiSure > 0.0d;
 
 									if (!saveList.isEmpty()) {
-										ts = pdksEntityController.startTransaction(session);
+	//									ts = pdksEntityController.startTransaction(session);
 										for (Iterator iterator = saveList.iterator(); iterator.hasNext();) {
 											Object object = (Object) iterator.next();
 											boolean updateDurum = saveOrUpdate(object);

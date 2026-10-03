@@ -5289,6 +5289,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param personel
 	 * @param session
 	 */
+	@Transactional
 	public void personelKaydet(Personel personel, Session session) {
 		if (personel != null) {
 			pdksEntityController.startTransaction(session);
@@ -7575,6 +7576,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param map
 	 * @param session
 	 */
+	@Transactional
 	public void saveLastParameter(LinkedHashMap<String, Object> map, Session session) throws Exception {
 		String key = authenticatedUser != null ? authenticatedUser.getCalistigiSayfa() : null;
 		if (key != null && map != null) {
@@ -11823,7 +11825,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param menuAdi
 	 * @param session
 	 */
-
+	@Transactional
 	private UserMenuItemTime setUserMenuItem(String menuAdi, Session session) {
 		UserMenuItemTime menuItemTime = null;
 		if (authenticatedUser != null) {

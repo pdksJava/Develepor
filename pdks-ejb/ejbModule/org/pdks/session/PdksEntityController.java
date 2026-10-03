@@ -701,18 +701,18 @@ public class PdksEntityController implements Serializable {
 	 */
 	public Transaction startTransaction(Session session) {
 		Transaction t = null;
-		if (session != null) {
-			try {
-				t = session.getTransaction();
-				if (t == null || t.isActive() == false)
-					t = session.beginTransaction();
-			} catch (Exception e) {
-				logger.error(e);
-				e.printStackTrace();
-			}
-		}
-		if (t != null && t.isActive())
-			logger.debug("");
+//		if (session != null) {
+//			try {
+//				t = session.getTransaction();
+//				if (t == null || t.isActive() == false)
+//					t = session.beginTransaction();
+//			} catch (Exception e) {
+//				logger.error(e);
+//				e.printStackTrace();
+//			}
+//		}
+//		if (t != null && t.isActive())
+//			logger.debug("");
 		return t;
 	}
 

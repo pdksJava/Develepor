@@ -383,7 +383,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @return
 	 */
 	private boolean saveOrUpdate(Object object) {
- 	boolean islem = false;
+		boolean islem = false;
 		if (object != null) {
 			HashMap<String, Object> veriMap = new HashMap<String, Object>();
 			veriMap.put("spCalismaSaatGuncelleVar", spCalismaSaatGuncelleVar);
@@ -392,7 +392,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			veriMap.put("planEkran", Boolean.TRUE);
 			islem = fazlaMesaiOrtakIslemler.saveOrUpdate(object, veriMap, session);
 			veriMap = null;
- 		}
+		}
 		return islem;
 
 	}
@@ -5445,7 +5445,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			yoneticiKontrolEtme = loginUser == null || loginUser.isAdmin() || loginUser.isSistemYoneticisi() || PdksUtil.hasStringValue(yoneticiPuantajKontrolStr) == false;
 
 		} catch (Exception e) {
- 		}
+		}
 		if (!yoneticiKontrolEtme)
 			yoneticiKontrolEtme = yoneticiPuantajKontrolStr.equals("1") || ortakIslemler.yoneticiRolKontrol(session);
 

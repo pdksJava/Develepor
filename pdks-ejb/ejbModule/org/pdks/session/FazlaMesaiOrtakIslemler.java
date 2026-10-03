@@ -230,8 +230,9 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			boolean spCalismaSaatGuncelleVar = veriMap.containsKey("spCalismaSaatGuncelleVar") ? (Boolean) veriMap.get("spCalismaSaatGuncelleVar") : Boolean.FALSE;
 			boolean spPersonelDenklestirmeGuncelleVar = veriMap.containsKey("spPersonelDenklestirmeGuncelleVar") ? (Boolean) veriMap.get("spPersonelDenklestirmeGuncelleVar") : Boolean.FALSE;
 			boolean planEkran = veriMap.containsKey("planEkran") ? (Boolean) veriMap.get("planEkran") : Boolean.FALSE;
-//			if (planEkran == false)
-//				pdksEntityController.startTransaction(session);
+			// if (planEkran == false)
+			// pdksEntityController.startTransaction(session);
+			boolean refresh = false;
 			if (object instanceof VardiyaGun) {
 				if (spCalismaSaatGuncelleVar) {
 					VardiyaGun vg = (VardiyaGun) object;
@@ -239,19 +240,22 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						islem = updateVardiyaGunStoreProcedure(vg, pdksUser, session);
 				}
 			} else if (object instanceof PersonelDenklestirme) {
-				if (spPersonelDenklestirmeGuncelleVar && planEkran) {
+				if (spPersonelDenklestirmeGuncelleVar && planEkran == false) {
 					PersonelDenklestirme pd = (PersonelDenklestirme) object;
 					if (pd.getId() != null) {
 						islem = updatePersonelDenklestirmeStoreProcedure(pd, pdksUser, session);
 						if (islem)
-							session.refresh(pd);
+							refresh = true;
 					}
 				}
 			}
 			if (islem == false) {
 				pdksEntityController.saveOrUpdate(session, null, object);
 				islem = true;
+				refresh = false;
 			}
+			if (refresh)
+				session.refresh(object);
 		}
 		return islem;
 
@@ -2860,8 +2864,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						tesisId = personel.getTesis().getId();
 				}
 			}
-//			if (loginUser.isAdmin() || loginUser.isSistemYoneticisi())
-//				sirket = null;
+			// if (loginUser.isAdmin() || loginUser.isSistemYoneticisi())
+			// sirket = null;
 			paramsMap.put("loginUser", loginUser);
 			paramsMap.put("sirket", sirket != null && sirket.getId() != null ? sirket : null);
 			paramsMap.put("tesisId", tesisId != null ? String.valueOf(tesisId) : null);
