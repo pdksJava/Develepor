@@ -426,7 +426,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 						try {
 							vardiyaVersiyonGuncelle(denklestirmeAy, sirket.getFazlaMesaiTalepGirilebilir(), sirketId, new Date(), pdksUser, session);
 						} catch (Exception e) {
-							// TODO: handle exception
+						 
 						}
 
 						pdksUser.setAdmin(true);

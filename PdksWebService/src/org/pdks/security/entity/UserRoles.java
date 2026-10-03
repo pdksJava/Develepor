@@ -6,6 +6,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -47,5 +48,10 @@ public class UserRoles extends BasePDKSObject implements Serializable {
 
 	public void setRole(Role role) {
 		this.role = role;
+	}
+
+	@Transient
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 }

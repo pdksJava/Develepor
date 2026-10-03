@@ -18,6 +18,7 @@ import java.util.TreeMap;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.pdks.dao.BaseDAO;
+import org.pdks.entity.BaseObject;
 import org.pdks.entity.BasePDKSObject;
 import org.pdks.genel.model.Liste;
 import org.pdks.genel.model.PdksUtil;
@@ -683,7 +684,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 			queryReadUnCommitted = session.createSQLQuery(setTransactionIsolationLevel(TRANSACTION_ISOLATION_LEVEL_READ_COMMITTED));
 			queryReadUnCommitted.executeUpdate();
 		}
- 		return list;
+		return list;
 	}
 
 	/**
@@ -836,6 +837,7 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 				list = PdksUtil.sortListByAlanAdi(list, "id", true);
 			Long id = (Long) PdksUtil.getMethodObject(list.get(0), "getId", null);
 			if (id.longValue() != kayitAdet) {
+				String tableName = null;
 				kayitAdet = 0;
 				list = PdksUtil.sortListByAlanAdi(list, "id", false);
 				List saveList = new ArrayList(), removeList = new ArrayList();
@@ -846,8 +848,14 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 					if (id.longValue() != kayitAdet) {
 						removeList.add(object);
 						BasePDKSObject basePDKSObject = (BasePDKSObject) PdksUtil.getMethodObject(object, "cloneEmpty", null);
-						if (basePDKSObject != null)
+						if (basePDKSObject != null) {
+							if (object instanceof BaseObject) {
+								tableName = basePDKSObject.getTableName();
+							}
+
 							saveList.add(basePDKSObject);
+						}
+
 					}
 				}
 				if (!saveList.isEmpty() && removeList.size() == saveList.size()) {
@@ -868,8 +876,9 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 					LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 					if (session != null)
 						veriMap.put(MAP_KEY_SESSION, session);
+					veriMap.put("tableName", tableName);
+					veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_CHECKIDENT_TABLE");
 
-					veriMap.put(BaseDAOHibernate.MAP_KEY_SELECT, "SP_CHECKIDENT_VIEW");
 					execSP(veriMap);
 					session.flush();
 					session.clear();

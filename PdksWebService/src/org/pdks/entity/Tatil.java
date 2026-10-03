@@ -16,12 +16,13 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.pdks.genel.model.PdksUtil;
 
-@Entity(name = "TATIL")
+@Entity(name = Tatil.TABLE_NAME)
 public class Tatil extends BaseObject {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8647887629561748025L;
+	public static final String TABLE_NAME = "TATIL";
 	public static final String TATIL_TIPI_PERIYODIK = "P";
 	public static final String TATIL_TIPI_TEK_SEFER = "D";
 
@@ -226,6 +227,9 @@ public class Tatil extends BaseObject {
 		this.arifeSonraVardiyaDenklestirmeVar = arifeSonraVardiyaDenklestirmeVar;
 	}
 
-
+	@Transient
+	public String getTableName() {
+		return TABLE_NAME;
+	}
 
 }

@@ -520,4 +520,9 @@ public class PersonelIzin extends BaseObject {
 		return kod.trim();
 	}
 
+	@Transient
+	public String getTableName() {
+ 		return TABLE_NAME;
+	}
+
 }

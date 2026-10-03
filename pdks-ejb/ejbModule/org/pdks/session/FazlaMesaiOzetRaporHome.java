@@ -2416,8 +2416,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					try {
 						fillHareketList(list);
 					} catch (Exception e) {
-						// TODO: handle exception
-					}
+ 					}
 
 				ByteArrayOutputStream baosDosya = aylikVardiyaTabloHareketExcelDevam(list);
 				if (baosDosya != null) {

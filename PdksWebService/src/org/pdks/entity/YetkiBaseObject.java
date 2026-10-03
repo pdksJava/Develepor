@@ -101,4 +101,10 @@ public class YetkiBaseObject extends BaseObject {
 		return PdksUtil.tarihKarsilastirNumeric(this.getBasTarih(), new Date()) == 1;
 	}
 
+	@Override
+	public String getTableName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

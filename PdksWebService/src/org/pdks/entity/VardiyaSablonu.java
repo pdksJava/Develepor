@@ -18,7 +18,6 @@ import org.pdks.genel.model.PdksUtil;
 
 @Entity(name = VardiyaSablonu.TABLE_NAME)
 public class VardiyaSablonu extends BaseObject {
-	 
 
 	/**
 	 * 
@@ -395,6 +394,11 @@ public class VardiyaSablonu extends BaseObject {
 
 	public void entityRefresh() {
 
+	}
+
+	@Transient
+	public String getTableName() {
+		return TABLE_NAME;
 	}
 
 }

@@ -201,7 +201,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 	private Boolean manuelHareketEkle, kayitBasarili, vardiyaFazlaMesaiTalepGoster = Boolean.FALSE, bakiyeSifirlaDurum = Boolean.FALSE, isAramaGoster = Boolean.FALSE, yoneticiERP1Kontrol = Boolean.FALSE, bordroPuantajEkranindaGoster = Boolean.FALSE;
 
-	private boolean adminRole, userLoginOldu, spCalismaSaatGuncelleVar, ikRole, gorevYeriGirisDurum, kartBasmayanPersonel, fazlaMesaiTarihGuncelle = Boolean.FALSE, offIzinGuncelle = Boolean.FALSE, gebeSutIzniGuncelle = Boolean.FALSE;
+	private boolean adminRole, userLoginOldu, spCalismaSaatGuncelleVar, spPersonelDenklestirmeGuncelleVar, ikRole, gorevYeriGirisDurum, kartBasmayanPersonel, fazlaMesaiTarihGuncelle = Boolean.FALSE, offIzinGuncelle = Boolean.FALSE, gebeSutIzniGuncelle = Boolean.FALSE;
 
 	private Dosya vardiyaPlanDosya = new Dosya();
 
@@ -378,21 +378,21 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param object
 	 */
 
+	/**
+	 * @param object
+	 * @return
+	 */
 	private boolean saveOrUpdate(Object object) {
-		boolean islem = false;
+ 	boolean islem = false;
 		if (object != null) {
-			if (object instanceof VardiyaGun && spCalismaSaatGuncelleVar) {
-				VardiyaGun vg = (VardiyaGun) object;
-				if (vg.getId() != null)
-					islem = fazlaMesaiOrtakIslemler.updateVardiyaGunStoreProcedure(vg, getPdksUser(), session);
-
-			}
-			if (islem == false) {
-				pdksEntityController.saveOrUpdate(session, entityManager, object);
-				islem = true;
-			}
-
-		}
+			HashMap<String, Object> veriMap = new HashMap<String, Object>();
+			veriMap.put("spCalismaSaatGuncelleVar", spCalismaSaatGuncelleVar);
+			veriMap.put("spPersonelDenklestirmeGuncelleVar", spPersonelDenklestirmeGuncelleVar);
+			veriMap.put("user", getPdksUser());
+			veriMap.put("planEkran", Boolean.TRUE);
+			islem = fazlaMesaiOrtakIslemler.saveOrUpdate(object, veriMap, session);
+			veriMap = null;
+ 		}
 		return islem;
 
 	}
@@ -5445,8 +5445,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			yoneticiKontrolEtme = loginUser == null || loginUser.isAdmin() || loginUser.isSistemYoneticisi() || PdksUtil.hasStringValue(yoneticiPuantajKontrolStr) == false;
 
 		} catch (Exception e) {
-			// TODO: handle exception
-		}
+ 		}
 		if (!yoneticiKontrolEtme)
 			yoneticiKontrolEtme = yoneticiPuantajKontrolStr.equals("1") || ortakIslemler.yoneticiRolKontrol(session);
 
@@ -10939,6 +10938,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		if (PdksUtil.isSessionKapali(session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		spCalismaSaatGuncelleVar = ortakIslemler.isExisStoreProcedure(FazlaMesaiOrtakIslemler.SP_CALISMA_PLANI_GUNCELLEME_ADI, session);
+		spPersonelDenklestirmeGuncelleVar = ortakIslemler.isExisStoreProcedure(FazlaMesaiOrtakIslemler.SP_UPDATE_PERSONEL_DENKLESME_GUNCELLEME, session);
 		topluGuncelleme = false;
 		setPdksUser(authenticatedUser);
 		userLoginOldu = authenticatedUser != null;

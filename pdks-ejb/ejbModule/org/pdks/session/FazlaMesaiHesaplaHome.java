@@ -165,7 +165,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	private Sirket sirket;
 
 	private DenklestirmeAy denklestirmeAy, gecenAy = null;
-	private boolean spPersonelDenklestirmeGuncelleVar = false;
+	private boolean spPersonelDenklestirmeGuncelleVar = false, spCalismaSaatGuncelleVar = false;
 
 	private Boolean hataYok, calisiyor = Boolean.FALSE, fazlaMesaiIzinKullan = Boolean.FALSE, fazlaMesaiOde = Boolean.FALSE, fazlaMesaiTalepSil = Boolean.FALSE, yetkili = Boolean.FALSE, resmiTatilVar = Boolean.FALSE, haftaTatilVar = Boolean.FALSE, kaydetDurum = Boolean.FALSE;
 	private Boolean sutIzniGoster = Boolean.FALSE, suaGoster, gebeGoster = Boolean.FALSE, partTimeGoster = Boolean.FALSE, onayla, hastaneSuperVisor = Boolean.FALSE, sirketIzinGirisDurum = Boolean.FALSE;
@@ -252,28 +252,21 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 	/**
 	 * @param object
+	 * @return
 	 */
-
 	public boolean saveOrUpdate(Object object) {
 		boolean islem = false;
 		if (object != null) {
-			pdksEntityController.startTransaction(session);
-			if (object instanceof PersonelDenklestirme && spPersonelDenklestirmeGuncelleVar) {
-				PersonelDenklestirme pd = (PersonelDenklestirme) object;
-				if (pd.getId() != null)
-					islem = fazlaMesaiOrtakIslemler.updatePersonelDenklestirmeStoreProcedure(pd, getPdksUser(), session);
-				if (islem)
-					session.refresh(object);
-			}
-			if (islem == false) {
-				pdksEntityController.saveOrUpdate(session, entityManager, object);
-				islem = true;
-			}
-
+			HashMap<String, Object> veriMap = new HashMap<String, Object>();
+			veriMap.put("spCalismaSaatGuncelleVar", spCalismaSaatGuncelleVar);
+			veriMap.put("spPersonelDenklestirmeGuncelleVar", spPersonelDenklestirmeGuncelleVar);
+			veriMap.put("user", getPdksUser());
+			veriMap.put("planEkran", Boolean.FALSE);
+			islem = fazlaMesaiOrtakIslemler.saveOrUpdate(object, veriMap, session);
+			veriMap = null;
 		}
 		return islem;
-
-	}
+ 	}
 
 	/**
 	 * 
@@ -1948,7 +1941,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						User adminUser = null;
 						String spVardiyaGuncelleme = FazlaMesaiOrtakIslemler.SP_CALISMA_PLANI_GUNCELLEME_ADI;
 						spPersonelDenklestirmeGuncelleVar = ortakIslemler.isExisStoreProcedure(FazlaMesaiOrtakIslemler.SP_UPDATE_PERSONEL_DENKLESME_GUNCELLEME, session);
-						boolean spCalismaSaatGuncelleVar = ortakIslemler.isExisStoreProcedure(FazlaMesaiOrtakIslemler.SP_CALISMA_PLANI_GUNCELLEME_ADI, session);
+						spCalismaSaatGuncelleVar = ortakIslemler.isExisStoreProcedure(FazlaMesaiOrtakIslemler.SP_CALISMA_PLANI_GUNCELLEME_ADI, session);
 						boolean spVardiyaGuncellemeVar = ortakIslemler.isExisStoreProcedure(spVardiyaGuncelleme, session);
 						boolean ekle = (denklestirmeAyDurum || (bakiyeGuncelle != null && bakiyeGuncelle));
 						Transaction ts = null;

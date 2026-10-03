@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
 
@@ -57,6 +58,11 @@ public class MailGrubu extends BasePDKSObject implements Serializable, Cloneable
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	@Transient
+	public String getTableName() {
+ 		return TABLE_NAME;
 	}
 
 }

@@ -11,7 +11,7 @@ import javax.persistence.Transient;
 import org.apache.log4j.Logger;
 
 @MappedSuperclass
-public abstract class BasePDKSObject implements Serializable, Cloneable {
+public abstract class BasePDKSObject implements Serializable, Cloneable,PdksInterface {
 
 	/**
 	 * 

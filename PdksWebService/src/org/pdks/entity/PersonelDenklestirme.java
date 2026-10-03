@@ -466,4 +466,9 @@ public class PersonelDenklestirme extends BaseObject {
 		return sutIzniDurum != null && sutIzniDurum.booleanValue();
 	}
 
+	@Transient
+	public String getTableName() {
+ 		return TABLE_NAME;
+	}
+
 }

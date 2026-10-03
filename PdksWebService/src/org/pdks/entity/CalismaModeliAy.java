@@ -89,4 +89,9 @@ public class CalismaModeliAy extends BasePDKSObject implements Serializable {
 		return key;
 	}
 
+	@Transient
+	public String getTableName() {
+ 		return TABLE_NAME;
+	}
+
 }

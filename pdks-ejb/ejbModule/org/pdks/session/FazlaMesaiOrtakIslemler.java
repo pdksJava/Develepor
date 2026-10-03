@@ -218,6 +218,46 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param object
+	 * @param veriMap
+	 * @param session
+	 * @return
+	 */
+	public boolean saveOrUpdate(Object object, HashMap<String, Object> veriMap, Session session) {
+		boolean islem = false;
+		if (object != null) {
+			User pdksUser = veriMap.containsKey("user") ? (User) veriMap.get("user") : authenticatedUser;
+			boolean spCalismaSaatGuncelleVar = veriMap.containsKey("spCalismaSaatGuncelleVar") ? (Boolean) veriMap.get("spCalismaSaatGuncelleVar") : Boolean.FALSE;
+			boolean spPersonelDenklestirmeGuncelleVar = veriMap.containsKey("spPersonelDenklestirmeGuncelleVar") ? (Boolean) veriMap.get("spPersonelDenklestirmeGuncelleVar") : Boolean.FALSE;
+			boolean planEkran = veriMap.containsKey("planEkran") ? (Boolean) veriMap.get("planEkran") : Boolean.FALSE;
+			if (planEkran == false)
+				pdksEntityController.startTransaction(session);
+			if (object instanceof VardiyaGun) {
+				if (spCalismaSaatGuncelleVar) {
+					VardiyaGun vg = (VardiyaGun) object;
+					if (vg.getId() != null)
+						islem = updateVardiyaGunStoreProcedure(vg, pdksUser, session);
+				}
+			} else if (object instanceof PersonelDenklestirme) {
+				if (spPersonelDenklestirmeGuncelleVar && planEkran) {
+					PersonelDenklestirme pd = (PersonelDenklestirme) object;
+					if (pd.getId() != null) {
+						islem = updatePersonelDenklestirmeStoreProcedure(pd, pdksUser, session);
+						if (islem)
+							session.refresh(pd);
+					}
+				}
+			}
+			if (islem == false) {
+				pdksEntityController.saveOrUpdate(session, null, object);
+				islem = true;
+			}
+		}
+		return islem;
+
+	}
+
+	/**
 	 * @param vg
 	 * @param user
 	 * @param session

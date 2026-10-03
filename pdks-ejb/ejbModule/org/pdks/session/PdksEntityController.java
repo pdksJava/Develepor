@@ -879,7 +879,7 @@ public class PdksEntityController implements Serializable {
 		if (veriMap != null) {
 			for (Iterator iterator = veriMap.keySet().iterator(); iterator.hasNext();) {
 				String key = (String) iterator.next();
- 				Object value = veriMap.get(key);
+				Object value = veriMap.get(key);
 				if (value == null)
 					sb.append(" null ");
 				else if (value instanceof String)
@@ -925,8 +925,9 @@ public class PdksEntityController implements Serializable {
 				sessionClose(session);
 		} catch (Exception e) {
 			StringBuffer sb = getExecStringSP(veriMap, sp);
- 			logger.error(sb.toString() + "\n" + e);
-			sb = null;		}
+			logger.error(sb.toString() + "\n" + e);
+			sb = null;
+		}
 		if (manuelReadUnCommitted)
 			veriMap.put("readUnCommitted", true);
 		return sonuc;
@@ -1314,7 +1315,8 @@ public class PdksEntityController implements Serializable {
 				if (kayitAdet != null && kayitAdet > 0) {
 					logger.info(tableName + " " + kayitAdet);
 					veriMap.clear();
-					execSP(session, veriMap, "SP_CHECKIDENT_VIEW");
+					veriMap.put("tableName", tableName);
+					execSP(session, veriMap, "SP_CHECKIDENT_TABLE");
 					sessionFlush(session);
 				}
 				veriMap = null;

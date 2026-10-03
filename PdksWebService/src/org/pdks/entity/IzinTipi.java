@@ -604,4 +604,9 @@ public class IzinTipi extends BaseObject {
 		return kod.trim();
 	}
 
+	@Transient
+	public String getTableName() {
+ 		return TABLE_NAME;
+	}
+
 }

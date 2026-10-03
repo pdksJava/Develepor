@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity(name = ServiceData.TABLE_NAME)
 public class ServiceData extends BasePDKSObject implements Serializable {
@@ -73,6 +74,11 @@ public class ServiceData extends BasePDKSObject implements Serializable {
 
 	public void setFonksiyonAdi(String fonksiyonAdi) {
 		this.fonksiyonAdi = fonksiyonAdi;
+	}
+
+	@Transient
+	public String getTableName() {
+ 		return TABLE_NAME;
 	}
 
 }

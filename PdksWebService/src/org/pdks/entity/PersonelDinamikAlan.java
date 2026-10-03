@@ -140,4 +140,9 @@ public class PersonelDinamikAlan extends BasePDKSObject implements Serializable 
 		return durumSecim != null && durumSecim.booleanValue();
 	}
 
+	@Transient
+	public String getTableName() {
+ 		return TABLE_NAME;
+	}
+
 }

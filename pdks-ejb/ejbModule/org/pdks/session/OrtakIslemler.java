@@ -259,6 +259,9 @@ public class OrtakIslemler implements Serializable {
 	HashMap<String, MenuItem> menuItemMap = new HashMap<String, MenuItem>();
 	@In(required = false)
 	FacesMessages facesMessages;
+	
+	
+	
 
 	/**
 	 * @param id
@@ -4103,8 +4106,7 @@ public class OrtakIslemler implements Serializable {
 				}
 
 			} catch (Exception e) {
-				// TODO: handle exception
-			}
+ 			}
 
 		}
 		return str;
@@ -11890,8 +11892,7 @@ public class OrtakIslemler implements Serializable {
 										flush = true;
 										pdksEntityController.sessionRefresh(session, null, menuItemTime);
 									} catch (Exception e) {
-										// TODO: handle exception
-									}
+ 									}
 
 							}
 
@@ -19200,8 +19201,7 @@ public class OrtakIslemler implements Serializable {
 			if (image != null)
 				backgroundColorRGB = getProjeImageBackgroundColorRGB();
 		} catch (Exception e) {
-			// TODO: handle exception
-		}
+ 		}
 
 		List<Liste> pdfList = new ArrayList<Liste>();
 		HeaderIText event = new HeaderIText();
@@ -19726,8 +19726,7 @@ public class OrtakIslemler implements Serializable {
 			if (renkler.length == 3)
 				backgroundColorRGB = new BaseColor(Integer.parseInt(renkler[0]), Integer.parseInt(renkler[1]), Integer.parseInt(renkler[2]));
 		} catch (Exception e) {
-			// TODO: handle exception
-		}
+ 		}
 		return backgroundColorRGB;
 	}
 

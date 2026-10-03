@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
@@ -61,6 +62,11 @@ public class PersonelMesai extends BasePDKSObject implements Serializable {
 
 	public void setErpKodu(String erpKodu) {
 		this.erpKodu = erpKodu;
+	}
+
+	@Transient
+	public String getTableName() {
+		return null;
 	}
 
 }

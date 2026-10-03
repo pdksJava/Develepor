@@ -135,4 +135,9 @@ public class Parameter extends BasePDKSObject implements Serializable {
 	public boolean isHelpDeskMi() {
 		return helpDesk != null && helpDesk.booleanValue();
 	}
+
+	@Transient
+	public String getTableName() {
+ 		return TABLE_NAME;
+	}
 }
