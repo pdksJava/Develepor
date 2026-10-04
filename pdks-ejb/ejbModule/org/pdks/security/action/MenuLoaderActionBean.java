@@ -15,6 +15,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -39,6 +40,7 @@ public class MenuLoaderActionBean implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 3857102837520938592L;
+	static Logger logger = Logger.getLogger(MenuLoaderActionBean.class);
 	@In(create = true)
 	PdksEntityController pdksEntityController;
 	@In(create = true)
@@ -163,14 +165,17 @@ public class MenuLoaderActionBean implements Serializable {
 			for (Iterator iterator = raporIslemleri.getChildren().iterator(); iterator.hasNext();) {
 				Object object = (Object) iterator.next();
 				boolean ekle = true;
+				String id = null;
 				if (object instanceof HtmlMenuGroup) {
 					HtmlMenuGroup raporGrup = (HtmlMenuGroup) object;
-					if (raporGrup.getId().equals(menuAdi))
+					id = raporGrup.getId();
+
+					if (id.equals(menuAdi))
 						ekle = false;
 					else {
-						if (bagliRaporMap.containsKey(raporGrup.getId())) {
-							List<PdksDinamikRapor> list1 = bagliRaporMap.get(raporGrup.getId());
+						if (bagliRaporMap.containsKey(id)) {
 							List<UIComponent> childrenList = raporGrup.getChildren();
+							List<PdksDinamikRapor> list1 = bagliRaporMap.get(id);
 							for (PdksDinamikRapor pdksDinamikRapor : list1) {
 								MenuItem dinamikMenu = (MenuItem) dinamikRaporMenu.cloneEmpty();
 								dinamikMenu.setName(dinamikRaporMenu.getName());
@@ -179,7 +184,7 @@ public class MenuLoaderActionBean implements Serializable {
 								rapor.setData(pdksDinamikRapor.getSira());
 								dinamikMenu.setParametre("id=" + PdksUtil.getEncodeStringByBase64("id=" + pdksDinamikRapor.getId() + "&userId=" + authenticatedUser.getId() + "&time=" + new Date().getTime()));
 								rapor.setValue(pdksDinamikRapor.getAciklama() + (authenticatedUser.isAdmin() == false ? "" : " [ Dinamik ]"));
-								rapor.setId(raporGrup.getId() + "_" + menuAdi + pdksDinamikRapor.getId());
+								rapor.setId(id + "_" + menuAdi + pdksDinamikRapor.getId());
 								MethodExpression me = null;
 								try {
 									me = startAction(dinamikMenu);
@@ -204,7 +209,7 @@ public class MenuLoaderActionBean implements Serializable {
 									}
 								}
 
-								raporGrup.getChildren().clear();
+								childrenList.clear();
 								for (Long key : map.keySet()) {
 									raporGrup.getChildren().add(map.get(key));
 								}
@@ -216,8 +221,12 @@ public class MenuLoaderActionBean implements Serializable {
 
 				} else if (object instanceof HtmlMenuItem) {
 					HtmlMenuItem rapor = (HtmlMenuItem) object;
-					if (rapor.getId().equals(menuAdi))
+					id = rapor.getId();
+					if (id.equals(menuAdi))
 						ekle = false;
+					else {
+
+					}
 
 				}
 				if (ekle)
@@ -290,7 +299,7 @@ public class MenuLoaderActionBean implements Serializable {
 			HtmlMenuGroup htmlMenuGroup = new HtmlMenuGroup();
 			for (MenuItem subMenu : topMenu.getChildMenuItemListSirali()) {
 				try {
-					if (subMenu.getChildMenuItemList().isEmpty()) {
+					if (subMenu.getChildMenuItemList().isEmpty() && subMenu.istUstMenu() == false) {
 
 						if (subMenu.getStatus() && userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW)) {// gormeye yetkisi yoksa menüyü yaratmasın
 							hmiHomePage = new HtmlMenuItem();
@@ -336,7 +345,7 @@ public class MenuLoaderActionBean implements Serializable {
 		HtmlMenuItem hmiHomePage;
 		HtmlMenuGroup htmlMenuGroup = new HtmlMenuGroup();
 		for (MenuItem subMenu : menuItem.getChildMenuItemListSirali()) {
-			if (subMenu.getChildMenuItemList().isEmpty()) {// demekki sub menuleri yok
+			if (subMenu.getChildMenuItemList().isEmpty() && subMenu.istUstMenu() == false) {// demekki sub menuleri yok
 				if (subMenu.getStatus() && userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW)) {// gormeye yetkisi yoksa menüyü yaratmasın
 					hmiHomePage = new HtmlMenuItem();
 					String aciklama = ortakIslemler.getMenuAciklamaERP(subMenu);
@@ -354,7 +363,8 @@ public class MenuLoaderActionBean implements Serializable {
 					htmlMenuGroup.setValue(aciklama);
 					// htmlMenuGroup.setRendered(userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW));
 					menuGroup.getChildren().add(htmlMenuGroup);
-					addChildNodes(subMenu, htmlMenuGroup);// sub menüleri doldur
+					if (subMenu.getChildMenuItemList().isEmpty() == false)
+						addChildNodes(subMenu, htmlMenuGroup);// sub menüleri doldur
 				}
 			}
 		}
