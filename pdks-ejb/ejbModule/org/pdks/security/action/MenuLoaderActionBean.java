@@ -119,6 +119,8 @@ public class MenuLoaderActionBean implements Serializable {
 			try {
 				dinamikRaporUpdate(menuAdi);
 			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
 			}
 		}
 		return raporIslemleri;
@@ -150,6 +152,10 @@ public class MenuLoaderActionBean implements Serializable {
 			HashMap<String, List<PdksDinamikRapor>> bagliRaporMap = new HashMap<String, List<PdksDinamikRapor>>();
 			for (Iterator iterator = raporlar.iterator(); iterator.hasNext();) {
 				PdksDinamikRapor pdksDinamikRapor = (PdksDinamikRapor) iterator.next();
+				if (ortakIslemler.isRaporYetkili(pdksDinamikRapor) == false) {
+					iterator.remove();
+					continue;
+				}
 				if (pdksDinamikRapor.getUstMenu() != null) {
 					String key = pdksDinamikRapor.getUstMenu().getName();
 					List<PdksDinamikRapor> list1 = bagliRaporMap.containsKey(key) ? bagliRaporMap.get(key) : new ArrayList<PdksDinamikRapor>();
@@ -167,13 +173,11 @@ public class MenuLoaderActionBean implements Serializable {
 				String id = component.getId();
 				if (component instanceof HtmlMenuGroup) {
 					HtmlMenuGroup raporGrup = (HtmlMenuGroup) component;
-
 					if (id.equals(menuAdi))
 						ekle = false;
 					else {
 						if (bagliRaporMap.containsKey(id)) {
 							List<UIComponent> childrenList = raporGrup.getChildren();
-							bagliRaporMap.remove(id);
 							List<PdksDinamikRapor> list1 = bagliRaporMap.get(id);
 							for (PdksDinamikRapor pdksDinamikRapor : list1) {
 								MenuItem dinamikMenu = (MenuItem) dinamikRaporMenu.cloneEmpty();
@@ -190,13 +194,12 @@ public class MenuLoaderActionBean implements Serializable {
 								} catch (Exception e) {
 									System.err.println(e);
 								}
-
-								if (me != null) {
+ 								if (me != null) {
 									rapor.setActionExpression(me);
-
-								}
+ 								}
 								childrenList.add(rapor);
-							}
+								bagliRaporMap.remove(id);
+ 							}
 							if (childrenList.size() > 1) {
 								TreeMap<Long, HtmlMenuItem> map = new TreeMap<Long, HtmlMenuItem>();
 								for (UIComponent child : childrenList) {
@@ -239,10 +242,7 @@ public class MenuLoaderActionBean implements Serializable {
 				raporGrup.setValue(menuBaslik);
 				for (Iterator iterator = raporlar.iterator(); iterator.hasNext();) {
 					PdksDinamikRapor pdksDinamikRapor = (PdksDinamikRapor) iterator.next();
-					if (ortakIslemler.isRaporYetkili(pdksDinamikRapor) == false) {
-						iterator.remove();
-						continue;
-					}
+
 					HtmlMenuItem rapor = new HtmlMenuItem();
 					dinamikRaporMenu.setParametre("id=" + PdksUtil.getEncodeStringByBase64("id=" + pdksDinamikRapor.getId() + "&userId=" + authenticatedUser.getId() + "&time=" + new Date().getTime()));
 					rapor.setValue(pdksDinamikRapor.getAciklama());
