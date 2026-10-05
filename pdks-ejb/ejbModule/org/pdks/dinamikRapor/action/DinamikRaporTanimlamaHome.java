@@ -181,7 +181,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 				fillRaporMenuList();
 				fillDinamikRapoRoleList();
 			}
- 		}
+		}
 
 		return "";
 
@@ -441,13 +441,22 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 		sb.append("select distinct M.* from " + MenuItem.TABLE_NAME + " U " + PdksEntityController.getSelectLOCK());
 		sb.append(" inner join " + MenuIliski.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on I." + MenuIliski.COLUMN_NAME_MENU_ITEM + " = U." + MenuItem.COLUMN_NAME_ID);
 		sb.append(" inner join " + MenuItem.TABLE_NAME + " M " + PdksEntityController.getJoinLOCK() + " on I." + MenuIliski.COLUMN_NAME_CHILD_MENU_ITEM + " = M." + MenuItem.COLUMN_NAME_ID);
-		sb.append(" inner join " + MenuIliski.TABLE_NAME + " B " + PdksEntityController.getJoinLOCK() + " on B." + MenuIliski.COLUMN_NAME_MENU_ITEM + " = M." + MenuItem.COLUMN_NAME_ID);
+		// sb.append(" inner join " + MenuIliski.TABLE_NAME + " B " + PdksEntityController.getJoinLOCK() + " on B." + MenuIliski.COLUMN_NAME_MENU_ITEM + " = M." + MenuItem.COLUMN_NAME_ID);
 		sb.append(" where U." + MenuItem.COLUMN_NAME_ADI + " = :m");
 		sb.append(" order by M." + MenuItem.COLUMN_NAME_SIRA);
 		fields.put("m", MenuItemConstant.raporIslemleri);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		raporMenuList = pdksEntityController.getObjectBySQLList(sb, fields, MenuItem.class);
+		MenuItemConstant mc = new MenuItemConstant();
+		for (Iterator iterator = raporMenuList.iterator(); iterator.hasNext();) {
+			MenuItem mi = (MenuItem) iterator.next();
+			String adi = mi.getName();
+			String method = "get" + adi.substring(0, 1).toUpperCase(Locale.ENGLISH) + adi.substring(1);
+			String deger = (String) PdksUtil.getMethodObject(mc, method, null);
+			if (deger != null && deger.indexOf(".") > 0)
+				iterator.remove();
+		}
 	}
 
 	/**
