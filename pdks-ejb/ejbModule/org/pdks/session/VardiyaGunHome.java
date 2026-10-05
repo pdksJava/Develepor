@@ -374,9 +374,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		return list;
 	}
 
-	/**
-	 * @param object
-	 */
+ 
 
 	/**
 	 * @param object
@@ -390,7 +388,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			veriMap.put("spPersonelDenklestirmeGuncelleVar", spPersonelDenklestirmeGuncelleVar);
 			veriMap.put("user", getPdksUser());
 			veriMap.put("planEkran", Boolean.TRUE);
-			islem = fazlaMesaiOrtakIslemler.saveOrUpdate(object, veriMap, session);
+			islem = ortakIslemler.saveOrUpdate(session, veriMap, object);
 			veriMap = null;
 		}
 		return islem;
@@ -10939,7 +10937,9 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		spCalismaSaatGuncelleVar = ortakIslemler.isExisStoreProcedure(FazlaMesaiOrtakIslemler.SP_CALISMA_PLANI_GUNCELLEME_ADI, session);
 		spPersonelDenklestirmeGuncelleVar = ortakIslemler.isExisStoreProcedure(FazlaMesaiOrtakIslemler.SP_UPDATE_PERSONEL_DENKLESME_GUNCELLEME, session);
-		topluGuncelleme = false;
+		FazlaMesaiOrtakIslemler.setSpCalismaSaatGuncelleVar(spCalismaSaatGuncelleVar);
+		FazlaMesaiOrtakIslemler.setSpPersonelDenklestirmeGuncelleVar(spPersonelDenklestirmeGuncelleVar);
+ 		topluGuncelleme = false;
 		setPdksUser(authenticatedUser);
 		userLoginOldu = authenticatedUser != null;
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);

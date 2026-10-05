@@ -262,11 +262,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			veriMap.put("spPersonelDenklestirmeGuncelleVar", spPersonelDenklestirmeGuncelleVar);
 			veriMap.put("user", getPdksUser());
 			veriMap.put("planEkran", Boolean.FALSE);
-			islem = fazlaMesaiOrtakIslemler.saveOrUpdate(object, veriMap, session);
+			islem = ortakIslemler.saveOrUpdate(session, veriMap, object);
 			veriMap = null;
 		}
 		return islem;
- 	}
+	}
 
 	/**
 	 * 
@@ -1942,6 +1942,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						String spVardiyaGuncelleme = FazlaMesaiOrtakIslemler.SP_CALISMA_PLANI_GUNCELLEME_ADI;
 						spPersonelDenklestirmeGuncelleVar = ortakIslemler.isExisStoreProcedure(FazlaMesaiOrtakIslemler.SP_UPDATE_PERSONEL_DENKLESME_GUNCELLEME, session);
 						spCalismaSaatGuncelleVar = ortakIslemler.isExisStoreProcedure(FazlaMesaiOrtakIslemler.SP_CALISMA_PLANI_GUNCELLEME_ADI, session);
+						FazlaMesaiOrtakIslemler.setSpCalismaSaatGuncelleVar(spCalismaSaatGuncelleVar);
+						FazlaMesaiOrtakIslemler.setSpPersonelDenklestirmeGuncelleVar(spPersonelDenklestirmeGuncelleVar);
 						boolean spVardiyaGuncellemeVar = ortakIslemler.isExisStoreProcedure(spVardiyaGuncelleme, session);
 						boolean ekle = (denklestirmeAyDurum || (bakiyeGuncelle != null && bakiyeGuncelle));
 						Transaction ts = null;
@@ -2638,7 +2640,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 										yasalFazlaCalismaAsanSaat = calismaModeli.isFazlaMesaiVarMi() && ucretiOdenenMesaiSure > 0.0d;
 
 									if (!saveList.isEmpty()) {
-	//									ts = pdksEntityController.startTransaction(session);
+										// ts = pdksEntityController.startTransaction(session);
 										for (Iterator iterator = saveList.iterator(); iterator.hasNext();) {
 											Object object = (Object) iterator.next();
 											boolean updateDurum = saveOrUpdate(object);
@@ -3290,7 +3292,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 											try {
 												boolean islem = false;
 												if (spCalismaSaatGuncelleVar)
-													islem = fazlaMesaiOrtakIslemler.updateVardiyaGunStoreProcedure(vg, null, session);
+													islem = ortakIslemler.updateVardiyaGunStoreProcedure(vg, null, session);
 												if (spVardiyaGuncellemeVar && islem == false) {
 													VardiyaSaat vardiyaSaat = vg.getVardiyaSaat();
 													veriMap.put("id", vg.getId());
@@ -3386,7 +3388,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 													if (hareketId.equals(hId)) {
 														fm.setHareketId(mukerrerHareket.getId());
 														fm.setGuncellemeTarihi(guncellemeZamani);
-														pdksEntityController.saveOrUpdate(session, entityManager, fm);
+														saveOrUpdate(fm);
 														flush = true;
 													}
 												}
@@ -7465,7 +7467,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			fmt.setGuncellemeTarihi(new Date());
 			fmt.setGuncelleyenUser(getPdksUser());
 		}
-		pdksEntityController.saveOrUpdate(session, entityManager, fmt);
+		saveOrUpdate(fmt);
 		try {
 			pdksEntityController.sessionFlush(session);
 		} catch (Exception e) {

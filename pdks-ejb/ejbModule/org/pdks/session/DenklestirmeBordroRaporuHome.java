@@ -426,7 +426,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 						try {
 							vardiyaVersiyonGuncelle(denklestirmeAy, sirket.getFazlaMesaiTalepGirilebilir(), sirketId, new Date(), pdksUser, session);
 						} catch (Exception e) {
-						 
+
 						}
 
 						pdksUser.setAdmin(true);
@@ -610,6 +610,10 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
 		AylikPuantaj aylikPuantajDefault = fazlaMesaiOrtakIslemler.getAylikPuantaj(denklestirmeAy.getAy(), denklestirmeAy.getYil(), denklestirmeDonemi, session);
 		vardiyaGunHome.setAylikPuantajDefault(aylikPuantajDefault);
+		boolean spPersonelDenklestirmeGuncelleVar = ortakIslemler.isExisStoreProcedure(FazlaMesaiOrtakIslemler.SP_UPDATE_PERSONEL_DENKLESME_GUNCELLEME, session);
+		boolean spCalismaSaatGuncelleVar = ortakIslemler.isExisStoreProcedure(FazlaMesaiOrtakIslemler.SP_CALISMA_PLANI_GUNCELLEME_ADI, session);
+		FazlaMesaiOrtakIslemler.setSpCalismaSaatGuncelleVar(spCalismaSaatGuncelleVar);
+		FazlaMesaiOrtakIslemler.setSpPersonelDenklestirmeGuncelleVar(spPersonelDenklestirmeGuncelleVar);
 		if (ekSaha4Tanim == null)
 			ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, sirketId, session);
 		for (SelectItem selectItem : bolumList) {
@@ -657,7 +661,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 								donemCPPerList = null;
 							}
 							List<AylikPuantaj> puantajList = null;
-							if (donemKodu.longValue() >= islemDonemKodu.longValue()) {
+							if (donemKodu.longValue() >= islemDonemKodu.longValue() || authenticatedUser == null) {
 								if (logYaz)
 									logger.info(altBolumStr + " [ " + donemPerList.size() + " ] in " + PdksUtil.getCurrentTimeStampStr());
 								if (kayitAdet > 0 && gelecekTarih == false) {

@@ -259,9 +259,6 @@ public class OrtakIslemler implements Serializable {
 	HashMap<String, MenuItem> menuItemMap = new HashMap<String, MenuItem>();
 	@In(required = false)
 	FacesMessages facesMessages;
-	
-	
-	
 
 	/**
 	 * @param id
@@ -4093,12 +4090,12 @@ public class OrtakIslemler implements Serializable {
 					if (str.indexOf("http") < 0) {
 						HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 						if (req != null) {
- 							InetAddress localHost = InetAddress.getLocalHost();
+							InetAddress localHost = InetAddress.getLocalHost();
 							String serverIP = localHost.getHostAddress();
 							int pos = serverIP.indexOf(">");
 							if (pos > 0)
 								serverIP = serverIP.substring(pos + 1);
- 							int port = req.getServerPort();
+							int port = req.getServerPort();
 							str = "http://" + serverIP + (port != 80 ? ":" + port : "");
 						}
 
@@ -4106,7 +4103,7 @@ public class OrtakIslemler implements Serializable {
 				}
 
 			} catch (Exception e) {
- 			}
+			}
 
 		}
 		return str;
@@ -10325,16 +10322,6 @@ public class OrtakIslemler implements Serializable {
 								logger.debug(str + " Geç çıkma");
 							else
 								logger.debug(str + " Erken gelme");
-							// if (iptalDurum) {
-							// fazlaMesai.setDurum(Boolean.FALSE);
-							// if (!loginUser.isAdmin()) {
-							// fazlaMesai.setGuncelleyenUser(loginUser);
-							// fazlaMesai.setGuncellemeTarihi(new Date());
-							// }
-							// pdksEntityController.saveOrUpdate(session, null, fazlaMesai);
-							// iterator.remove();
-							// flush = Boolean.TRUE;
-							// }
 						}
 
 					}
@@ -11267,7 +11254,7 @@ public class OrtakIslemler implements Serializable {
 										vardiyaGun.setVardiyaOnayli(Boolean.TRUE);
 										vardiyaGun.setGuncelleyenUser(guncelleyenUser);
 										vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
-										pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
+										saveOrUpdate(session, null, vardiyaGun);
 									} else {
 										HashMap<String, Object> vGunMap = new HashMap<String, Object>();
 										vGunMap.put("id", vardiyaGun);
@@ -11278,7 +11265,6 @@ public class OrtakIslemler implements Serializable {
 
 									}
 
-									// pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
 									personelDenklestirmeTasiyici.getVardiyaGunleriMap().put(vardiyaDateStr, vardiyaGun);
 									vgMap.put(vardiyaDateStr, vardiyaGun);
 									flush = authenticatedUser != null;
@@ -11302,7 +11288,7 @@ public class OrtakIslemler implements Serializable {
 									vardiyaGun.setGuncelleyenUser(guncelleyenUser);
 									vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
 									vardiyaGun.setGuncellendi(Boolean.TRUE);
-									pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
+									saveOrUpdate(session, null, vardiyaGun);
 
 								} else {
 									HashMap<String, Object> vGunMap = new HashMap<String, Object>();
@@ -11312,8 +11298,6 @@ public class OrtakIslemler implements Serializable {
 									vGunMap.put("guncellemeTarihi", guncellemeTarihi);
 									updateMap.put(vardiyaGun.getId(), vGunMap);
 								}
-
-								// pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
 
 								flush = authenticatedUser != null;
 								planGuncelle = true;
@@ -11480,7 +11464,8 @@ public class OrtakIslemler implements Serializable {
 											vardiyaGun.setVardiya(vg.getVardiya());
 											vardiyaGun.setVardiyaOnayli(vg.isVardiyaOnay());
 											vardiyaGun.setGuncellendi(Boolean.TRUE);
-											pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
+											// pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
+											saveOrUpdate(vardiyaGun, guncelleyenUser, session);
 										} else {
 											HashMap<String, Object> vGunMap = new HashMap<String, Object>();
 											vGunMap.put("id", vardiyaGun);
@@ -11512,7 +11497,8 @@ public class OrtakIslemler implements Serializable {
 													vardiyaGun.setGuncelleyenUser(guncelleyenUser);
 													vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
 													vardiyaGun.setGuncellendi(Boolean.TRUE);
-													pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
+													// pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
+													saveOrUpdate(vardiyaGun, guncelleyenUser, session);
 												} else {
 													HashMap<String, Object> vGunMap = new HashMap<String, Object>();
 													vGunMap.put("id", vardiyaGun);
@@ -11542,7 +11528,8 @@ public class OrtakIslemler implements Serializable {
 								vardiyaGun.setGuncelleyenUser(guncelleyenUser);
 								vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
 								vardiyaGun.setGuncellendi(Boolean.TRUE);
-								pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
+								// pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
+								saveOrUpdate(vardiyaGun, guncelleyenUser, session);
 							} else {
 								HashMap<String, Object> vGunMap = new HashMap<String, Object>();
 								vGunMap.put("id", vardiyaGun);
@@ -11894,7 +11881,7 @@ public class OrtakIslemler implements Serializable {
 										flush = true;
 										pdksEntityController.sessionRefresh(session, null, menuItemTime);
 									} catch (Exception e) {
- 									}
+									}
 
 							}
 
@@ -15488,6 +15475,157 @@ public class OrtakIslemler implements Serializable {
 		vardiyaMap = null;
 		return vardiyaIstenen;
 
+	}
+
+	/**
+	 * @param object
+	 * @param user
+	 * @param session
+	 * @return
+	 */
+	public boolean saveOrUpdate(Object object, User user, Session session) {
+		boolean islem = false;
+		if (object != null) {
+			HashMap<String, Object> veriMap = new HashMap<String, Object>();
+			veriMap.put("spCalismaSaatGuncelleVar", FazlaMesaiOrtakIslemler.isSpCalismaSaatGuncelleVar());
+			veriMap.put("spPersonelDenklestirmeGuncelleVar", FazlaMesaiOrtakIslemler.isSpPersonelDenklestirmeGuncelleVar());
+			veriMap.put("user", user != null ? user : authenticatedUser);
+			veriMap.put("planEkran", Boolean.FALSE);
+			islem = saveOrUpdate(session, veriMap, object);
+			veriMap = null;
+		}
+		return islem;
+
+	}
+
+	/**
+	 * @param object
+	 * @param veriMap
+	 * @param session
+	 * @return
+	 */
+	public boolean saveOrUpdate(Session session, HashMap<String, Object> veriMap, Object object) {
+		boolean islem = false;
+		if (object != null && veriMap != null) {
+			User pdksUser = veriMap.containsKey("user") ? (User) veriMap.get("user") : authenticatedUser;
+			boolean spCalismaSaatGuncelleVar = veriMap.containsKey("spCalismaSaatGuncelleVar") ? (Boolean) veriMap.get("spCalismaSaatGuncelleVar") : Boolean.FALSE;
+			boolean spPersonelDenklestirmeGuncelleVar = veriMap.containsKey("spPersonelDenklestirmeGuncelleVar") ? (Boolean) veriMap.get("spPersonelDenklestirmeGuncelleVar") : Boolean.FALSE;
+			boolean planEkran = veriMap.containsKey("planEkran") ? (Boolean) veriMap.get("planEkran") : Boolean.FALSE;
+			// if (planEkran == false)
+			// pdksEntityController.startTransaction(session);
+			boolean refresh = false;
+			if (object instanceof VardiyaGun) {
+				if (spCalismaSaatGuncelleVar) {
+					VardiyaGun vg = (VardiyaGun) object;
+					if (vg.getId() != null)
+						islem = updateVardiyaGunStoreProcedure(vg, pdksUser, session);
+				}
+			} else if (object instanceof PersonelDenklestirme) {
+				if (spPersonelDenklestirmeGuncelleVar && planEkran == false) {
+					PersonelDenklestirme pd = (PersonelDenklestirme) object;
+					if (pd.getId() != null) {
+						islem = updatePersonelDenklestirmeStoreProcedure(pd, pdksUser, session);
+						if (islem)
+							refresh = true;
+					}
+				}
+			}
+			if (islem == false) {
+				pdksEntityController.saveOrUpdate(session, null, object);
+				islem = true;
+				refresh = false;
+			}
+			if (refresh)
+				session.refresh(object);
+		}
+		return islem;
+
+	}
+
+	/**
+	 * @param pd
+	 * @param user
+	 * @param session
+	 * @return
+	 */
+	public boolean updatePersonelDenklestirmeStoreProcedure(PersonelDenklestirme pd, User user, Session session) {
+		boolean islem = false;
+		Long pdId = pd != null ? pd.getId() : null;
+		if (pdId != null) {
+			if (pd.getGuncelleyenUser() != null)
+				if (user == null || (authenticatedUser == null && user.isAdmin()))
+					user = pd.getGuncelleyenUser();
+			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+			veriMap.put("id", pd.getId());
+			veriMap.put("durum", pd.getDurum() ? 1 : 0);
+			veriMap.put("guncelleyen", user != null ? user.getId() : null);
+			veriMap.put("aksamVardiyaSayisi", pd.getAksamVardiyaSaatSayisi());
+			veriMap.put("devredenSure", pd.getDevredenSure());
+			veriMap.put("eksikCalismaSure", pd.getEksikCalismaSure());
+			veriMap.put("fazlaMesaiSure", pd.getFazlaMesaiSure());
+			veriMap.put("haftaCalismaSuresi", pd.getHaftaCalismaSuresi());
+			veriMap.put("hesaplananSure", pd.getHesaplananSure());
+			veriMap.put("kesilenSure", pd.getKesilenSure());
+			veriMap.put("odenenSure", pd.getOdenenSure());
+			veriMap.put("planlanSure", pd.getPlanlanSure());
+			veriMap.put("resmiTatilSure", pd.getResmiTatilSure());
+			List<PersonelDenklestirme> list = null;
+			try {
+				list = pdksEntityController.execSPList(session, veriMap, FazlaMesaiOrtakIslemler.SP_UPDATE_PERSONEL_DENKLESME_GUNCELLEME, PersonelDenklestirme.class);
+			} catch (Exception e) {
+
+				logger.error(e);
+			}
+			if (list != null) {
+				islem = list.isEmpty() == false;
+				list = null;
+			}
+			veriMap = null;
+		}
+		return islem;
+
+	}
+
+	/**
+	 * @param vg
+	 * @param user
+	 * @param session
+	 * @return
+	 */
+	public boolean updateVardiyaGunStoreProcedure(VardiyaGun vg, User user, Session session) {
+		boolean islem = false;
+		Long vardiyaId = vg.getId() != null && vg.getVardiya() != null ? vg.getVardiya().getId() : null;
+		if (vardiyaId != null) {
+			if (user == null || user.isAdmin())
+				user = vg.getGuncelleyenUser();
+			if (vg.getVardiyaSaat() == null && vg.isAyinGunu()) {
+				VardiyaSaat vs = new VardiyaSaat();
+				vs.setNormalSure(vg.getVardiya().getNetCalismaSuresi());
+				session.saveOrUpdate(vs);
+				vg.setVardiyaSaat(vs);
+			}
+			Long saatId = vg.getVardiyaSaat() != null ? vg.getVardiyaSaat().getId() : null;
+			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+			veriMap.put("id", vg.getId());
+			veriMap.put("vardiya", vardiyaId);
+			veriMap.put("saat", saatId);
+			veriMap.put("durum", vg.getDurum() ? 1 : 0);
+			veriMap.put("vardiyaOnayli", vg.getDurum() || (vg.getVardiyaOnayli() != null && vg.getVardiyaOnayli()) ? 1 : 0);
+			veriMap.put("guncelleyen", user != null ? user.getId() : null);
+			List<VardiyaGun> list = null;
+			Gson gson = new Gson();
+			try {
+				list = pdksEntityController.execSPList(session, veriMap, FazlaMesaiOrtakIslemler.SP_CALISMA_PLANI_GUNCELLEME_ADI, VardiyaGun.class);
+			} catch (Exception e) {
+				logger.error(e + "\n" + FazlaMesaiOrtakIslemler.SP_CALISMA_PLANI_GUNCELLEME_ADI + "\n" + gson.toJson(veriMap));
+			}
+			if (list != null) {
+				islem = list.isEmpty() == false;
+				list = null;
+			}
+			veriMap = null;
+		}
+		return islem;
 	}
 
 	/**
@@ -19203,7 +19341,7 @@ public class OrtakIslemler implements Serializable {
 			if (image != null)
 				backgroundColorRGB = getProjeImageBackgroundColorRGB();
 		} catch (Exception e) {
- 		}
+		}
 
 		List<Liste> pdfList = new ArrayList<Liste>();
 		HeaderIText event = new HeaderIText();
@@ -19728,7 +19866,7 @@ public class OrtakIslemler implements Serializable {
 			if (renkler.length == 3)
 				backgroundColorRGB = new BaseColor(Integer.parseInt(renkler[0]), Integer.parseInt(renkler[1]), Integer.parseInt(renkler[2]));
 		} catch (Exception e) {
- 		}
+		}
 		return backgroundColorRGB;
 	}
 
