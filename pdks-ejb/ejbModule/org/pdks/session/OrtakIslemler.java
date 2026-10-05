@@ -15511,9 +15511,7 @@ public class OrtakIslemler implements Serializable {
 			boolean spCalismaSaatGuncelleVar = veriMap.containsKey("spCalismaSaatGuncelleVar") ? (Boolean) veriMap.get("spCalismaSaatGuncelleVar") : Boolean.FALSE;
 			boolean spPersonelDenklestirmeGuncelleVar = veriMap.containsKey("spPersonelDenklestirmeGuncelleVar") ? (Boolean) veriMap.get("spPersonelDenklestirmeGuncelleVar") : Boolean.FALSE;
 			boolean planEkran = veriMap.containsKey("planEkran") ? (Boolean) veriMap.get("planEkran") : Boolean.FALSE;
-			// if (planEkran == false)
-			// pdksEntityController.startTransaction(session);
-			boolean refresh = false;
+ 			boolean refresh = false;
 			if (object instanceof VardiyaGun) {
 				if (spCalismaSaatGuncelleVar) {
 					VardiyaGun vg = (VardiyaGun) object;

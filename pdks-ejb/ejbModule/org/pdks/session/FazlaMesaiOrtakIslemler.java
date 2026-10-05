@@ -156,11 +156,9 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 										toplamSaat += 7.5d;
 									} else if (vg.getVardiya().isIzin() || vg.getVardiya().isHaftaTatil())
 										toplamSaat += 7.5d;
-
-								}
+ 								}
 							}
-
-						}
+ 						}
 						if (toplamSaat > 0) {
 							brutUcretGoster = true;
 							ap.setAylikBrutUcret(toplamSaat * gunlukBrutUcret);

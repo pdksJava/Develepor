@@ -702,10 +702,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 						++adet;
 						donemCPPerList = null;
 					}
-
-				}
-
-				List<AylikPuantaj> puantajList = null;
+ 				}
+ 				List<AylikPuantaj> puantajList = null;
 				if (donemKodu.longValue() >= islemDonemKodu.longValue()) {
 					try {
 						if (logYaz)

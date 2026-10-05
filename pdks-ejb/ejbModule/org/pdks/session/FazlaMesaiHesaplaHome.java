@@ -1991,12 +1991,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							Boolean tarihGecti = Boolean.TRUE;
 							Boolean gebemi = Boolean.FALSE, calisiyor = Boolean.FALSE;
 							puantaj.setKaydet(Boolean.FALSE);
-
-							puantaj.setCalisiyor(personel.isCalisiyorGun(yeniDonem));
+ 							puantaj.setCalisiyor(personel.isCalisiyorGun(yeniDonem));
 							if (istifaGoster == false)
 								istifaGoster = puantaj.isCalisiyor() == false;
-
-							personelFazlaMesaiStr = personelFazlaMesaiOrjStr;
+ 							personelFazlaMesaiStr = personelFazlaMesaiOrjStr;
 							puantaj.setSablonAylikPuantaj(aylikPuantajSablon);
 							puantaj.setFazlaMesaiHesapla(Boolean.FALSE);
 							CalismaModeli calismaModeli = puantaj.getCalismaModeli();

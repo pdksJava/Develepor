@@ -374,8 +374,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		return list;
 	}
 
- 
-
 	/**
 	 * @param object
 	 * @return
@@ -10939,7 +10937,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		spPersonelDenklestirmeGuncelleVar = ortakIslemler.isExisStoreProcedure(FazlaMesaiOrtakIslemler.SP_UPDATE_PERSONEL_DENKLESME_GUNCELLEME, session);
 		FazlaMesaiOrtakIslemler.setSpCalismaSaatGuncelleVar(spCalismaSaatGuncelleVar);
 		FazlaMesaiOrtakIslemler.setSpPersonelDenklestirmeGuncelleVar(spPersonelDenklestirmeGuncelleVar);
- 		topluGuncelleme = false;
+		topluGuncelleme = false;
 		setPdksUser(authenticatedUser);
 		userLoginOldu = authenticatedUser != null;
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
@@ -10971,9 +10969,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		listeleriTemizle();
 		tumBolumPersonelleri = null;
 		if (aramaSecenekleri.getSirketId() != null) {
-
 			sirket = (Sirket) pdksEntityController.getSQLParamByFieldObject(Sirket.TABLE_NAME, Sirket.COLUMN_NAME_ID, aramaSecenekleri.getSirketId(), Sirket.class, session);
-
 			ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, null, session);
 		}
 		aramaSecenekleri.setSirket(sirket);
