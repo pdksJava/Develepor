@@ -237,10 +237,13 @@ public class MenuLoaderActionBean implements Serializable {
 				HtmlMenuGroup raporGrup = new HtmlMenuGroup();
 				raporGrup.setId(menuAdi);
 				raporGrup.setValue(menuBaslik);
-				for (PdksDinamikRapor pdksDinamikRapor : raporlar) {
-					if (ortakIslemler.isRaporYetkili(pdksDinamikRapor) == false)
+				for (Iterator iterator = raporlar.iterator(); iterator.hasNext();) {
+					PdksDinamikRapor pdksDinamikRapor = (PdksDinamikRapor) iterator.next();
+ 					if (ortakIslemler.isRaporYetkili(pdksDinamikRapor) == false) {
+						iterator.remove();
 						continue;
-					HtmlMenuItem rapor = new HtmlMenuItem();
+					}
+ 					HtmlMenuItem rapor = new HtmlMenuItem();
 					dinamikRaporMenu.setParametre("id=" + PdksUtil.getEncodeStringByBase64("id=" + pdksDinamikRapor.getId() + "&userId=" + authenticatedUser.getId() + "&time=" + new Date().getTime()));
 					rapor.setValue(pdksDinamikRapor.getAciklama());
 					rapor.setId(menuAdi + pdksDinamikRapor.getId());
