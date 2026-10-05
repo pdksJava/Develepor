@@ -689,7 +689,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 						List<Personel> donemCPPerList = fazlaMesaiOrtakIslemler.getFazlaMesaiPersonelList(denklestirmeAy, donemPerList, session);
 						try {
 							devam = donemCPPerList != null && kayitAdet != donemCPPerList.size();
-							if (devam && donemKodu.longValue() >= denklestirmeAy.getDonem()) {
+							if (devam && (loginUser.getLogin().booleanValue() == false || donemKodu.longValue() >= denklestirmeAy.getDonem())) {
 								logger.info(str + " aylikPuantajOlusturuluyor in " + PdksUtil.getCurrentTimeStampStr());
 								String idStr = ortakIslemler.getEncodeStringByBase64(linkStr);
 								vardiyaGunHome.sayfaCalismaPlanOlustur(idStr, loginUser);
