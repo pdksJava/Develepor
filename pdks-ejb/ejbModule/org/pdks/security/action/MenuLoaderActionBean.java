@@ -239,11 +239,11 @@ public class MenuLoaderActionBean implements Serializable {
 				raporGrup.setValue(menuBaslik);
 				for (Iterator iterator = raporlar.iterator(); iterator.hasNext();) {
 					PdksDinamikRapor pdksDinamikRapor = (PdksDinamikRapor) iterator.next();
- 					if (ortakIslemler.isRaporYetkili(pdksDinamikRapor) == false) {
+					if (ortakIslemler.isRaporYetkili(pdksDinamikRapor) == false) {
 						iterator.remove();
 						continue;
 					}
- 					HtmlMenuItem rapor = new HtmlMenuItem();
+					HtmlMenuItem rapor = new HtmlMenuItem();
 					dinamikRaporMenu.setParametre("id=" + PdksUtil.getEncodeStringByBase64("id=" + pdksDinamikRapor.getId() + "&userId=" + authenticatedUser.getId() + "&time=" + new Date().getTime()));
 					rapor.setValue(pdksDinamikRapor.getAciklama());
 					rapor.setId(menuAdi + pdksDinamikRapor.getId());
@@ -298,15 +298,13 @@ public class MenuLoaderActionBean implements Serializable {
 						if (altDetayVar == false) {
 							logger.debug(component.getId());
 							iterator.remove();
-						} else {
+						} else
 							detayVar = true;
-						}
 
 					} else if (component instanceof HtmlMenuItem) {
 						detayVar = true;
 						break;
 					}
-
 				}
 			}
 		}
