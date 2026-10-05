@@ -526,11 +526,11 @@
 								</s:decorate>
 							</c:if>
 
-							<s:decorate template="/layout/edit.xhtml">
+							<s:decorate template="/layout/edit.xhtml" id="sira2">
 								<ui:define name="label">Menü Sıra</ui:define>
-								<h:inputText id="sira2" value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.sira}" size="2" maxlength="5" required="true"
+								<h:inputText value="#{dinamikRaporTanimlamaHome.seciliPdksDinamikRapor.sira}" size="2" maxlength="5" required="true"
 									requiredMessage="Menü sıra giriniz">
-									<a4j:support event="onchange" reRender="sira" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+									<a4j:support event="onchange" reRender="sira2" ajaxSingle="true" status="ajaxStatus" action="#{ortakIslemler.emtpyAjaxFunction()}" />
 								</h:inputText>
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" id="ustMenu">
