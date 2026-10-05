@@ -74,7 +74,7 @@ public class MenuLoaderActionBean implements Serializable {
 	private HtmlDropDownMenu raporIslemleri;
 
 	public HtmlDropDownMenu getMenuIslemleri() {
-		menuIslemleri = createMenu(MenuItemConstant.menuIslemleri);
+		menuIslemleri = createMenu(MenuItemConstant.menuIslemleri, false);
 		return menuIslemleri;
 	}
 
@@ -83,7 +83,7 @@ public class MenuLoaderActionBean implements Serializable {
 	}
 
 	public HtmlDropDownMenu getKullaniciIslemleri() {
-		kullaniciIslemleri = createMenu(MenuItemConstant.kullaniciIslemleri);
+		kullaniciIslemleri = createMenu(MenuItemConstant.kullaniciIslemleri, false);
 		return kullaniciIslemleri;
 	}
 
@@ -92,7 +92,7 @@ public class MenuLoaderActionBean implements Serializable {
 	}
 
 	public HtmlDropDownMenu getIzinIslemleri() {
-		izinIslemleri = createMenu(MenuItemConstant.izinIslemleri);
+		izinIslemleri = createMenu(MenuItemConstant.izinIslemleri, false);
 		return izinIslemleri;
 	}
 
@@ -101,12 +101,12 @@ public class MenuLoaderActionBean implements Serializable {
 	}
 
 	public HtmlDropDownMenu getPuantajIslemleri() {
-		puantajIslemleri = createMenu(MenuItemConstant.puantajIslemleri);
+		puantajIslemleri = createMenu(MenuItemConstant.puantajIslemleri, false);
 		return puantajIslemleri;
 	}
 
 	public HtmlDropDownMenu getRaporIslemleri() {
-		raporIslemleri = createMenu(MenuItemConstant.raporIslemleri);
+		raporIslemleri = createMenu(MenuItemConstant.raporIslemleri, true);
 		String menuAdi = "dinamikRapor";
 		if (raporIslemleri != null && authenticatedUser != null && userHome != null && userHome.hasPermission(menuAdi, "view")) {
 			if (PdksUtil.isSessionKapali(session)) {
@@ -136,7 +136,6 @@ public class MenuLoaderActionBean implements Serializable {
 		String menuBaslik = ortakIslemler.getMenuAdi(menuAdi);
 		if (PdksUtil.hasStringValue(menuBaslik) == false)
 			menuBaslik = "Dinamik Raporlar";
-
 		StringBuilder sb = new StringBuilder();
 		sb.append("select * from " + PdksDinamikRapor.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 		sb.append(" where " + PdksDinamikRapor.COLUMN_NAME_DURUM + " = 1 ");
@@ -163,18 +162,18 @@ public class MenuLoaderActionBean implements Serializable {
 			}
 			List list = new ArrayList();
 			for (Iterator iterator = raporIslemleri.getChildren().iterator(); iterator.hasNext();) {
-				Object object = (Object) iterator.next();
+				UIComponent component = (UIComponent) iterator.next();
 				boolean ekle = true;
-				String id = null;
-				if (object instanceof HtmlMenuGroup) {
-					HtmlMenuGroup raporGrup = (HtmlMenuGroup) object;
-					id = raporGrup.getId();
+				String id = component.getId();
+				if (component instanceof HtmlMenuGroup) {
+					HtmlMenuGroup raporGrup = (HtmlMenuGroup) component;
 
 					if (id.equals(menuAdi))
 						ekle = false;
 					else {
 						if (bagliRaporMap.containsKey(id)) {
 							List<UIComponent> childrenList = raporGrup.getChildren();
+							bagliRaporMap.remove(id);
 							List<PdksDinamikRapor> list1 = bagliRaporMap.get(id);
 							for (PdksDinamikRapor pdksDinamikRapor : list1) {
 								MenuItem dinamikMenu = (MenuItem) dinamikRaporMenu.cloneEmpty();
@@ -219,72 +218,106 @@ public class MenuLoaderActionBean implements Serializable {
 						}
 					}
 
-				} else if (object instanceof HtmlMenuItem) {
-					HtmlMenuItem rapor = (HtmlMenuItem) object;
-					id = rapor.getId();
+				} else if (component instanceof HtmlMenuItem) {
 					if (id.equals(menuAdi))
 						ekle = false;
-					else {
+				}
+				if (ekle)
+					list.add(component);
+			}
+			if (bagliRaporMap.isEmpty() == false) {
+				for (String key : bagliRaporMap.keySet()) {
+					List<PdksDinamikRapor> list1 = bagliRaporMap.get(key);
+					raporlar.addAll(list1);
+				}
+				if (raporlar.size() > 1)
+					raporlar = PdksUtil.sortListByAlanAdi(raporlar, "sira", false);
+			}
+			if (raporlar.isEmpty() == false) {
+				HtmlMenuGroup raporGrup = new HtmlMenuGroup();
+				raporGrup.setId(menuAdi);
+				raporGrup.setValue(menuBaslik);
+				for (PdksDinamikRapor pdksDinamikRapor : raporlar) {
+					if (ortakIslemler.isRaporYetkili(pdksDinamikRapor) == false)
+						continue;
+					HtmlMenuItem rapor = new HtmlMenuItem();
+					dinamikRaporMenu.setParametre("id=" + PdksUtil.getEncodeStringByBase64("id=" + pdksDinamikRapor.getId() + "&userId=" + authenticatedUser.getId() + "&time=" + new Date().getTime()));
+					rapor.setValue(pdksDinamikRapor.getAciklama());
+					rapor.setId(menuAdi + pdksDinamikRapor.getId());
+					MethodExpression me = startAction(dinamikRaporMenu);
+					if (me != null) {
+						rapor.setActionExpression(me);
+						raporGrup.getChildren().add(rapor);
+					}
+				}
+				if (raporGrup.getChildren().isEmpty() == false) {
+					raporIslemleri.getChildren().clear();
+					raporIslemleri.getChildren().add(raporGrup);
+					raporIslemleri.getChildren().addAll(list);
+					list = null;
+				} else
+					raporGrup = null;
+			}
+		}
+		if (raporlar.isEmpty()) {
+			for (Iterator iterator = raporIslemleri.getChildren().iterator(); iterator.hasNext();) {
+				UIComponent component = (UIComponent) iterator.next();
+				if (component.getId().endsWith(menuAdi))
+					iterator.remove();
 
+			}
+		}
+		menuAltKontrol(raporIslemleri);
+
+	}
+
+	/**
+	 * @param dropDownMenu
+	 */
+	private boolean menuAltKontrol(UIComponent dropDownMenu) {
+		boolean detayVar = false;
+		if (dropDownMenu != null) {
+			if (dropDownMenu.getId().equals("dinamikRapor"))
+				logger.debug("");
+			List<UIComponent> list = dropDownMenu.getChildren();
+			if (list != null) {
+				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+					UIComponent component = (UIComponent) iterator.next();
+					if (component.getId().equals(dropDownMenu.getId()))
+						continue;
+					if (component instanceof HtmlMenuGroup || component instanceof HtmlDropDownMenu) {
+						boolean altDetayVar = false;
+						for (UIComponent child : component.getChildren()) {
+							if (child instanceof HtmlMenuItem) {
+								altDetayVar = true;
+								break;
+							} else if (child instanceof HtmlMenuGroup || component instanceof HtmlDropDownMenu)
+								altDetayVar = menuAltKontrol(child);
+						}
+						if (altDetayVar == false) {
+							logger.info(component.getId());
+							iterator.remove();
+						} else {
+							detayVar = true;
+						}
+
+					} else if (component instanceof HtmlMenuItem) {
+						detayVar = true;
+						break;
 					}
 
 				}
-				if (ekle)
-					list.add(object);
 			}
-			HtmlMenuGroup raporGrup = new HtmlMenuGroup();
-			raporGrup.setId(menuAdi);
-			raporGrup.setValue(menuBaslik);
-			for (PdksDinamikRapor pdksDinamikRapor : raporlar) {
-				if (ortakIslemler.isRaporYetkili(pdksDinamikRapor) == false)
-					continue;
-				HtmlMenuItem rapor = new HtmlMenuItem();
-				dinamikRaporMenu.setParametre("id=" + PdksUtil.getEncodeStringByBase64("id=" + pdksDinamikRapor.getId() + "&userId=" + authenticatedUser.getId() + "&time=" + new Date().getTime()));
-				rapor.setValue(pdksDinamikRapor.getAciklama());
-				rapor.setId(menuAdi + pdksDinamikRapor.getId());
-				MethodExpression me = startAction(dinamikRaporMenu);
-				if (me != null) {
-					rapor.setActionExpression(me);
-					raporGrup.getChildren().add(rapor);
-				}
-			}
-			if (raporGrup.getChildren().isEmpty() == false) {
-				raporIslemleri.getChildren().clear();
-				raporIslemleri.getChildren().add(raporGrup);
-				raporIslemleri.getChildren().addAll(list);
-				list = null;
-			} else
-				raporGrup = null;
 		}
+		return detayVar;
 	}
 
-	public void setPuantajIslemleri(HtmlDropDownMenu puantajIslemleri) {
-		this.puantajIslemleri = puantajIslemleri;
-	}
-
-	public void setRaporIslemleri(HtmlDropDownMenu raporIslemleri) {
-		this.raporIslemleri = raporIslemleri;
-	}
-
-	public HtmlDropDownMenu getAdminMenu() {
-		adminMenu = createMenu(MenuItemConstant.admin);
-		return adminMenu;
-	}
-
-	public void setAdminMenu(HtmlDropDownMenu adminMenu) {
-		this.adminMenu = adminMenu;
-	}
-
-	public HtmlDropDownMenu getGuestMenu() {
-		guestMenu = createMenu(MenuItemConstant.guest);
-		return guestMenu;
-	}
-
-	public void setGuestMenu(HtmlDropDownMenu guestMenu) {
-		this.guestMenu = guestMenu;
-	}
-
-	public HtmlDropDownMenu createMenu(String menuItemName) {
+	/**
+	 * @param menuItemName
+	 * @param raporMenu
+	 * @return
+	 */
+	public HtmlDropDownMenu createMenu(String menuItemName, boolean raporMenu) {
 		MenuItem topMenu = menuItemName != null ? topActiveMenuItemMap.get(menuItemName) : null;
 		HtmlDropDownMenu menu = null;
 		if (topMenu != null) {
@@ -329,6 +362,8 @@ public class MenuLoaderActionBean implements Serializable {
 				} catch (Exception e) {
 				}
 			}
+			if (raporMenu == false)
+				menuAltKontrol(menu);
 		}
 		return menu;
 
@@ -341,10 +376,12 @@ public class MenuLoaderActionBean implements Serializable {
 	 * @param tempNode
 	 * @param node2RootMenuItem
 	 */
-	private void addChildNodes(MenuItem menuItem, HtmlMenuGroup menuGroup) {
+	private boolean addChildNodes(MenuItem menuItem, HtmlMenuGroup menuGroup) {
 		HtmlMenuItem hmiHomePage;
 		HtmlMenuGroup htmlMenuGroup = new HtmlMenuGroup();
+		boolean eklendi = false;
 		for (MenuItem subMenu : menuItem.getChildMenuItemListSirali()) {
+			eklendi = true;
 			if (subMenu.getChildMenuItemList().isEmpty() && subMenu.istUstMenu() == false) {// demekki sub menuleri yok
 				if (subMenu.getStatus() && userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW)) {// gormeye yetkisi yoksa menüyü yaratmasın
 					hmiHomePage = new HtmlMenuItem();
@@ -368,11 +405,15 @@ public class MenuLoaderActionBean implements Serializable {
 				}
 			}
 		}
+		return eklendi;
 	}
 
+	/**
+	 * @param menuItem
+	 * @return
+	 */
 	private MethodExpression startAction(MenuItem menuItem) {
 		String menuName = "", firstCharMenuName = "", action = "";
-
 		menuName = menuItem.getName().trim();
 		firstCharMenuName = menuName.substring(0, 1);
 		menuName = menuName.substring(1);
@@ -392,6 +433,32 @@ public class MenuLoaderActionBean implements Serializable {
 		Class[] params = {};
 		MethodExpression actionExpression = app.getExpressionFactory().createMethodExpression(ctx.getELContext(), action, String.class, params);
 		return actionExpression;
+	}
+
+	public void setPuantajIslemleri(HtmlDropDownMenu puantajIslemleri) {
+		this.puantajIslemleri = puantajIslemleri;
+	}
+
+	public void setRaporIslemleri(HtmlDropDownMenu raporIslemleri) {
+		this.raporIslemleri = raporIslemleri;
+	}
+
+	public HtmlDropDownMenu getAdminMenu() {
+		adminMenu = createMenu(MenuItemConstant.admin, false);
+		return adminMenu;
+	}
+
+	public void setAdminMenu(HtmlDropDownMenu adminMenu) {
+		this.adminMenu = adminMenu;
+	}
+
+	public HtmlDropDownMenu getGuestMenu() {
+		guestMenu = createMenu(MenuItemConstant.guest, false);
+		return guestMenu;
+	}
+
+	public void setGuestMenu(HtmlDropDownMenu guestMenu) {
+		this.guestMenu = guestMenu;
 	}
 
 }
