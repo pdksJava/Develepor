@@ -17,6 +17,10 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
 
 import org.apache.log4j.Logger;
+import org.jboss.seam.Component;
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Name;
+import org.jboss.seam.faces.FacesMessages;
 import org.pdks.entity.Tatil;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaSablonu;
@@ -24,10 +28,6 @@ import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
 import org.pdks.session.TatilHome;
 import org.pdks.session.VardiyaSablonuHome;
-import org.jboss.seam.Component;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
-import org.jboss.seam.faces.FacesMessages;
 
 @Name(value = "pdksValidator")
 // @BypassInterceptors
