@@ -280,8 +280,6 @@ public class MenuLoaderActionBean implements Serializable {
 	private boolean menuAltKontrol(UIComponent dropDownMenu) {
 		boolean detayVar = false;
 		if (dropDownMenu != null) {
-			if (dropDownMenu.getId().equals("dinamikRapor"))
-				logger.debug("");
 			List<UIComponent> list = dropDownMenu.getChildren();
 			if (list != null) {
 				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
@@ -298,7 +296,7 @@ public class MenuLoaderActionBean implements Serializable {
 								altDetayVar = menuAltKontrol(child);
 						}
 						if (altDetayVar == false) {
-							logger.info(component.getId());
+							logger.debug(component.getId());
 							iterator.remove();
 						} else {
 							detayVar = true;
