@@ -164,29 +164,31 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 				} catch (Exception e) {
 					logger.error(e);
 				}
-				if (vardiyaGunList != null) {
+				if (vardiyaGunList != null && vardiyaGunList.isEmpty() == false) {
 					LinkedHashMap<Long, List<VardiyaGun>> map1 = new LinkedHashMap<Long, List<VardiyaGun>>();
 					LinkedHashMap<Long, Liste> perMap1 = new LinkedHashMap<Long, Liste>();
 					for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
 						VardiyaGun vg = (VardiyaGun) iterator.next();
 						Personel personel = vg.getPdksPersonel();
 						boolean sil = false;
+						String aciklama = null;
 						if (personel.getEkSaha3() == null || vg.getVardiya() == null)
 							sil = true;
 						else {
 							Vardiya islemVardiya = vg.getIslemVardiya();
-							String aciklama = getVardiyaAciklama(vg);
+							aciklama = getVardiyaAciklama(vg);
 							if (islemVardiya.isCalisma()) {
 								if (islemVardiya.getVardiyaBitZaman().before(bitisTarih) && aciklama.indexOf("Geç Giriş") < 0)
 									sil = true;
 							} else if (vg.getVardiyaDate().before(bitisTarih))
 								sil = true;
 						}
-						if (sil == false) {
+						if (sil == false && vg.getGirisHareket() != null) {
 							Long key = personel.getId();
 							if (perMap1.containsKey(key) == false) {
+								Sirket sirket = personel.getSirket();
 								Tanim tesis = personel.getTesis(), bolum = personel.getEkSaha3();
-								Liste liste = new Liste(personel.getSirket().getAd() + "_" + (tesis != null ? tesis.getAciklama() : "") + "_" + (bolum != null ? bolum.getAciklama() : "") + "_" + personel.getAdSoyad() + "_" + personel.getPdksSicilNo(), personel);
+								Liste liste = new Liste(sirket.getDepartman().getId() + "_" + sirket.getAd() + "_" + (tesis != null ? tesis.getAciklama() : "") + "_" + (bolum != null ? bolum.getAciklama() : "") + "_" + personel.getAdSoyad() + "_" + personel.getPdksSicilNo(), personel);
 								perMap1.put(key, liste);
 							}
 							List<VardiyaGun> list = map1.containsKey(key) ? map1.get(key) : new ArrayList<VardiyaGun>();
@@ -204,7 +206,6 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 						vardiyaGunList.clear();
 						for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 							Liste liste = (Liste) iterator.next();
-
 							Personel personel = (Personel) liste.getValue();
 							Long key = personel.getId();
 							boolean sil = true;
@@ -219,6 +220,8 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 								iterator.remove();
 						}
 					}
+					map1 = null;
+					perMap1 = null;
 				}
 			}
 		}
