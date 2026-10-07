@@ -177,7 +177,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							Vardiya islemVardiya = vg.getIslemVardiya();
 							aciklama = getVardiyaAciklama(vg);
 							if (islemVardiya.isCalisma()) {
-								if (aciklama == null || aciklama.indexOf("Geç Giriş") < 0)
+								if (aciklama == null || aciklama.indexOf("Geç Giriş") < 0 || vg.getGirisHareket() == null)
 									continue;
 							} else
 								continue;
