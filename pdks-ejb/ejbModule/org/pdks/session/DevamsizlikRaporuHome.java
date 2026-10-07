@@ -152,7 +152,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 			gunSayisi = 1;
 		if (adetSayisi == null || adetSayisi < 1)
 			adetSayisi = 1;
-		// User sistemAdmin = new User();
+
 		String adresStr = ortakIslemler.getLoginAdres();
 		if (PdksUtil.hasStringValue(adresStr)) {
 			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
@@ -170,20 +170,19 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
 						VardiyaGun vg = (VardiyaGun) iterator.next();
 						Personel personel = vg.getPdksPersonel();
-						boolean sil = false;
 						String aciklama = null;
 						if (personel.getEkSaha3() == null || vg.getVardiya() == null)
-							sil = true;
+							continue;
 						else {
 							Vardiya islemVardiya = vg.getIslemVardiya();
 							aciklama = getVardiyaAciklama(vg);
 							if (islemVardiya.isCalisma()) {
-								if (islemVardiya.getVardiyaBitZaman().before(bitisTarih) && aciklama.indexOf("Geç Giriş") < 0)
-									sil = true;
-							} else if (vg.getVardiyaDate().before(bitisTarih))
-								sil = true;
+								if (aciklama == null || aciklama.indexOf("Geç Giriş") < 0)
+									continue;
+							} else
+								continue;
 						}
-						if (sil == false && vg.getGirisHareket() != null) {
+						if (aciklama != null && vg.getGirisHareket() != null) {
 							Long key = personel.getId();
 							if (perMap1.containsKey(key) == false) {
 								Sirket sirket = personel.getSirket();
@@ -200,11 +199,11 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 					}
 					if (perMap1.isEmpty() == false) {
-						List<Liste> list = new ArrayList<Liste>(perMap1.values());
-						if (list.size() > 1)
-							list = PdksUtil.sortObjectStringAlanList(list, "getId", null);
+						List<Liste> perList = new ArrayList<Liste>(perMap1.values());
+						if (perList.size() > 1)
+							perList = PdksUtil.sortObjectStringAlanList(perList, "getId", null);
 						vardiyaGunList.clear();
-						for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+						for (Iterator iterator = perList.iterator(); iterator.hasNext();) {
 							Liste liste = (Liste) iterator.next();
 							Personel personel = (Personel) liste.getValue();
 							Long key = personel.getId();
@@ -218,6 +217,99 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							}
 							if (sil)
 								iterator.remove();
+						}
+						perList = null;
+						if (vardiyaGunList.isEmpty() == false) {
+							User sistemAdmin = new User();
+
+							Gson gs = new Gson();
+							String baslik = ortakIslemler.getMenuAdi(sayfaURL);
+							if (agentId != null) {
+								PdksAgent agent = (PdksAgent) pdksEntityController.getSQLParamByFieldObject(PdksAgent.TABLE_NAME, PdksAgent.COLUMN_NAME_ID, agentId, PdksAgent.class, session);
+								if (agent != null)
+									baslik = agent.getAciklama();
+							}
+							String dosyaAdi = baslik + '_' + PdksUtil.convertToDateString(bitisTarih, "yyyyMMdd") + ".xlsx";
+							boolean tesisDurum = ortakIslemler.getListTesisDurum(vardiyaGunList);
+							LinkedHashMap<String, Object> inputMap = new LinkedHashMap<String, Object>();
+							LinkedHashMap<String, Object> outputMap = new LinkedHashMap<String, Object>();
+							LinkedHashMap<String, Object> parametreMap = new LinkedHashMap<String, Object>();
+							parametreMap.put("personelNoAciklama", "C");
+							parametreMap.put("Tarihi", "d");
+							parametreMap.put("Vardiya Başlangıç Zaman", "dt");
+							parametreMap.put("Vardiya Bitiş Zaman", "dt");
+							parametreMap.put("Giriş", "dt");
+							inputMap.put("parametre", parametreMap);
+							inputMap.put("konu", "Geç Giriş Raporu");
+							inputMap.put("dosyaAdi", dosyaAdi);
+							inputMap.put("baslik", baslik);
+							inputMap.put("tabloYaz", 1);
+							String toAdres = PdksUtil.getCanliSunucuDurum() ? ortakIslemler.getParameterKey("mailGrubuIK") : null;
+							if (toAdres != null && toAdres.indexOf("@") > 0)
+								inputMap.put("toAdres", toAdres);
+							String bccAdres = ortakIslemler.getParameterKey("bccAdres");
+							if (bccAdres != null && bccAdres.indexOf("@") > 0)
+								inputMap.put("bcc", bccAdres);
+							List<LinkedHashMap<String, Object>> list = new ArrayList<LinkedHashMap<String, Object>>();
+							outputMap.put(baslik, list);
+							String patternDate = PdksUtil.getDateFormat(), patternSaat = PdksUtil.getSaatFormat();
+							// Calendar cal = Calendar.getInstance();
+							// long zoneOffSet = cal.get(Calendar.ZONE_OFFSET);
+							// zoneOffSet = 0L;
+							SimpleDateFormat sdf = new SimpleDateFormat(patternSaat);
+							sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+							for (VardiyaGun vg : vardiyaGunList) {
+								if (vg.getVardiya().isCalisma())
+									vg.setIslemVardiya(null);
+								Vardiya vardiya = vg.getIslemVardiya();
+								Personel personel = vg.getPdksPersonel();
+								LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+								Sirket sirket = personel.getSirket();
+								map.put("sirketAciklama", sirket.getAd());
+								if (tesisDurum)
+									map.put("tesisAciklama", sirket.getTesisDurum() && personel.getTesis() != null ? personel.getTesis().getAciklama() : "");
+								map.put("yoneticiAciklama", personel.getYoneticisi() != null ? personel.getYoneticisi().getAdSoyad() : "");
+								map.put("Adı Soyad", personel.getAdSoyad());
+								map.put("personelNoAciklama", personel.getPdksSicilNo());
+								map.put("bolumAciklama", personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() : "");
+								map.put("Tarihi", PdksUtil.convertToDateString(vg.getVardiyaDate(), patternDate));
+								map.put("Vardiya Başlangıç Zaman", sistemAdmin.dateTimeFormatla(vardiya.getVardiyaBasZaman()));
+								map.put("Vardiya Bitiş Zaman", sistemAdmin.dateTimeFormatla(vardiya.getVardiyaBitZaman()));
+								map.put("Giriş", vg.getGirisHareket() != null ? sistemAdmin.dateTimeFormatla(vg.getGirisHareket().getOrjinalZaman()) : "");
+								String fark = "";
+								Date farkTime = null, basZaman = vardiya.getVardiyaBasZaman();
+								Date girisZaman = vg.getGirisHareket() != null ? vg.getGirisHareket().getOrjinalZaman() : null;
+
+								if (girisZaman != null) {
+									// Long dts = vardiya.getBasZaman().getTime() - vg.getGirisHareket().getOrjinalZaman().getTime() - zoneOffSet;
+									Long dts = basZaman.getTime() - girisZaman.getTime();
+									farkTime = new Date(dts);
+									// fark = PdksUtil.convertToDateString(farkTime, patternSaat);
+								}
+
+								if (farkTime != null)
+									fark = sdf.format(farkTime);
+
+								map.put("Fark", fark);
+								list.add(map);
+							}
+
+							ServiceData sd = new ServiceData("mailDosyaGonder");
+							sd.setInputData(gs.toJson(inputMap));
+							sd.setOutputData(gs.toJson(outputMap));
+							if (pdksAgentTanimlamaHome != null) {
+								pdksAgentTanimlamaHome.setSession(session);
+								pdksAgentTanimlamaHome.mailGonderServisData(sd);
+							} else {
+								pdksEntityController.saveOrUpdate(session, entityManager, sd);
+								try {
+									pdksEntityController.sessionFlush(session);
+								} catch (Exception e) {
+									logger.error(e);
+									e.printStackTrace();
+								}
+							}
+
 						}
 					}
 					map1 = null;
