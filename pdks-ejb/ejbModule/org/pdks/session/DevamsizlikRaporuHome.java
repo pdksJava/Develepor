@@ -110,6 +110,122 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		super.create();
 	}
 
+	public String sayfaGecGelenRaporAction() {
+		Long agentId = null;
+		Integer gunSayisi = null, adetSayisi = null;
+		String parametreler = null;
+		try {
+			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+			agentId = req != null ? Long.parseLong(req.getParameter("agentId")) : null;
+			parametreler = req.getParameter("params");
+		} catch (Exception e) {
+		}
+		if (agentId != null) {
+
+		}
+		if (parametreler != null) {
+			parametreler = PdksUtil.getDecodeStringByBase64(parametreler);
+			String[] params = parametreler.split(" ");
+			for (int i = 0; i < params.length; i++) {
+				parametreler = params[i];
+				int index = -1;
+				if (parametreler.indexOf("/G") >= 0) {
+					index = parametreler.indexOf("/G") + 2;
+					parametreler = parametreler.substring(index);
+					try {
+						gunSayisi = Integer.parseInt(parametreler);
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
+				} else if (parametreler.indexOf("/A") >= 0) {
+					index = parametreler.indexOf("/A") + 2;
+					parametreler = parametreler.substring(index);
+					try {
+						adetSayisi = Integer.parseInt(parametreler);
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
+				}
+			}
+		}
+		if (gunSayisi == null || gunSayisi < 1)
+			gunSayisi = 1;
+		if (adetSayisi == null || adetSayisi < 1)
+			adetSayisi = 1;
+		// User sistemAdmin = new User();
+		String adresStr = ortakIslemler.getLoginAdres();
+		if (PdksUtil.hasStringValue(adresStr)) {
+			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+			if (PdksUtil.isSessionKapali(session) == false) {
+				girisBilgiHazirla();
+				setDate(PdksUtil.tariheGunEkleCikar(PdksUtil.buGun(), -(gunSayisi) + 1));
+				try {
+					devamsizlikListeRaporuOlustur();
+				} catch (Exception e) {
+					logger.error(e);
+				}
+				if (vardiyaGunList != null) {
+					LinkedHashMap<Long, List<VardiyaGun>> map1 = new LinkedHashMap<Long, List<VardiyaGun>>();
+					LinkedHashMap<Long, Liste> perMap1 = new LinkedHashMap<Long, Liste>();
+					for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
+						VardiyaGun vg = (VardiyaGun) iterator.next();
+						Personel personel = vg.getPdksPersonel();
+						boolean sil = false;
+						if (personel.getEkSaha3() == null || vg.getVardiya() == null)
+							sil = true;
+						else {
+							Vardiya islemVardiya = vg.getIslemVardiya();
+							String aciklama = getVardiyaAciklama(vg);
+							if (islemVardiya.isCalisma()) {
+								if (islemVardiya.getVardiyaBitZaman().before(bitisTarih) && aciklama.indexOf("Geç Giriş") < 0)
+									sil = true;
+							} else if (vg.getVardiyaDate().before(bitisTarih))
+								sil = true;
+						}
+						if (sil == false) {
+							Long key = personel.getId();
+							if (perMap1.containsKey(key) == false) {
+								Tanim tesis = personel.getTesis(), bolum = personel.getEkSaha3();
+								Liste liste = new Liste(personel.getSirket().getAd() + "_" + (tesis != null ? tesis.getAciklama() : "") + "_" + (bolum != null ? bolum.getAciklama() : "") + "_" + personel.getAdSoyad() + "_" + personel.getPdksSicilNo(), personel);
+								perMap1.put(key, liste);
+							}
+							List<VardiyaGun> list = map1.containsKey(key) ? map1.get(key) : new ArrayList<VardiyaGun>();
+							if (list.isEmpty())
+								map1.put(key, list);
+							list.add(vg);
+						} else
+							iterator.remove();
+
+					}
+					if (perMap1.isEmpty() == false) {
+						List<Liste> list = new ArrayList<Liste>(perMap1.values());
+						if (list.size() > 1)
+							list = PdksUtil.sortObjectStringAlanList(list, "getId", null);
+						vardiyaGunList.clear();
+						for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+							Liste liste = (Liste) iterator.next();
+
+							Personel personel = (Personel) liste.getValue();
+							Long key = personel.getId();
+							boolean sil = true;
+							if (map1.containsKey(key)) {
+								List<VardiyaGun> list2 = map1.get(key);
+								if (list2.size() >= adetSayisi) {
+									vardiyaGunList.addAll(list2);
+									sil = false;
+								}
+							}
+							if (sil)
+								iterator.remove();
+						}
+					}
+				}
+			}
+		}
+		return MenuItemConstant.home;
+
+	}
+
 	public String sayfaMailRaporAction() {
 		Long agentId = null;
 		try {
