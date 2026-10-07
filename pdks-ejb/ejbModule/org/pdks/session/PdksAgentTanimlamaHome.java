@@ -368,7 +368,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 				logger.error(e);
 			}
 
-		} else if (sd.getId() != null) {
+		} else if (sd.getId() != null && sd.getId().longValue() >= 0L) {
 			sil = false;
 			sd.setFonksiyonAdi("mailDosyaGonderilmedi");
 			sd.setOlusturmaTarihi(new Date());
@@ -717,6 +717,14 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 
 	public void setCurrentAgent(PdksAgent currentAgent) {
 		this.currentAgent = currentAgent;
+	}
+
+	public Long getMailId() {
+		return mailId;
+	}
+
+	public void setMailId(Long mailId) {
+		this.mailId = mailId;
 	}
 
 }

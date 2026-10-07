@@ -112,7 +112,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 	public String sayfaGecGelenRaporAction() {
 		Long agentId = null;
-		Integer gunSayisi = null, adetSayisi = null;
+		Integer gunSayisi = null, adetSayisi = null, dakika = null;
 		String parametreler = null;
 		try {
 			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
@@ -145,13 +145,23 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					} catch (Exception e) {
 						// TODO: handle exception
 					}
+				} else if (parametreler.indexOf("/D") >= 0) {
+					index = parametreler.indexOf("/D") + 2;
+					parametreler = parametreler.substring(index);
+					try {
+						dakika = Integer.parseInt(parametreler);
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
 				}
 			}
 		}
 		if (gunSayisi == null || gunSayisi < 1)
-			gunSayisi = 1;
+			gunSayisi = 7;
 		if (adetSayisi == null || adetSayisi < 1)
-			adetSayisi = 1;
+			adetSayisi = 3;
+		if (dakika != null && dakika < 1)
+			dakika = null;
 
 		String adresStr = ortakIslemler.getLoginAdres();
 		if (PdksUtil.hasStringValue(adresStr)) {
@@ -183,6 +193,13 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 								continue;
 						}
 						if (aciklama != null && vg.getGirisHareket() != null) {
+							if (dakika != null) {
+								Date girisZaman = vg.getGirisHareket().getOrjinalZaman();
+								Vardiya vardiya = vg.getIslemVardiya();
+								Date kontrolZaman = PdksUtil.addTarih(vardiya.getVardiyaBasZaman(), Calendar.MINUTE, dakika);
+								if (girisZaman.before(kontrolZaman))
+									continue;
+							}
 							Long key = personel.getId();
 							if (perMap1.containsKey(key) == false) {
 								Sirket sirket = personel.getSirket();
@@ -221,7 +238,6 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 						perList = null;
 						if (vardiyaGunList.isEmpty() == false) {
 							User sistemAdmin = new User();
-
 							Gson gs = new Gson();
 							String baslik = ortakIslemler.getMenuAdi(sayfaURL);
 							if (agentId != null) {
@@ -235,16 +251,17 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							LinkedHashMap<String, Object> outputMap = new LinkedHashMap<String, Object>();
 							LinkedHashMap<String, Object> parametreMap = new LinkedHashMap<String, Object>();
 							parametreMap.put("personelNoAciklama", "C");
-							parametreMap.put("Tarihi", "d");
 							parametreMap.put("Vardiya Başlangıç Zaman", "dt");
-							parametreMap.put("Vardiya Bitiş Zaman", "dt");
 							parametreMap.put("Giriş", "dt");
+							parametreMap.put("Fark", "C");
 							inputMap.put("parametre", parametreMap);
 							inputMap.put("konu", "Geç Giriş Raporu");
 							inputMap.put("dosyaAdi", dosyaAdi);
 							inputMap.put("baslik", baslik);
 							inputMap.put("tabloYaz", 1);
 							String toAdres = PdksUtil.getCanliSunucuDurum() ? ortakIslemler.getParameterKey("mailGrubuIK") : null;
+							if (toAdres == null && PdksUtil.isSistemDestekVar() && PdksUtil.getCanliSunucuDurum() == false && PdksUtil.getTestSunucuDurum() == false)
+								toAdres = "hasan.sayar@gmail.com";
 							if (toAdres != null && toAdres.indexOf("@") > 0)
 								inputMap.put("toAdres", toAdres);
 							String bccAdres = ortakIslemler.getParameterKey("bccAdres");
@@ -252,10 +269,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 								inputMap.put("bcc", bccAdres);
 							List<LinkedHashMap<String, Object>> list = new ArrayList<LinkedHashMap<String, Object>>();
 							outputMap.put(baslik, list);
-							String patternDate = PdksUtil.getDateFormat(), patternSaat = PdksUtil.getSaatFormat();
-							// Calendar cal = Calendar.getInstance();
-							// long zoneOffSet = cal.get(Calendar.ZONE_OFFSET);
-							// zoneOffSet = 0L;
+							String patternSaat = PdksUtil.getSaatFormat();
 							SimpleDateFormat sdf = new SimpleDateFormat(patternSaat);
 							sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 							for (VardiyaGun vg : vardiyaGunList) {
@@ -272,9 +286,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 								map.put("Adı Soyad", personel.getAdSoyad());
 								map.put("personelNoAciklama", personel.getPdksSicilNo());
 								map.put("bolumAciklama", personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() : "");
-								map.put("Tarihi", PdksUtil.convertToDateString(vg.getVardiyaDate(), patternDate));
 								map.put("Vardiya Başlangıç Zaman", sistemAdmin.dateTimeFormatla(vardiya.getVardiyaBasZaman()));
-								map.put("Vardiya Bitiş Zaman", sistemAdmin.dateTimeFormatla(vardiya.getVardiyaBitZaman()));
 								map.put("Giriş", vg.getGirisHareket() != null ? sistemAdmin.dateTimeFormatla(vg.getGirisHareket().getOrjinalZaman()) : "");
 								String fark = "";
 								Date farkTime = null, basZaman = vardiya.getVardiyaBasZaman();
@@ -282,7 +294,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 								if (girisZaman != null) {
 									// Long dts = vardiya.getBasZaman().getTime() - vg.getGirisHareket().getOrjinalZaman().getTime() - zoneOffSet;
-									Long dts = basZaman.getTime() - girisZaman.getTime();
+									Long dts = girisZaman.getTime() - basZaman.getTime();
 									farkTime = new Date(dts);
 									// fark = PdksUtil.convertToDateString(farkTime, patternSaat);
 								}
@@ -299,6 +311,8 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							sd.setOutputData(gs.toJson(outputMap));
 							if (pdksAgentTanimlamaHome != null) {
 								pdksAgentTanimlamaHome.setSession(session);
+								if (agentId != null && PdksUtil.getCanliSunucuDurum() == false && PdksUtil.getTestSunucuDurum() == false)
+									pdksAgentTanimlamaHome.setMailId(-agentId);
 								pdksAgentTanimlamaHome.mailGonderServisData(sd);
 							} else {
 								pdksEntityController.saveOrUpdate(session, entityManager, sd);
