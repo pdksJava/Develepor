@@ -423,13 +423,10 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 			if (yaz) {
 				HashMap parametreMap = new HashMap();
 				User islemYapan = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_ID, authenticatedUser.getId(), User.class, session);
-
 				if (pdksVardiya.getId() == null) {
 					pdksVardiya.setOlusturmaTarihi(new Date());
 					pdksVardiya.setOlusturanUser(islemYapan);
-				}
-
-				else {
+				} else {
 					pdksVardiya.setGuncelleyenUser(islemYapan);
 					pdksVardiya.setGuncellemeTarihi(new Date());
 				}

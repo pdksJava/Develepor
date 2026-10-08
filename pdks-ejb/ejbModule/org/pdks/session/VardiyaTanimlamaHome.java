@@ -824,14 +824,14 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 						int fark = 0;
 						switch (dayOfWeek) {
 						case Calendar.MONDAY:
-							fark = 6;
+							fark = 7;
 							break;
 						case Calendar.SUNDAY:
 							fark = 6;
 							break;
 
 						default:
-							fark = dayOfWeek - 1;
+							fark = dayOfWeek - 2;
 							break;
 						}
 						if (fark != 0)

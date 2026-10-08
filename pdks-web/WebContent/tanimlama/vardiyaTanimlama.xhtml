@@ -79,13 +79,13 @@
 									</rich:column>
 								</c:if>
 								<c:if test="#{authenticatedUser.admin==false}">
-									<rich:column >
+									<rich:column>
 										<f:facet name="header">
 											<h:outputText value="#{ortakIslemler.vardiyaAciklama()} Adı" />
 										</f:facet>
 										<h:outputText value="#{vardiya.adi}" id="vardiyaAdi" />
 									</rich:column>
-									<rich:column  >
+									<rich:column>
 										<f:facet name="header">
 											<h:outputText value="#{ortakIslemler.vardiyaAciklama()} Kısa Adı" />
 										</f:facet>
@@ -425,10 +425,12 @@
 												</TABLE>
 											</s:decorate>
 
-											<s:decorate template="/layout/edit.xhtml">
+											<s:decorate template="/layout/edit.xhtml" id="yemekSuresi">
 												<ui:define name="label">Yemek Süresi (Dakika)</ui:define>
 												<ui:fragment rendered="#{vardiyaHome.seciliVardiya.yemekSuresiKontrolEt}">
-													<rich:inputNumberSpinner value="#{vardiyaHome.seciliVardiya.yemekSuresi}" minValue="0" maxValue="1440" inputSize="4" step="15" />
+													<rich:inputNumberSpinner value="#{vardiyaHome.seciliVardiya.yemekSuresi}" minValue="0" maxValue="1440" inputSize="4" step="15">
+														<a4j:support event="onchange" reRender="yemekSuresi" status="ajaxStatus" ajaxSingle="true" />
+													</rich:inputNumberSpinner>
 												</ui:fragment>
 												<ui:fragment rendered="#{vardiyaHome.seciliVardiya.yemekSuresiKontrolEt==false}">
 													<h:outputText value="#{vardiyaHome.seciliVardiya.yemekSuresi}" />
