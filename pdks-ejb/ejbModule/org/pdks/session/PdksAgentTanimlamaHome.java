@@ -373,6 +373,12 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 			sd.setFonksiyonAdi("mailDosyaGonderilmedi");
 			sd.setOlusturmaTarihi(new Date());
 			pdksEntityController.saveOrUpdate(session, entityManager, sd);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		if (sil) {
@@ -381,7 +387,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 			} catch (Exception e) {
 
 			}
-			if (adet == 0 || (mailStatu != null && mailStatu.getDurum())) {
+			if (mailStatu != null && mailStatu.getDurum()) {
 				logger.info(mail.getSubject() + " mail gönderildi. ");
 
 			}
