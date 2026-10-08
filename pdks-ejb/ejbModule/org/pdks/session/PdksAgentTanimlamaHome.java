@@ -368,11 +368,17 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 				logger.error(e);
 			}
 
-		} else if (sd.getId() != null) {
+		} else if (sd.getId() != null && sd.getId().longValue() >= 0L) {
 			sil = false;
 			sd.setFonksiyonAdi("mailDosyaGonderilmedi");
 			sd.setOlusturmaTarihi(new Date());
 			pdksEntityController.saveOrUpdate(session, entityManager, sd);
+			try {
+				pdksEntityController.sessionFlush(session);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		if (sil) {
@@ -381,7 +387,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 			} catch (Exception e) {
 
 			}
-			if (adet == 0 || (mailStatu != null && mailStatu.getDurum())) {
+			if (mailStatu != null && mailStatu.getDurum()) {
 				logger.info(mail.getSubject() + " mail gönderildi. ");
 
 			}
@@ -717,6 +723,14 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 
 	public void setCurrentAgent(PdksAgent currentAgent) {
 		this.currentAgent = currentAgent;
+	}
+
+	public Long getMailId() {
+		return mailId;
+	}
+
+	public void setMailId(Long mailId) {
+		this.mailId = mailId;
 	}
 
 }
