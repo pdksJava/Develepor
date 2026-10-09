@@ -751,12 +751,6 @@ public class PdksEntityController implements Serializable {
 					connection = session.disconnect();
 				else
 					session.close();
-				if (connection != null) {
-					try {
-						logger.info("session : open --> " + session.isOpen() + " connected --> " + session.isConnected() + " close " + connection.isClosed());
-					} catch (Exception e) {
-					}
-				}
 
 			}
 		}

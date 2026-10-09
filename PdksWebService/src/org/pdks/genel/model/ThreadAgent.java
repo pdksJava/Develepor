@@ -68,9 +68,16 @@ public class ThreadAgent extends Thread implements Serializable {
 						if (dosyaList != null && dosyaList.isEmpty() == false) {
 							for (String string : dosyaList) {
 								if (string.startsWith("http") && string.indexOf("login") > 1) {
+									int beginIndex = index + 9;
+									String parametre = null;
+									try {
+										parametre = programAdi.substring(beginIndex);
+									} catch (Exception e) {
+										parametre = "";
+									}
 									String adres = PdksUtil.replaceAllManuel(string, "login", programAdi.substring(0, index));
 									logger.info(agent.getAciklama() + " --> " + adres + " " + PdksUtil.getCurrentTimeStampStr());
-									PdksUtil.adresKontrol(adres + "?agentId=" + agent.getId());
+									PdksUtil.adresKontrol(adres + "?agentId=" + agent.getId() + (PdksUtil.hasStringValue(parametre) ? "&params=" + PdksUtil.getEncodeStringByBase64(parametre) : ""));
 
 								}
 
