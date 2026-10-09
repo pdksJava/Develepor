@@ -1,7 +1,6 @@
 package org.pdks.erp.action;
 
 import java.io.Serializable;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -51,8 +50,7 @@ public class PdksNoSapController implements ERPController, Serializable {
 	public void setFazlaMesaiUcretRFC(List<PersonelDenklestirme> sapMesaiList, User user, Session session) throws Exception {
 
 		try {
-			Connection connection = pdksEntityController.sessionKapat(session);
-			if (pdksEntityController.isSessionKapali(connection, session))
+ 			if (pdksEntityController.isSessionKapali(null, session))
 				session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 			DenklestirmeAy denklestirmeAy = sapMesaiList.get(0).getDenklestirmeAy();
 			Calendar cal = Calendar.getInstance();

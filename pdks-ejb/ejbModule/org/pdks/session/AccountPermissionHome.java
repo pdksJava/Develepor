@@ -84,8 +84,8 @@ public class AccountPermissionHome extends EntityHome<AccountPermission> impleme
 		List<AccountPermission> parametreList = new ArrayList<AccountPermission>();
 		HashMap parametreMap = new HashMap();
 		parametreMap.put("status", Boolean.TRUE);
-		Connection connection = pdksEntityController.sessionKapat(session);
-		if (pdksEntityController.isSessionKapali(connection, session))
+		
+		if (pdksEntityController.isSessionKapali(null, session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 
 		parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -97,8 +97,8 @@ public class AccountPermissionHome extends EntityHome<AccountPermission> impleme
 	public List<Role> getDistinctRoleList() {
 		List<Role> parametreList = new ArrayList<Role>();
 		HashMap parametreMap = new HashMap();
-		Connection connection = pdksEntityController.sessionKapat(session);
-		if (pdksEntityController.isSessionKapali(connection, session) )
+		
+		if (pdksEntityController.isSessionKapali(null, session) )
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 
 		parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);

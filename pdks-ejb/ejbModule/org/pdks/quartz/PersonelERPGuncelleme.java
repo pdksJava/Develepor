@@ -344,8 +344,7 @@ public class PersonelERPGuncelleme implements Serializable {
 	}
 
 	public void kullaniciGuncelle(Session session, User user) {
-		Connection connection = pdksEntityController.sessionKapat(session);
-		if (pdksEntityController.isSessionKapali(connection, session))
+ 		if (pdksEntityController.isSessionKapali(null, session))
 			session = PdksUtil.getSession(entityManager, user == null);
 		Parameter parameterEmailBozuk = ortakIslemler.getParameterAktif(session, "emailBozuk");
 		boolean emailBozuk = parameterEmailBozuk != null;

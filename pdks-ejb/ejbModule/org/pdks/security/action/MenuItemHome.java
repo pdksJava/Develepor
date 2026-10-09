@@ -132,8 +132,8 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 		ArrayList<String> targetListForDataTable = new ArrayList<String>();
 		MenuItem seciliMenuItem = null;
 		FacesMessage facesMessage = new FacesMessage();
-		Connection connection = pdksEntityController.sessionKapat(session);
-		if (pdksEntityController.isSessionKapali(connection, session))
+		
+		if (pdksEntityController.isSessionKapali(null, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 
 		// treeden secili olanlari alir.Bu islem sirasinda agactan bir tane menu
@@ -230,8 +230,8 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
  	 */
 	@Transactional
 	public String moveMenuItemsFromTree2DataTable() {
-		Connection connection = pdksEntityController.sessionKapat(session);
-		if (pdksEntityController.isSessionKapali(connection, session))
+		
+		if (pdksEntityController.isSessionKapali(null, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ArrayList<MenuItem> deleteMenuItemList = new ArrayList<MenuItem>();
 		ArrayList<String> menuItemNameList = new ArrayList<String>();
@@ -371,8 +371,8 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 	@Transactional
 	private void menuItemGiris() {
 		rootNode = null;
-		Connection connection = pdksEntityController.sessionKapat(session);
-		if (pdksEntityController.isSessionKapali(connection, session))
+		
+		if (pdksEntityController.isSessionKapali(null, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		HashMap fields = new HashMap();
 		StringBuilder sb = new StringBuilder();

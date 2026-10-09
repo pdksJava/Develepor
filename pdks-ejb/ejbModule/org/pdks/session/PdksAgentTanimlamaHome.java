@@ -101,8 +101,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 
 			if (mailId != null || PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
 
-				Connection connection = pdksEntityController.sessionKapat(session);
-				if (pdksEntityController.isSessionKapali(connection, session)) {
+	 			if (pdksEntityController.isSessionKapali(null, session)) {
 					if (authenticatedUser != null)
 						session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 					else

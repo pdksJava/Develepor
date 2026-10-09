@@ -94,8 +94,7 @@ public class PdksSapController implements ERPController, Serializable {
 		if (jcoClient != null) {
 			String hataMesaj = null;
 			try {
-				Connection connection = pdksEntityController.sessionKapat(session);
-				if (pdksEntityController.isSessionKapali(connection, session))
+ 				if (pdksEntityController.isSessionKapali(null, session))
 					session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 				DenklestirmeAy denklestirmeAy = sapMesaiList.get(0).getDenklestirmeAy();
 				Calendar cal = Calendar.getInstance();

@@ -284,8 +284,7 @@ public class IseGelmemeUyari implements Serializable {
 			devam = bugun.getTime() > tarih.getTime();
 		islemTarihi = tarih;
 		if (devam) {
-			Connection connection = pdksEntityController.sessionKapat(session);
-			if (pdksEntityController.isSessionKapali(connection, session))
+ 			if (pdksEntityController.isSessionKapali(null, session))
 				session = PdksUtil.getSession(entityManager, islemYapan == null);
 
 			setEkSaha1(null);

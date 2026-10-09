@@ -103,8 +103,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 		guncellemeDBDurum = false;
 		StringBuilder sb = new StringBuilder();
 		try {
-			Connection connection = pdksEntityController.sessionKapat(session);
-			if (pdksEntityController.isSessionKapali(connection, session))
+ 			if (pdksEntityController.isSessionKapali(null, session))
 				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 			// Calendar cal = getAgentCalistirTime(session);
 			Calendar cal = Calendar.getInstance();
@@ -380,9 +379,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 		yil = cal.get(Calendar.YEAR);
 
 		try {
-
-			Connection connection = pdksEntityController.sessionKapat(session);
-			if (pdksEntityController.isSessionKapali(connection, session))
+ 			if (pdksEntityController.isSessionKapali(null, session))
 				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 			hataKonum = "senelikBakiyeIzinEkle basladı ";
 
