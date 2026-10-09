@@ -201,8 +201,8 @@ public class UserHome extends EntityHome<User> implements Serializable {
 
 	public List<Role> getDistinctRoles() {
 		HashMap parametreMap = new HashMap();
-		Connection connection = pdksEntityController.sessionKapat(session);
-		if (pdksEntityController.isSessionKapali(connection, session))
+
+		if (pdksEntityController.isSessionKapali(null, session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		parametreMap.put("status = ", Boolean.TRUE);
 		if (!authenticatedUser.isAdmin())
@@ -306,8 +306,8 @@ public class UserHome extends EntityHome<User> implements Serializable {
 	}
 
 	public List<Role> getRoles() {
-		Connection connection = pdksEntityController.sessionKapat(session);
-		if (pdksEntityController.isSessionKapali(connection, session))
+
+		if (pdksEntityController.isSessionKapali(null, session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 
 		if (getInstance().getYetkiliRollerim() == null)
@@ -350,8 +350,8 @@ public class UserHome extends EntityHome<User> implements Serializable {
 						sonuc = getSonuc(target);
 					} else {
 						List<Role> yetkiliRollerim = new ArrayList<Role>();
-						Connection connection = pdksEntityController.sessionKapat(session);
-						if (pdksEntityController.isSessionKapali(connection, session))
+
+						if (pdksEntityController.isSessionKapali(null, session))
 							session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 						if (authenticatedUser.getYetkiliRollerim() == null || authenticatedUser.getYetkiliRollerim().isEmpty())
 							ortakIslemler.setUserRoller(authenticatedUser, session);

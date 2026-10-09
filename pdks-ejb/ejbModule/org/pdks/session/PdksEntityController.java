@@ -747,10 +747,10 @@ public class PdksEntityController implements Serializable {
 		if (session != null) {
 			logger.debug("session : open --> " + session.isOpen() + " connected --> " + session.isConnected());
 			if (session.isOpen() || session.isConnected()) {
-				if (authenticatedUser != null)
-					connection = session.disconnect();
-				else
-					session.close();
+//				if (authenticatedUser == null)
+//					session.close();
+//				else
+//					connection = session.disconnect();
 
 			}
 		}
@@ -775,7 +775,7 @@ public class PdksEntityController implements Serializable {
 
 				}
 			} else
-				kapali = false;
+				kapali = sessionx.isConnected() == false;
 
 		}
 		return kapali;

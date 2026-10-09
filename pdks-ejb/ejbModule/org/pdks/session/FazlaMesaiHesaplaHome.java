@@ -1171,8 +1171,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 */
 	public String sayfaFazlaMesaiGuncelle(String id, User islemUser) {
 		String donus = "";
-		Connection connection = pdksEntityController.sessionKapat(session);
-		if (pdksEntityController.isSessionKapali(connection, session)) {
+ 		if (pdksEntityController.isSessionKapali(null, session)) {
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 			if (authenticatedUser != null)
 				authenticatedUser.putSessionMap("sayfaFazlaMesaiGuncelle", session);

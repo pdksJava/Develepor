@@ -17,7 +17,6 @@ import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import java.sql.Connection;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.international.StatusMessages;
@@ -110,11 +109,9 @@ public class MenuLoaderActionBean implements Serializable {
 		raporIslemleri = createMenu(MenuItemConstant.raporIslemleri, true);
 		String menuAdi = "dinamikRapor";
 		if (raporIslemleri != null && authenticatedUser != null && userHome != null && userHome.hasPermission(menuAdi, "view")) {
-			Connection connection = pdksEntityController.sessionKapat(session);
-			if (pdksEntityController.isSessionKapali(connection, session) ) {
+			if (pdksEntityController.isSessionKapali(null, session)) {
 				session = authenticatedUser.getSessionSQL();
-				connection = pdksEntityController.sessionKapat(session);
-				if (pdksEntityController.isSessionKapali(connection, session) )
+				if (pdksEntityController.isSessionKapali(null, session))
 					session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 			}
 

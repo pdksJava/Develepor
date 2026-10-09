@@ -2279,8 +2279,8 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	 * 
 	 */
 	public void sayfaGirisPDFAction() {
-		Connection connection = pdksEntityController.sessionKapat(session);
-		if (pdksEntityController.isSessionKapali(connection, session))
+	 
+		if (pdksEntityController.isSessionKapali(null, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		if (sessionIzin != null)
 			setIzin(sessionIzin);

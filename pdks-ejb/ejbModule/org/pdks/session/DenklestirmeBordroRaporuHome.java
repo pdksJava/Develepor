@@ -377,8 +377,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	}
 
 	public String sayfaFazlaMesaiGuncellemeAction() throws Exception {
-		Connection connection = pdksEntityController.sessionKapat(session);
-		if (pdksEntityController.isSessionKapali(connection, session)) {
+	 
+		if (pdksEntityController.isSessionKapali(null, session)) {
 			if (authenticatedUser != null)
 				session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 			else
@@ -584,11 +584,6 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	 */
 	private boolean bolumFazlaMesai(LinkedHashMap<String, Object> paramMap) {
 		User loginUser = (User) paramMap.get("loginUser");
-		if (pdksEntityController.isSessionKapali(null, session)) {
-			session = PdksUtil.getSessionUser(entityManager, loginUser);
-			if (authenticatedUser != null)
-				authenticatedUser.putSessionMap("bolumFazlaMesai", session);
-		}
 
 		Long donemKodu = Long.parseLong(PdksUtil.convertToDateString(new Date(), "yyyyMM")), islemDonemKodu = denklestirmeAy.getDonemKodu();
 		AylikPuantaj aylikPuantaj = (AylikPuantaj) paramMap.get("aylikPuantaj");
@@ -597,6 +592,11 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			logYaz = ortakIslemler.getCanliDurum() == false && ortakIslemler.getTestSunucuDurum() == false;
 		Sirket seciliSirket = (Sirket) paramMap.get("seciliSirket");
 		Long seciliTesisId = paramMap.containsKey("seciliTesisId") ? (Long) paramMap.get("seciliTesisId") : null;
+		if (pdksEntityController.isSessionKapali(null, session)) {
+			session = PdksUtil.getSessionUser(entityManager, loginUser);
+			if (authenticatedUser != null)
+				authenticatedUser.putSessionMap("bolumFazlaMesai", session);
+		}
 		List<SelectItem> bolumList = fazlaMesaiOrtakIslemler.getFazlaMesaiBolumList(seciliSirket, seciliTesisId != null ? String.valueOf(seciliTesisId) : "", aylikPuantaj, loginUser.isAdmin() == false, session);
 		AylikPuantaj ap = aylikPuantaj != null ? (AylikPuantaj) aylikPuantaj.clone() : new AylikPuantaj(denklestirmeAy);
 		if (ap.getLoginUser() == null)
@@ -724,7 +724,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 					} catch (Exception eX) {
 					}
 					if (pdksEntityController.isSessionKapali(null, session)) {
-						session = PdksUtil.getSessionUser(entityManager, loginUser);
+						session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 						if (authenticatedUser != null)
 							authenticatedUser.putSessionMap("bolumFazlaMesai", session);
 					}
