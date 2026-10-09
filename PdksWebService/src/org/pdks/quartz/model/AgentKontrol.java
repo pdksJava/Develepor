@@ -23,7 +23,6 @@ import org.pdks.genel.model.PdksUtil;
 import org.pdks.genel.model.ThreadAgent;
 import org.pdks.mail.model.MailObject;
 import org.pdks.mail.model.MailPersonel;
-import org.pdks.mail.model.MailStatu;
 import org.pdks.security.entity.User;
 import org.pdks.security.entity.UserDigerOrganizasyon;
 import org.pdks.security.entity.UserRoles;
@@ -178,10 +177,8 @@ public final class AgentKontrol extends QuartzJobBean {
 			if (!mailDataList.isEmpty()) {
 				PdksVeriOrtakAktar pdksVeriOrtakAktar = new PdksVeriOrtakAktar();
 				HashMap<String, Object> mailMap = pdksVeriOrtakAktar.sistemVerileriniYukle(dAO, false);
-				MailStatu mailStatu = null;
 				Gson gson = new Gson();
 				List<String> mailStrList = new ArrayList<String>(), pasifList = new ArrayList<String>();
-				List<ServiceData> mailDataDeleteList = new ArrayList<ServiceData>();
 				for (ServiceData serviceData : mailDataList) {
 					if (mailMap.containsKey("mailObject"))
 						mailMap.remove("mailObject");
@@ -190,6 +187,7 @@ public final class AgentKontrol extends QuartzJobBean {
 					LinkedHashMap<String, Object> map = null;
 					String jsonStr = serviceData.getOutputData();
 					try {
+						boolean sil = false;
 						map = gson.fromJson(jsonStr, LinkedHashMap.class);
 						if (map.containsKey("mail")) {
 							List list = (List) map.get("mail");
@@ -227,31 +225,31 @@ public final class AgentKontrol extends QuartzJobBean {
 								if (dataMap.containsKey("subject"))
 									mailObject.setSubject((String) dataMap.get("subject"));
 								if (mailObject.getBody() != null) {
-									// mailObject.getToList().clear();
-									// MailPersonel mailPersonel = new MailPersonel();
-									// mailPersonel.setePosta("hasansayar58@gmail.com");
-									// mailObject.getToList().add(mailPersonel);
 									mailObject.setSubject(serviceData.getInputData());
 									mailMap.put("mailObject", mailObject);
-									mailStatu = MailManager.ePostaGonder(mailMap);
+									MailManager.ePostaGonder(mailMap);
+									dAO.deleteObject(serviceData);
+									sil = true;
 								}
-								if (mailStatu != null && mailStatu.isDurum())
-									mailDataDeleteList.add(serviceData);
+
 							}
-						}
+						} else
+							sil = true;
+						if (sil)
+							dAO.deleteObject(serviceData);
 					} catch (Exception e) {
 						logger.error(e);
 						e.printStackTrace();
 					}
+
 					mailObject = null;
 					mailStrList.clear();
 					pasifList.clear();
 				}
-				if (mailDataDeleteList.isEmpty() == false)
-					dAO.deleteObjectList(mailDataDeleteList);
+
 				pasifList = null;
 				mailStrList = null;
-				mailDataDeleteList = null;
+
 			}
 			mailDataList = null;
 
