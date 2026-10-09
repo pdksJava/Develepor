@@ -156,9 +156,9 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 										toplamSaat += 7.5d;
 									} else if (vg.getVardiya().isIzin() || vg.getVardiya().isHaftaTatil())
 										toplamSaat += 7.5d;
- 								}
+								}
 							}
- 						}
+						}
 						if (toplamSaat > 0) {
 							brutUcretGoster = true;
 							ap.setAylikBrutUcret(toplamSaat * gunlukBrutUcret);
@@ -1556,8 +1556,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			if (donemAy == 0) {
 				donemAy = (Integer) aylar.get(aylar.size() - 1).getValue();
 			}
-		} else
-			PdksUtil.addMessageAvailableWarn(donemYil + " yılı aylarında çalışma planı oluşturulmamıştır!");
+		} 
 
 		return donemAy;
 	}

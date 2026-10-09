@@ -2,6 +2,7 @@ package org.pdks.session;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
+import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -166,7 +167,8 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		String adresStr = ortakIslemler.getLoginAdres();
 		if (PdksUtil.hasStringValue(adresStr)) {
 			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-			if (PdksUtil.isSessionKapali(session) == false) {
+			Connection connection = pdksEntityController.sessionKapat(session);
+			if (pdksEntityController.isSessionKapali(connection, session) == false) {
 				girisBilgiHazirla();
 				setDate(PdksUtil.tariheGunEkleCikar(PdksUtil.buGun(), -(gunSayisi) + 1));
 				try {
@@ -347,7 +349,8 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		String adresStr = ortakIslemler.getLoginAdres();
 		if (PdksUtil.hasStringValue(adresStr)) {
 			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-			if (PdksUtil.isSessionKapali(session) == false) {
+			Connection connection = pdksEntityController.sessionKapat(session);
+			if (pdksEntityController.isSessionKapali(connection, session) == false) {
 				girisBilgiHazirla();
 				setDate(PdksUtil.tariheGunEkleCikar(PdksUtil.buGun(), -1));
 				try {
@@ -522,7 +525,8 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		try {

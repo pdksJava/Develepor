@@ -21,6 +21,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import java.sql.Connection;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
@@ -219,7 +220,8 @@ public class StartupAction implements Serializable {
 	}
 
 	public void fillMenuItemList(Session session) {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = null;
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		fillAccountPermission(session, null);
 
@@ -379,9 +381,10 @@ public class StartupAction implements Serializable {
 	 * @param session
 	 */
 	public void fillStartMethod(User user, boolean lockVar, Session session) {
-		if (PdksUtil.isSessionKapali(session)) {
+		Connection connection = null;
+		if (pdksEntityController.isSessionKapali(connection, session)) {
 			session = user != null ? user.getSessionSQL() : null;
-			if (PdksUtil.isSessionKapali(session))
+			if (pdksEntityController.isSessionKapali(connection, session))
 				session = PdksUtil.getSession(entityManager, user == null || user.getLogin().booleanValue() == false);
 		}
 		logger.info("Sistem verileri yukleniyor in " + PdksUtil.getCurrentTimeStampStr());
@@ -482,16 +485,17 @@ public class StartupAction implements Serializable {
 		parameterMap.clear();
 		List<String> helpDeskList = new ArrayList<String>();
 		HashMap<String, Parameter> pmMap = new HashMap<String, Parameter>();
-		for (Parameter parameter : parameterList) {
-			String key = parameter.getName().trim(), deger = parameter.getValue().trim();
-			pmMap.put(key, parameter);
-			if (parameter != null && parameter.getActive()) {
-				parameterMap.put(key, deger);
-				if (parameter.isHelpDeskMi())
-					helpDeskList.add(key);
-			}
+		if (parameterList != null)
+			for (Parameter parameter : parameterList) {
+				String key = parameter.getName().trim(), deger = parameter.getValue().trim();
+				pmMap.put(key, parameter);
+				if (parameter != null && parameter.getActive()) {
+					parameterMap.put(key, deger);
+					if (parameter.isHelpDeskMi())
+						helpDeskList.add(key);
+				}
 
-		}
+			}
 		String dateFormat = null;
 		if (parameterMap.containsKey("dateFormat")) {
 			String str = null;
@@ -1148,7 +1152,8 @@ public class StartupAction implements Serializable {
 	@Transactional
 	public void setLDAPUserList(Session session) {
 		List saveList = new ArrayList(), list = new ArrayList();
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = null;
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		HashMap fields = new HashMap();
 		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -1212,10 +1217,11 @@ public class StartupAction implements Serializable {
 	}
 
 	public void fillAccountPermission(Session session, User user) {
-		if (PdksUtil.isSessionKapali(session)) {
+		Connection connection = null;
+		if (pdksEntityController.isSessionKapali(connection, session)) {
 			if (user != null)
 				session = user.getSessionSQL();
-			if (PdksUtil.isSessionKapali(session))
+			if (pdksEntityController.isSessionKapali(connection, session))
 				session = PdksUtil.getSession(entityManager, user == null || user.getLogin().booleanValue() == false);
 		}
 

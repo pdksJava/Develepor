@@ -2,6 +2,7 @@ package org.pdks.session;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -92,7 +93,8 @@ public class GirisCikisKontrolHome extends EntityHome<VardiyaGun> implements Ser
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		setHareketList(new ArrayList<HareketKGS>());

@@ -1,6 +1,7 @@
 package org.pdks.security.action;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -200,7 +201,8 @@ public class UserHome extends EntityHome<User> implements Serializable {
 
 	public List<Role> getDistinctRoles() {
 		HashMap parametreMap = new HashMap();
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		parametreMap.put("status = ", Boolean.TRUE);
 		if (!authenticatedUser.isAdmin())
@@ -219,7 +221,8 @@ public class UserHome extends EntityHome<User> implements Serializable {
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sifreUnuttumAction() {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, "/sifreUnuttum");
 		ortakIslemler.setUserMenuItemTime(entityManager, session, "sifreUnuttum");
 		String str = MenuItemConstant.login;
@@ -231,7 +234,8 @@ public class UserHome extends EntityHome<User> implements Serializable {
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 		session.setFlushMode(FlushMode.MANUAL);
 		session.clear();
@@ -242,7 +246,8 @@ public class UserHome extends EntityHome<User> implements Serializable {
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sifreDegistirAction() {
 		User user = authenticatedUser;
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUser(entityManager, user);
 		session.setFlushMode(FlushMode.MANUAL);
 		session.clear();
@@ -301,7 +306,8 @@ public class UserHome extends EntityHome<User> implements Serializable {
 	}
 
 	public List<Role> getRoles() {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 
 		if (getInstance().getYetkiliRollerim() == null)
@@ -344,7 +350,8 @@ public class UserHome extends EntityHome<User> implements Serializable {
 						sonuc = getSonuc(target);
 					} else {
 						List<Role> yetkiliRollerim = new ArrayList<Role>();
-						if (PdksUtil.isSessionKapali(session))
+						Connection connection = pdksEntityController.sessionKapat(session);
+						if (pdksEntityController.isSessionKapali(connection, session))
 							session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 						if (authenticatedUser.getYetkiliRollerim() == null || authenticatedUser.getYetkiliRollerim().isEmpty())
 							ortakIslemler.setUserRoller(authenticatedUser, session);

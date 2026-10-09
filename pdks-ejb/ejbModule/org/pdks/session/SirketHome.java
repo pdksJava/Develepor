@@ -2,6 +2,7 @@ package org.pdks.session;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -38,6 +39,7 @@ import org.pdks.security.entity.User;
 
 import com.pdks.webservice.IzinERP;
 import com.pdks.webservice.PersonelERP;
+
 
 @Name("sirketHome")
 public class SirketHome extends EntityHome<Sirket> implements Serializable {
@@ -469,7 +471,8 @@ public class SirketHome extends EntityHome<Sirket> implements Serializable {
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 

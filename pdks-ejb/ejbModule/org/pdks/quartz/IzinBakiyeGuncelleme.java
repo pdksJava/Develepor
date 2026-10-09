@@ -17,6 +17,7 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import java.sql.Connection;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
@@ -102,7 +103,8 @@ public class IzinBakiyeGuncelleme implements Serializable {
 		guncellemeDBDurum = false;
 		StringBuilder sb = new StringBuilder();
 		try {
-			if (PdksUtil.isSessionKapali(session))
+			Connection connection = pdksEntityController.sessionKapat(session);
+			if (pdksEntityController.isSessionKapali(connection, session))
 				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 			// Calendar cal = getAgentCalistirTime(session);
 			Calendar cal = Calendar.getInstance();
@@ -379,7 +381,8 @@ public class IzinBakiyeGuncelleme implements Serializable {
 
 		try {
 
-			if (PdksUtil.isSessionKapali(session))
+			Connection connection = pdksEntityController.sessionKapat(session);
+			if (pdksEntityController.isSessionKapali(connection, session))
 				session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 			hataKonum = "senelikBakiyeIzinEkle basladı ";
 
@@ -452,7 +455,7 @@ public class IzinBakiyeGuncelleme implements Serializable {
 	 */
 
 	public void izinleriBakiyeleriniHesapla(Session userSession, List<String> siciller, Sirket sirket, User user, boolean yeni, boolean gecmisHesapla, boolean manuel, boolean calisanPersonel) {
-		if (PdksUtil.isSessionKapali(userSession))
+		if (pdksEntityController.isSessionKapali(null, userSession))
 			userSession = PdksUtil.getSession(entityManager, yeni);
 		logger.info("izinleriBakiyeleriniHesapla in " + PdksUtil.getCurrentTimeStampStr());
 		Date bugun = PdksUtil.getDate(Calendar.getInstance().getTime());

@@ -1,6 +1,7 @@
 package org.pdks.session;
 
 import java.io.ByteArrayOutputStream;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -168,7 +169,8 @@ public class BakiyeIzinHome extends EntityHome<PersonelIzin> {
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		HashMap fields = new HashMap();

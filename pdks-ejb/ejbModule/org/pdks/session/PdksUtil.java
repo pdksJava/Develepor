@@ -182,16 +182,6 @@ public class PdksUtil implements Serializable {
 	}
 
 	/**
-	 * @param sessionx
-	 * @return
-	 */
-	public static boolean isSessionKapali(Session sessionx) {
-		boolean kapali = sessionx == null || sessionx.isOpen() == false;
-		return kapali;
-
-	}
-
-	/**
 	 * @param item
 	 * @param list
 	 */
@@ -3465,7 +3455,7 @@ public class PdksUtil implements Serializable {
 			session1 = getSessionUserCalistiSayfa(em, user, null);
 
 		}
-		boolean sessionVar = PdksUtil.isSessionKapali(session1) == false;
+		boolean sessionVar = session1 != null;
 		if (sessionVar)
 			session1.clear();
 		else
@@ -3488,7 +3478,7 @@ public class PdksUtil implements Serializable {
 			try {
 				if (PdksUtil.hasStringValue(sayfa) == false)
 					session1 = user.getSessionSQL();
-				if (PdksUtil.isSessionKapali(session1) && em != null)
+				if (session1 == null && em != null)
 					session1 = getSession(em, durum);
 			} catch (Exception e) {
 				logger.error(e);
@@ -3496,7 +3486,7 @@ public class PdksUtil implements Serializable {
 			}
 
 		}
-		boolean sessionVar = PdksUtil.isSessionKapali(session1) == false;
+		boolean sessionVar = session1 != null;
 		if (sessionVar)
 			session1.clear();
 		else
@@ -3526,7 +3516,7 @@ public class PdksUtil implements Serializable {
 			session1 = null;
 
 		}
-		if (PdksUtil.isSessionKapali(session1) && delegate != null) {
+		if (session1 == null && delegate != null) {
 			try {
 				HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
 				sessionFactory = hsp.getSessionFactory();

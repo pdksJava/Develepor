@@ -34,6 +34,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Session;
+import java.sql.Connection;
 import org.hibernate.Transaction;
 import org.hibernate.validator.InvalidStateException;
 import org.hibernate.validator.InvalidValue;
@@ -369,7 +370,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 */
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		boolean calistir = false;
 		setPdksUser(authenticatedUser);
@@ -1169,7 +1171,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 */
 	public String sayfaFazlaMesaiGuncelle(String id, User islemUser) {
 		String donus = "";
-		if (PdksUtil.isSessionKapali(session)) {
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session)) {
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 			if (authenticatedUser != null)
 				authenticatedUser.putSessionMap("sayfaFazlaMesaiGuncelle", session);
@@ -1252,7 +1255,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		linkAdres = null;
 		if (userLogin == null)
 			userLogin = getPdksUser();
-		if (PdksUtil.isSessionKapali(session))
+		if (pdksEntityController.isSessionKapali(null, session))
 			session = PdksUtil.getSessionUser(entityManager, userLogin);
 		sessionClear();
 		ciftBolumCalisanMap.clear();
@@ -1323,7 +1326,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			try {
 				calisiyor = true;
 				User loginUser = aylikPuantajSablon.getLoginUser();
-				if (PdksUtil.isSessionKapali(session)) {
+				if (pdksEntityController.isSessionKapali(null, session)) {
 					session = PdksUtil.getSessionUser(entityManager, loginUser);
 					if (authenticatedUser != null)
 						authenticatedUser.putSessionMap(sayfaURL, session);
@@ -1991,10 +1994,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							Boolean tarihGecti = Boolean.TRUE;
 							Boolean gebemi = Boolean.FALSE, calisiyor = Boolean.FALSE;
 							puantaj.setKaydet(Boolean.FALSE);
- 							puantaj.setCalisiyor(personel.isCalisiyorGun(yeniDonem));
+							puantaj.setCalisiyor(personel.isCalisiyorGun(yeniDonem));
 							if (istifaGoster == false)
 								istifaGoster = puantaj.isCalisiyor() == false;
- 							personelFazlaMesaiStr = personelFazlaMesaiOrjStr;
+							personelFazlaMesaiStr = personelFazlaMesaiOrjStr;
 							puantaj.setSablonAylikPuantaj(aylikPuantajSablon);
 							puantaj.setFazlaMesaiHesapla(Boolean.FALSE);
 							CalismaModeli calismaModeli = puantaj.getCalismaModeli();
@@ -3816,7 +3819,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @param fazlaMesaiOrtakIslemlerInput
 	 */
 	public void setInject(Session sessionInput, EntityManager entityManagerInput, PdksEntityController pdksEntityControllerInput, OrtakIslemler ortakIslemlerInput, FazlaMesaiOrtakIslemler fazlaMesaiOrtakIslemlerInput) {
-		if (sessionInput != null && PdksUtil.isSessionKapali(session))
+		if (sessionInput != null && pdksEntityController.isSessionKapali(null, session))
 			this.session = sessionInput;
 		if (entityManagerInput != null && entityManager == null)
 			this.entityManager = entityManagerInput;

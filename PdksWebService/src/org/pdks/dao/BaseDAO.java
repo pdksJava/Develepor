@@ -22,7 +22,7 @@ import org.pdks.genel.model.DAO;
  *         Window - Preferences - Java - Code Style - Code Templates
  */
 public interface BaseDAO extends DAO {
-	
+
 	/**
 	 * @param single
 	 * @param class1
@@ -40,7 +40,7 @@ public interface BaseDAO extends DAO {
 	 * @return
 	 */
 	public Session getHibernateCurrentSession();
-	
+
 	/**
 	 * @param list
 	 * @param method
@@ -238,7 +238,6 @@ public interface BaseDAO extends DAO {
 	 */
 	public void execSP(LinkedHashMap<String, Object> fields);
 
- 
 	public List execSPList(LinkedHashMap<String, Object> veriMap, Class class1) throws Exception;
 
 	/**

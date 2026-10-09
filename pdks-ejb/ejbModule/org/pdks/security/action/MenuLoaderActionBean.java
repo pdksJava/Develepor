@@ -17,6 +17,7 @@ import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import java.sql.Connection;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.international.StatusMessages;
@@ -109,9 +110,11 @@ public class MenuLoaderActionBean implements Serializable {
 		raporIslemleri = createMenu(MenuItemConstant.raporIslemleri, true);
 		String menuAdi = "dinamikRapor";
 		if (raporIslemleri != null && authenticatedUser != null && userHome != null && userHome.hasPermission(menuAdi, "view")) {
-			if (PdksUtil.isSessionKapali(session)) {
+			Connection connection = pdksEntityController.sessionKapat(session);
+			if (pdksEntityController.isSessionKapali(connection, session) ) {
 				session = authenticatedUser.getSessionSQL();
-				if (PdksUtil.isSessionKapali(session))
+				connection = pdksEntityController.sessionKapat(session);
+				if (pdksEntityController.isSessionKapali(connection, session) )
 					session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 			}
 
@@ -178,7 +181,7 @@ public class MenuLoaderActionBean implements Serializable {
 							List<UIComponent> childrenList = raporGrup.getChildren();
 							List<PdksDinamikRapor> list1 = bagliRaporMap.get(id);
 							for (PdksDinamikRapor pdksDinamikRapor : list1) {
- 								HtmlMenuItem rapor = new HtmlMenuItem();
+								HtmlMenuItem rapor = new HtmlMenuItem();
 								rapor.setData(pdksDinamikRapor.getSira());
 								dinamikRaporMenu.setParametre("id=" + PdksUtil.getEncodeStringByBase64("id=" + pdksDinamikRapor.getId() + "&userId=" + authenticatedUser.getId() + "&time=" + new Date().getTime()));
 								rapor.setValue(pdksDinamikRapor.getAciklama() + (authenticatedUser.isAdmin() == false ? "" : " [ Dinamik ]"));

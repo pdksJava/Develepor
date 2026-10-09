@@ -1,6 +1,7 @@
 package org.pdks.session;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,8 +52,8 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 
 	@RequestParameter
 	Long personelIzinId;
-	
-	public static String sayfaURL =  "personelIzinKopyala";
+
+	public static String sayfaURL = "personelIzinKopyala";
 
 	@In(create = true)
 	PdksEntityController pdksEntityController;
@@ -64,7 +65,6 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 	OrtakIslemler ortakIslemler;
 	@In(required = false, create = true)
 	IzinBakiyeGuncelleme izinBakiyeGuncelleme;
-	
 
 	private Dosya izinBakiyeDosya = new Dosya();
 	@In(required = false)
@@ -92,7 +92,8 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		session.setFlushMode(FlushMode.MANUAL);
 		session.clear();
@@ -557,7 +558,7 @@ public class PersonelIzinKopyalaHome extends EntityHome<PersonelIzin> implements
 						iterator2.remove();
 					}
 				}
-				pdksEntityController.sessionRefresh(session, entityManager,hakEdisIzinClone);
+				pdksEntityController.sessionRefresh(session, entityManager, hakEdisIzinClone);
 
 			}
 			idler = null;

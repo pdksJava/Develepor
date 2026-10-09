@@ -3,6 +3,7 @@ package org.pdks.quartz;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -343,7 +344,8 @@ public class PersonelERPGuncelleme implements Serializable {
 	}
 
 	public void kullaniciGuncelle(Session session, User user) {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSession(entityManager, user == null);
 		Parameter parameterEmailBozuk = ortakIslemler.getParameterAktif(session, "emailBozuk");
 		boolean emailBozuk = parameterEmailBozuk != null;

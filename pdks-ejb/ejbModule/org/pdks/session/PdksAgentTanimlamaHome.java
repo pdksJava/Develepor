@@ -2,6 +2,7 @@ package org.pdks.session;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -100,7 +101,8 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 
 			if (mailId != null || PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
 
-				if (PdksUtil.isSessionKapali(session)) {
+				Connection connection = pdksEntityController.sessionKapat(session);
+				if (pdksEntityController.isSessionKapali(connection, session)) {
 					if (authenticatedUser != null)
 						session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 					else
@@ -129,17 +131,22 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 		if (mailList == null)
 			mailList = getMailList(session);
 		if (mailList.isEmpty() == false) {
+			boolean flush = false;
 			for (Iterator iterator = mailList.iterator(); iterator.hasNext();) {
 				ServiceData sd = (ServiceData) iterator.next();
-				if (sd.getId() != null)
+				if (sd.getId() != null) {
 					session.delete(sd);
+					flush = true;
+				}
+
 				MailStatu mailStatu = mailGonderServisData(sd);
 				if (mailStatu != null && mailStatu.getDurum())
 					iterator.remove();
 
 			}
 			try {
-				pdksEntityController.sessionFlush(session);
+				if (flush)
+					pdksEntityController.sessionFlush(session);
 			} catch (Exception e) {
 				logger.error(e);
 				e.printStackTrace();
@@ -553,7 +560,8 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		admin = authenticatedUser.isAdmin();

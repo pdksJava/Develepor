@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import java.sql.Connection;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Begin;
@@ -376,7 +377,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	}
 
 	public String sayfaFazlaMesaiGuncellemeAction() throws Exception {
-		if (PdksUtil.isSessionKapali(session)) {
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session)) {
 			if (authenticatedUser != null)
 				session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 			else
@@ -582,7 +584,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	 */
 	private boolean bolumFazlaMesai(LinkedHashMap<String, Object> paramMap) {
 		User loginUser = (User) paramMap.get("loginUser");
-		if (PdksUtil.isSessionKapali(session)) {
+		if (pdksEntityController.isSessionKapali(null, session)) {
 			session = PdksUtil.getSessionUser(entityManager, loginUser);
 			if (authenticatedUser != null)
 				authenticatedUser.putSessionMap("bolumFazlaMesai", session);
@@ -617,7 +619,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		if (ekSaha4Tanim == null)
 			ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, sirketId, session);
 		for (SelectItem selectItem : bolumList) {
-			if (PdksUtil.isSessionKapali(session)) {
+			if (pdksEntityController.isSessionKapali(null, session)) {
 				session = PdksUtil.getSessionUser(entityManager, loginUser);
 				if (authenticatedUser != null)
 					authenticatedUser.putSessionMap("bolumFazlaMesai", session);
@@ -702,8 +704,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 						++adet;
 						donemCPPerList = null;
 					}
- 				}
- 				List<AylikPuantaj> puantajList = null;
+				}
+				List<AylikPuantaj> puantajList = null;
 				if (donemKodu.longValue() >= islemDonemKodu.longValue()) {
 					try {
 						if (logYaz)
@@ -721,7 +723,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 						}
 					} catch (Exception eX) {
 					}
-					if (PdksUtil.isSessionKapali(session)) {
+					if (pdksEntityController.isSessionKapali(null, session)) {
 						session = PdksUtil.getSessionUser(entityManager, loginUser);
 						if (authenticatedUser != null)
 							authenticatedUser.putSessionMap("bolumFazlaMesai", session);
@@ -800,7 +802,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
 		try {
-			if (PdksUtil.isSessionKapali(session))
+			Connection connection = pdksEntityController.sessionKapat(session);
+			if (pdksEntityController.isSessionKapali(connection, session))
 				session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 			setPdksUser(authenticatedUser);
 			ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);

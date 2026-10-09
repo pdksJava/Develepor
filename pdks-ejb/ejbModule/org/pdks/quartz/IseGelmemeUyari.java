@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -283,7 +284,8 @@ public class IseGelmemeUyari implements Serializable {
 			devam = bugun.getTime() > tarih.getTime();
 		islemTarihi = tarih;
 		if (devam) {
-			if (PdksUtil.isSessionKapali(session))
+			Connection connection = pdksEntityController.sessionKapat(session);
+			if (pdksEntityController.isSessionKapali(connection, session))
 				session = PdksUtil.getSession(entityManager, islemYapan == null);
 
 			setEkSaha1(null);

@@ -68,6 +68,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.FlushMode;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import java.sql.Connection;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -4771,7 +4772,8 @@ public class OrtakIslemler implements Serializable {
 		List veriList = new ArrayList();
 		try {
 			int size = PdksEntityController.LIST_MAX_SIZE - fieldsOrj.size();
-			if (PdksUtil.isSessionKapali(session) && fieldsOrj != null && fieldsOrj.containsKey(PdksEntityController.MAP_KEY_SESSION))
+			Connection connection = null;
+			if (pdksEntityController.isSessionKapali(connection, session) && fieldsOrj != null && fieldsOrj.containsKey(PdksEntityController.MAP_KEY_SESSION))
 				session = (Session) fieldsOrj.get(PdksEntityController.MAP_KEY_SESSION);
 			List idInputList = new ArrayList(dataIdList);
 			while (!idInputList.isEmpty()) {
@@ -4987,14 +4989,14 @@ public class OrtakIslemler implements Serializable {
 		List<Long> idList = new ArrayList<Long>();
 		List veriList = new ArrayList();
 		try {
-			if (PdksUtil.isSessionKapali(session) && fieldsOrj != null && fieldsOrj.containsKey(PdksEntityController.MAP_KEY_SESSION))
+			Connection connection = null;
+			if (pdksEntityController.isSessionKapali(connection, session) && fieldsOrj != null && fieldsOrj.containsKey(PdksEntityController.MAP_KEY_SESSION))
 				session = (Session) fieldsOrj.get(PdksEntityController.MAP_KEY_SESSION);
 			int size = PdksEntityController.LIST_MAX_SIZE - fieldsOrj.size();
 			if (idInputList == null) {
 				LinkedHashMap<String, Object> fields = new LinkedHashMap<String, Object>();
 				fields.putAll(fieldsOrj);
 				fields.put(fieldName, null);
-
 				veriList = pdksEntityController.execSPList(session, fields, spName, class1);
 			} else
 				while (!idInputList.isEmpty()) {
@@ -6718,7 +6720,7 @@ public class OrtakIslemler implements Serializable {
 								personel.setSablon(sablon);
 								personel.setDurum(Boolean.TRUE);
 								try {
-									sapVeriGuncelle(session, null, bordroAltBirimiMap, masrafYeriMap, personel, null, Boolean.TRUE, PdksUtil.isSessionKapali(session), Boolean.TRUE);
+									sapVeriGuncelle(session, null, bordroAltBirimiMap, masrafYeriMap, personel, null, Boolean.TRUE, pdksEntityController.isSessionKapali(null, session), Boolean.TRUE);
 									personel.setPdksSicilNo(personelView.getPersonelKGS().getSicilNo());
 									if (personel.getId() != null) {
 										ldapUser.setDurum(Boolean.FALSE);
@@ -15511,7 +15513,7 @@ public class OrtakIslemler implements Serializable {
 			boolean spCalismaSaatGuncelleVar = veriMap.containsKey("spCalismaSaatGuncelleVar") ? (Boolean) veriMap.get("spCalismaSaatGuncelleVar") : Boolean.FALSE;
 			boolean spPersonelDenklestirmeGuncelleVar = veriMap.containsKey("spPersonelDenklestirmeGuncelleVar") ? (Boolean) veriMap.get("spPersonelDenklestirmeGuncelleVar") : Boolean.FALSE;
 			boolean planEkran = veriMap.containsKey("planEkran") ? (Boolean) veriMap.get("planEkran") : Boolean.FALSE;
- 			boolean refresh = false;
+			boolean refresh = false;
 			if (object instanceof VardiyaGun) {
 				if (spCalismaSaatGuncelleVar) {
 					VardiyaGun vg = (VardiyaGun) object;

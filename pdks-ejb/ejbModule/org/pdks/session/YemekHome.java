@@ -1,6 +1,7 @@
 package org.pdks.session;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -222,7 +223,7 @@ public class YemekHome extends EntityHome<YemekOgun> implements Serializable {
 
 	public void instanceKartsizRefresh() {
 		if (yemekKartsiz.getId() != null)
-			pdksEntityController.sessionRefresh(session, entityManager,yemekKartsiz);
+			pdksEntityController.sessionRefresh(session, entityManager, yemekKartsiz);
 	}
 
 	public void instanceRefresh() {
@@ -232,7 +233,8 @@ public class YemekHome extends EntityHome<YemekOgun> implements Serializable {
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		fillPdksYemekList();
@@ -241,7 +243,8 @@ public class YemekHome extends EntityHome<YemekOgun> implements Serializable {
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaExtraGirisAction() {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, "yemekKartsizTanimlama");
 		if (basTarih == null) {

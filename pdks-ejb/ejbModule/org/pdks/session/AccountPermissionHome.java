@@ -1,6 +1,7 @@
 package org.pdks.session;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -83,7 +84,8 @@ public class AccountPermissionHome extends EntityHome<AccountPermission> impleme
 		List<AccountPermission> parametreList = new ArrayList<AccountPermission>();
 		HashMap parametreMap = new HashMap();
 		parametreMap.put("status", Boolean.TRUE);
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 
 		parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
@@ -95,7 +97,8 @@ public class AccountPermissionHome extends EntityHome<AccountPermission> impleme
 	public List<Role> getDistinctRoleList() {
 		List<Role> parametreList = new ArrayList<Role>();
 		HashMap parametreMap = new HashMap();
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session) )
 			session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 
 		parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);

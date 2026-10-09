@@ -1,6 +1,7 @@
 package org.pdks.quartz;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -104,7 +105,8 @@ public class FazlaMesaiGuncelleme implements Serializable {
 		}
 		boolean mailAt = false;
 		try {
-			if (PdksUtil.isSessionKapali(session)) {
+			Connection connection = pdksEntityController.sessionKapat(session);
+			if (pdksEntityController.isSessionKapali(connection, session)) {
 				if (authenticatedUser != null)
 					session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 				else
@@ -148,7 +150,8 @@ public class FazlaMesaiGuncelleme implements Serializable {
 			logger.debug("fazlaMesaiHesaplamaTimer in " + PdksUtil.getCurrentTimeStampStr());
 			try {
 				if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
-					if (PdksUtil.isSessionKapali(session))
+					Connection connection = pdksEntityController.sessionKapat(session);
+					if (pdksEntityController.isSessionKapali(connection, session))
 						session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 					Parameter parameter = getParameter(PARAMETER_FAZLA_MESAI_KEY, session);
 					mailAt = parameter != null;
@@ -211,7 +214,7 @@ public class FazlaMesaiGuncelleme implements Serializable {
 		if (ilkMaasDonemi == null)
 			ilkMaasDonemi = oncekiAy;
 		for (DenklestirmeAy denklestirmeAy : aylar)
- 			ayMap.put(denklestirmeAy.getDonem(), denklestirmeAy);
+			ayMap.put(denklestirmeAy.getDonem(), denklestirmeAy);
 		if (ayMap.containsKey(sonrakiAy) == false)
 			ayMap.put(sonrakiAy, ayMap.get(buAy));
 		aylar = null;
@@ -394,7 +397,8 @@ public class FazlaMesaiGuncelleme implements Serializable {
 		// / String konu = parameterFazlaMesaiHesaplama.getDescription();
 		logger.info(konu + " mail gönderiliyor. " + PdksUtil.getCurrentTimeStampStr());
 		String aciklama = "Fazla Mesai Toplu güncellenmiştir.<br></br>" + fazlaMesaiDetay.toString();
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSession(entityManager, Boolean.TRUE);
 		if (userList == null || userList.isEmpty()) {
 			Date bugun = ortakIslemler.getBugun();

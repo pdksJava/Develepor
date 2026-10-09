@@ -58,7 +58,7 @@ public class KapiGirisGuncelleme implements Serializable {
 
 	@Asynchronous
 	@SuppressWarnings("unchecked")
- 	// @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	// @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public QuartzTriggerHandle kapiGirisGuncellemeTimer(@Expiration Date when, @IntervalCron String interval) {
 		if (!isCalisiyor()) {
 			setCalisiyor(Boolean.TRUE);
@@ -141,7 +141,7 @@ public class KapiGirisGuncelleme implements Serializable {
 	 * @param session
 	 * @throws Exception
 	 */
- 	public void kapiGirisGuncellemeBasla(boolean manuel, Session session) throws Exception {
+	public void kapiGirisGuncellemeBasla(boolean manuel, Session session) throws Exception {
 		ortakIslemler.kapiGirisGuncelle(PdksUtil.getDate(PdksUtil.tariheGunEkleCikar(new Date(), -61)), null, session);
 	}
 

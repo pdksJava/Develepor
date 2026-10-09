@@ -89,10 +89,9 @@ public class ServiceRestful implements Serializable {
 		String message = null;
 		if (sessionSQL != null) {
 			PdksEntityController controller = new PdksEntityController();
-		
+
 			Personel personel = (Personel) controller.getSQLParamByFieldObject(Personel.TABLE_NAME, Personel.COLUMN_NAME_PDKS_SICIL_NO, pdksSicilNo, Personel.class, sessionSQL);
 
-					 
 			if (personel != null) {
 				OrtakIslemler ortakIslemler = new OrtakIslemler();
 				List<Personel> personeller = new ArrayList<Personel>();
@@ -100,7 +99,7 @@ public class ServiceRestful implements Serializable {
 				Date baslamaTarih = PdksUtil.getDateFromString(basTarih);
 				Date bitisTarih = PdksUtil.getDateFromString(bitTarih);
 				if (baslamaTarih != null && bitisTarih != null) {
-					TreeMap<String, VardiyaGun> vgunMap = ortakIslemler.getVardiyalar(personeller,null, baslamaTarih, bitisTarih, null, false, sessionSQL, false);
+					TreeMap<String, VardiyaGun> vgunMap = ortakIslemler.getVardiyalar(personeller, null, baslamaTarih, bitisTarih, null, false, sessionSQL, false);
 					if (vgunMap != null && !vgunMap.isEmpty())
 						map = new LinkedHashMap<String, Object>();
 					for (String key : vgunMap.keySet()) {

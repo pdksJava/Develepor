@@ -1,6 +1,7 @@
 package org.pdks.session;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -172,7 +173,8 @@ public class UserVekaletHome extends EntityHome<UserVekalet> implements Serializ
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		if (bitDate == null) {
@@ -324,7 +326,7 @@ public class UserVekaletHome extends EntityHome<UserVekalet> implements Serializ
 				parametreMap.put("iseBaslamaTarihi <= ", bugun);
 				if (session != null)
 					parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
-	 			TreeMap<Long, Personel> yoneticiMap = ortakIslemler.getParamTreeMap(Boolean.TRUE, "getId", Boolean.FALSE, dataIdList, fieldName, parametreMap, Personel.class, session);
+				TreeMap<Long, Personel> yoneticiMap = ortakIslemler.getParamTreeMap(Boolean.TRUE, "getId", Boolean.FALSE, dataIdList, fieldName, parametreMap, Personel.class, session);
 				for (Long ld : yoneticiMap.keySet()) {
 					if (userMap.containsKey(ld))
 						list.add(userMap.get(ld));

@@ -1,6 +1,7 @@
 package org.pdks.session;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -148,12 +149,13 @@ public class SapServerTanimlamaHome extends EntityHome<SAPSunucu> implements Ser
 
 	public void instanceRefresh() {
 		if (seciliSAPSunucu.getId() != null)
-			pdksEntityController.sessionRefresh(session, entityManager,seciliSAPSunucu);
+			pdksEntityController.sessionRefresh(session, entityManager, seciliSAPSunucu);
 	}
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		seciliSAPSunucu = new SAPSunucu();

@@ -1,6 +1,7 @@
 package org.pdks.security.action;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ import org.richfaces.component.html.HtmlTree;
 import org.richfaces.event.NodeSelectedEvent;
 import org.richfaces.model.TreeNode;
 import org.richfaces.model.TreeNodeImpl;
+
 
 @Name("menuItemHome")
 public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
@@ -130,7 +132,8 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 		ArrayList<String> targetListForDataTable = new ArrayList<String>();
 		MenuItem seciliMenuItem = null;
 		FacesMessage facesMessage = new FacesMessage();
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 
 		// treeden secili olanlari alir.Bu islem sirasinda agactan bir tane menu
@@ -227,7 +230,8 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
  	 */
 	@Transactional
 	public String moveMenuItemsFromTree2DataTable() {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ArrayList<MenuItem> deleteMenuItemList = new ArrayList<MenuItem>();
 		ArrayList<String> menuItemNameList = new ArrayList<String>();
@@ -355,7 +359,8 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public String sayfaGirisAction() {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		menuItemGiris();
@@ -366,7 +371,8 @@ public class MenuItemHome extends EntityHome<MenuItem> implements Serializable {
 	@Transactional
 	private void menuItemGiris() {
 		rootNode = null;
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		HashMap fields = new HashMap();
 		StringBuilder sb = new StringBuilder();

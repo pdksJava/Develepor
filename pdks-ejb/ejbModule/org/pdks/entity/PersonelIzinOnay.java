@@ -10,12 +10,12 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import org.pdks.security.entity.User;
-import org.pdks.session.PdksUtil;
-import org.pdks.session.OrtakIslemler;
 import org.hibernate.Session;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.pdks.security.entity.User;
+import org.pdks.session.OrtakIslemler;
+import org.pdks.session.PdksUtil;
 
 @Entity(name = PersonelIzinOnay.TABLE_NAME)
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { PersonelIzinOnay.COLUMN_NAME_PERSONEL_IZIN_ID, PersonelIzinOnay.COLUMN_NAME_ONAYLAYAN_TIPI }) })

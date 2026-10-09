@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.hibernate.Session;
+import java.sql.Connection;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
 import org.jboss.seam.annotations.In;
@@ -254,7 +255,8 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		denklestirmeTipiVar = false;
@@ -774,7 +776,7 @@ public class VardiyaTanimlamaHome extends EntityHome<DenklestirmeAy> implements 
 	 * @return
 	 */
 	public String yilAyKontrol(Session xSession) {
-		if (PdksUtil.isSessionKapali(xSession))
+		if (pdksEntityController.isSessionKapali(null, xSession))
 			xSession = session;
 		xSession.clear();
 		fillCalismaModeller(xSession);

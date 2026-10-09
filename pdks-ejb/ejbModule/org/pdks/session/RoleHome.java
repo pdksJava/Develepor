@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.pdks.security.entity.Role;
 import org.hibernate.Session;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.framework.EntityHome;
+import org.pdks.security.entity.Role;
 
 @Name("roleHome")
 public class RoleHome extends EntityHome<Role> implements Serializable {
@@ -19,11 +19,11 @@ public class RoleHome extends EntityHome<Role> implements Serializable {
 	 */
 	private static final long serialVersionUID = 6500632692114083648L;
 	static Logger logger = Logger.getLogger(RoleHome.class);
-	
+
 	@In(create = true)
 	PdksEntityController pdksEntityController;
 	private Session session;
-	
+
 	public void setRoleId(Integer id) {
 		setId(id);
 	}

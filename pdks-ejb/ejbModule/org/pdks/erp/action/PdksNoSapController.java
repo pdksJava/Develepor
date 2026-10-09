@@ -1,6 +1,7 @@
 package org.pdks.erp.action;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -12,6 +13,9 @@ import java.util.TreeMap;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Name;
 import org.pdks.entity.DenklestirmeAy;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelDenklestirme;
@@ -20,11 +24,9 @@ import org.pdks.security.entity.User;
 import org.pdks.session.OrtakIslemler;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
-import org.hibernate.Session;
-import org.jboss.seam.annotations.In;
-import org.jboss.seam.annotations.Name;
 
 import com.pdks.webservice.PersonelERP;
+
 
 @Name("pdksNoSapController")
 public class PdksNoSapController implements ERPController, Serializable {
@@ -49,7 +51,8 @@ public class PdksNoSapController implements ERPController, Serializable {
 	public void setFazlaMesaiUcretRFC(List<PersonelDenklestirme> sapMesaiList, User user, Session session) throws Exception {
 
 		try {
-			if (PdksUtil.isSessionKapali(session))
+			Connection connection = pdksEntityController.sessionKapat(session);
+			if (pdksEntityController.isSessionKapali(connection, session))
 				session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 			DenklestirmeAy denklestirmeAy = sapMesaiList.get(0).getDenklestirmeAy();
 			Calendar cal = Calendar.getInstance();
@@ -85,37 +88,37 @@ public class PdksNoSapController implements ERPController, Serializable {
 	}
 
 	public String setIzinRFC(PersonelIzin izin) throws Exception {
-		 
+
 		return null;
 	}
 
 	public LinkedHashMap<String, Personel> topluHaldePersonelBilgisiGetir(Session session, TreeMap bordroAltBirimiMap, TreeMap masrafYeriMap, LinkedHashMap<String, Personel> personelMap, Date baslangicZamani, Date bitisZamani, Object sapRfcManager, Object jcoClient) throws Exception {
-		 
+
 		return null;
 	}
 
 	public HashMap<String, Personel> topluHaldeYoneticiBulMap(int derinlik, ArrayList<String> personelNumaralariListesi, Date baslangicZamani, Date bitisZamani) throws Exception {
-		 
+
 		return null;
 	}
 
 	public LinkedHashMap topluHaldeIscileriVeriGetir(Session session, int icDerinlik, boolean yoneticiEkle, ArrayList<String> personelNo, Date baslangicZamani, Date bitisZamani, TreeMap bordroAltBirimiMap, TreeMap masrafYeriMap) throws Exception {
-		 
+
 		return null;
 	}
 
 	public List<Personel> pdksTanimsizPersonel(List<String> perNoList, String sapKodu) throws Exception {
-		 
+
 		return null;
 	}
 
 	public TreeMap<Long, String> setRFCIzinList(List<PersonelIzin> izinList) throws Exception {
-		 
+
 		return null;
 	}
 
 	public List<PersonelERP> topluHaldePersonelBilgisiNoSapDBGetir(Session session, List<String> personelList, Date baslangicZamani, Date bitisZamani) throws Exception {
-		
+
 		return null;
 	}
 

@@ -1,6 +1,7 @@
 package org.pdks.security.action;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -25,6 +26,7 @@ import org.pdks.security.entity.KullaniciSession;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
 import org.pdks.session.OrtakIslemler;
+import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
 
 @Name("openSessionHome")
@@ -40,6 +42,8 @@ public class OpenSessionHome extends EntityHome<User> implements Serializable {
 	Long userId;
 	@In(required = false, create = true)
 	EntityManager entityManager;
+	@In(create = true)
+	PdksEntityController pdksEntityController;
 	@In(required = false, create = true)
 	OrtakIslemler ortakIslemler;
 	@In(required = false, create = true)
@@ -163,7 +167,8 @@ public class OpenSessionHome extends EntityHome<User> implements Serializable {
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		secili = Boolean.FALSE;

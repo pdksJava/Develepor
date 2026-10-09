@@ -1,6 +1,7 @@
 package org.pdks.security.action;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -25,6 +26,7 @@ import org.pdks.security.entity.UserRoles;
 import org.pdks.session.OrtakIslemler;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
+
 
 @Name("superVisorDegistirHome")
 public class SuperVisorDegistirHome extends EntityHome<User> implements Serializable {
@@ -79,7 +81,8 @@ public class SuperVisorDegistirHome extends EntityHome<User> implements Serializ
 
 	@Begin(join = true, flushMode = FlushModeType.MANUAL)
 	public void sayfaGirisAction() {
-		if (PdksUtil.isSessionKapali(session))
+		Connection connection = pdksEntityController.sessionKapat(session);
+		if (pdksEntityController.isSessionKapali(connection, session))
 			session = PdksUtil.getSessionUserCalistiSayfa(entityManager, authenticatedUser, sayfaURL);
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		Date bugun = PdksUtil.getDate(Calendar.getInstance().getTime());

@@ -1,6 +1,7 @@
 package org.pdks.erp.action;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,6 +38,7 @@ import com.pdks.webservice.PersonelERP;
 import com.sap.mw.jco.IFunctionTemplate;
 import com.sap.mw.jco.IRepository;
 import com.sap.mw.jco.JCO;
+
 
 @Name("pdksSapController")
 public class PdksSapController implements ERPController, Serializable {
@@ -92,7 +94,8 @@ public class PdksSapController implements ERPController, Serializable {
 		if (jcoClient != null) {
 			String hataMesaj = null;
 			try {
-				if (PdksUtil.isSessionKapali(session))
+				Connection connection = pdksEntityController.sessionKapat(session);
+				if (pdksEntityController.isSessionKapali(connection, session))
 					session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 				DenklestirmeAy denklestirmeAy = sapMesaiList.get(0).getDenklestirmeAy();
 				Calendar cal = Calendar.getInstance();
