@@ -4,7 +4,7 @@
 	<action execute="#{devamsizlikRaporuHome.sayfaGecGelenRaporAction()}" on-postback="false" />
 	<navigation>
 		<rule if-outcome="mailGecGelenRaporu">
-			<redirect view-id="#{menuItemConstant.home}" />
+			<redirect view-id="#{menuItemConstant.mailGecGelenRaporu}" />
 		</rule>
 
 	</navigation>

@@ -31,6 +31,9 @@ public class MenuItemConstant implements Serializable {
 	public static String home = "/home.xhtml";
 	public static String role = "/Role.xhtml";
 	public static String roleList = "/RoleList.xhtml";
+	
+	public static String mailGecGelenRaporu = "/callNoXhtmlService/mailGecGelenRaporu.xhtml";
+	
 
 	public static String importSSL = "/general/importSSL.xhtml";
 	public static String notice = "/general/notice.xhtml";
