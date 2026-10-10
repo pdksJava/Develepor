@@ -342,7 +342,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 */
 	private void adminRoleDurum() {
 		userLogin = getPdksUser();
-		adminRole = userLogin == null || userLogin.isAdmin() || userLogin.isSistemYoneticisi() || userLogin.isIKAdmin();
+		adminRole = userLogin.isAdmin() || userLogin.isSistemYoneticisi() || userLogin.isIKAdmin();
 		ikRole = PdksUtil.getIkRole(userLogin);
 	}
 
