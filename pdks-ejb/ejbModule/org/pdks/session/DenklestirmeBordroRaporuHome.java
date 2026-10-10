@@ -377,7 +377,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	}
 
 	public String sayfaFazlaMesaiGuncellemeAction() throws Exception {
-	 
+
 		if (pdksEntityController.isSessionKapali(null, session)) {
 			if (authenticatedUser != null)
 				session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
@@ -722,6 +722,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 								logger.info(str + (puantajList != null ? " [ " + puantajList.size() + " ]" : "") + " out " + PdksUtil.getCurrentTimeStampStr());
 						}
 					} catch (Exception eX) {
+						logger.error(eX);
+						eX.printStackTrace();
 					}
 					if (pdksEntityController.isSessionKapali(null, session)) {
 						session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
