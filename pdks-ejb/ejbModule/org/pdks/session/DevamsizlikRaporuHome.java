@@ -123,37 +123,39 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		Integer gunSayisi = null, adetSayisi = null, dakika = null;
 		String parametreler = null;
 		hepsiniGoster = true;
-		try {
-			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-			agentId = req != null ? Long.parseLong(req.getParameter("agentId")) : null;
-			if (req.getParameterNames() != null) {
-				Enumeration<String> paramNames = req.getParameterNames();
-				while (paramNames.hasMoreElements()) {
-					String paramName = paramNames.nextElement();
-					String paramValue = req.getParameter(paramName);
-					if (paramValue == null)
-						continue;
-					if (paramName.equalsIgnoreCase("dakika")) {
-						try {
-							dakika = Integer.parseInt(paramValue);
-						} catch (Exception e) {
-						}
-					} else if (paramName.equalsIgnoreCase("gunSayisi")) {
-						try {
-							gunSayisi = Integer.parseInt(paramValue);
-						} catch (Exception e) {
-						}
-					} else if (paramName.equalsIgnoreCase("adetSayisi")) {
-						try {
-							adetSayisi = Integer.parseInt(paramValue);
-						} catch (Exception e) {
-						}
+
+		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+		if (req.getParameterNames() != null) {
+			Enumeration<String> paramNames = req.getParameterNames();
+			while (paramNames.hasMoreElements()) {
+				String paramName = paramNames.nextElement();
+				String paramValue = req.getParameter(paramName);
+				if (paramValue == null)
+					continue;
+				if (paramName.equalsIgnoreCase("dakika")) {
+					try {
+						dakika = Integer.parseInt(paramValue);
+					} catch (Exception e) {
 					}
+				} else if (paramName.equalsIgnoreCase("gunSayisi")) {
+					try {
+						gunSayisi = Integer.parseInt(paramValue);
+					} catch (Exception e) {
+					}
+				} else if (paramName.equalsIgnoreCase("adetSayisi")) {
+					try {
+						adetSayisi = Integer.parseInt(paramValue);
+					} catch (Exception e) {
+					}
+				} else if (paramName.equalsIgnoreCase("agentId")) {
+					try {
+						agentId = Long.parseLong(paramValue);
+					} catch (Exception e) {
+					}
+				} else if (paramName.equalsIgnoreCase("params")) {
+					parametreler = paramValue;
 				}
 			}
-
-			parametreler = req.getParameter("params");
-		} catch (Exception e) {
 		}
 
 		if (parametreler != null) {
