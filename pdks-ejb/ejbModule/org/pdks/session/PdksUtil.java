@@ -3455,10 +3455,10 @@ public class PdksUtil implements Serializable {
 			session1 = getSessionUserCalistiSayfa(em, user, null);
 
 		}
-		boolean sessionVar = session1 != null;
-		if (sessionVar)
+		boolean sessionVar = session1 != null && session1.isConnected();
+		if (sessionVar)  
 			session1.clear();
-		else
+	 	else
 			session1 = getSession(em, durum);
 		if (user != null && sessionVar)
 			user.setSessionSQL(session1);
@@ -3486,7 +3486,7 @@ public class PdksUtil implements Serializable {
 			}
 
 		}
-		boolean sessionVar = session1 != null;
+		boolean sessionVar = session1 != null && session1.isConnected();
 		if (sessionVar)
 			session1.clear();
 		else

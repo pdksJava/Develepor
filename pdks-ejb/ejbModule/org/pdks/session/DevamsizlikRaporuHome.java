@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -111,19 +112,50 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		super.create();
 	}
 
+	@Begin(join = true, flushMode = FlushModeType.MANUAL)
+	public String sayfaGecGelenGirisRaporAction() {
+		String str = sayfaGecGelenRaporAction();
+		return str;
+	}
+
 	public String sayfaGecGelenRaporAction() {
 		Long agentId = null;
 		Integer gunSayisi = null, adetSayisi = null, dakika = null;
 		String parametreler = null;
+		hepsiniGoster = true;
 		try {
 			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 			agentId = req != null ? Long.parseLong(req.getParameter("agentId")) : null;
+			if (req.getParameterNames() != null) {
+				Enumeration<String> paramNames = req.getParameterNames();
+				while (paramNames.hasMoreElements()) {
+					String paramName = paramNames.nextElement();
+					String paramValue = req.getParameter(paramName);
+					if (paramValue == null)
+						continue;
+					if (paramName.equalsIgnoreCase("dakika")) {
+						try {
+							dakika = Integer.parseInt(paramValue);
+						} catch (Exception e) {
+						}
+					} else if (paramName.equalsIgnoreCase("gunSayisi")) {
+						try {
+							gunSayisi = Integer.parseInt(paramValue);
+						} catch (Exception e) {
+						}
+					} else if (paramName.equalsIgnoreCase("adetSayisi")) {
+						try {
+							adetSayisi = Integer.parseInt(paramValue);
+						} catch (Exception e) {
+						}
+					}
+				}
+			}
+
 			parametreler = req.getParameter("params");
 		} catch (Exception e) {
 		}
-		if (agentId != null) {
 
-		}
 		if (parametreler != null) {
 			parametreler = PdksUtil.getDecodeStringByBase64(parametreler);
 			String[] params = parametreler.split(" ");
@@ -136,7 +168,6 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					try {
 						gunSayisi = Integer.parseInt(parametreler);
 					} catch (Exception e) {
-						// TODO: handle exception
 					}
 				} else if (parametreler.indexOf("/A") >= 0) {
 					index = parametreler.indexOf("/A") + 2;
@@ -144,7 +175,6 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					try {
 						adetSayisi = Integer.parseInt(parametreler);
 					} catch (Exception e) {
-						// TODO: handle exception
 					}
 				} else if (parametreler.indexOf("/D") >= 0) {
 					index = parametreler.indexOf("/D") + 2;
@@ -152,7 +182,6 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					try {
 						dakika = Integer.parseInt(parametreler);
 					} catch (Exception e) {
-						// TODO: handle exception
 					}
 				}
 			}
@@ -161,8 +190,8 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 			gunSayisi = 7;
 		if (adetSayisi == null || adetSayisi < 1)
 			adetSayisi = 3;
-		if (dakika != null && dakika < 1)
-			dakika = null;
+		if (dakika == null || dakika < 1)
+			dakika = 6;
 
 		String adresStr = ortakIslemler.getLoginAdres();
 		if (PdksUtil.hasStringValue(adresStr)) {
@@ -182,6 +211,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
 						VardiyaGun vg = (VardiyaGun) iterator.next();
 						Personel personel = vg.getPdksPersonel();
+						HareketKGS girisHareket = null;
 						String aciklama = null;
 						if (personel.getEkSaha3() == null || vg.getVardiya() == null)
 							continue;
@@ -189,14 +219,15 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							Vardiya islemVardiya = vg.getIslemVardiya();
 							aciklama = getVardiyaAciklama(vg);
 							if (islemVardiya.isCalisma()) {
-								if (aciklama == null || aciklama.indexOf("Geç Giriş") < 0 || vg.getGirisHareket() == null)
+								girisHareket = vg.getGirisHareket();
+								if (aciklama == null || aciklama.indexOf("Geç Giriş") < 0 || girisHareket == null)
 									continue;
 							} else
 								continue;
 						}
-						if (aciklama != null && vg.getGirisHareket() != null) {
+						if (aciklama != null && girisHareket != null) {
 							if (dakika != null) {
-								Date girisZaman = vg.getGirisHareket().getOrjinalZaman();
+								Date girisZaman = girisHareket.getOrjinalZaman();
 								Vardiya vardiya = vg.getIslemVardiya();
 								Date kontrolZaman = PdksUtil.addTarih(vardiya.getVardiyaBasZaman(), Calendar.MINUTE, dakika);
 								if (girisZaman.before(kontrolZaman))
@@ -238,7 +269,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 								iterator.remove();
 						}
 						perList = null;
-						if (vardiyaGunList.isEmpty() == false) {
+						if (vardiyaGunList.isEmpty() == false && authenticatedUser == null) {
 							User sistemAdmin = new User();
 							Gson gs = new Gson();
 							String baslik = ortakIslemler.getMenuAdi(sayfaURL);
@@ -271,9 +302,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 								inputMap.put("bcc", bccAdres);
 							List<LinkedHashMap<String, Object>> list = new ArrayList<LinkedHashMap<String, Object>>();
 							outputMap.put(baslik, list);
-							String patternSaat = PdksUtil.getSaatFormat();
-							SimpleDateFormat sdf = new SimpleDateFormat(patternSaat);
-							sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+
 							for (VardiyaGun vg : vardiyaGunList) {
 								if (vg.getVardiya().isCalisma())
 									vg.setIslemVardiya(null);
@@ -290,20 +319,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 								map.put("bolumAciklama", personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() : "");
 								map.put("Vardiya Başlangıç Zaman", sistemAdmin.dateTimeFormatla(vardiya.getVardiyaBasZaman()));
 								map.put("Giriş", vg.getGirisHareket() != null ? sistemAdmin.dateTimeFormatla(vg.getGirisHareket().getOrjinalZaman()) : "");
-								String fark = "";
-								Date farkTime = null, basZaman = vardiya.getVardiyaBasZaman();
-								Date girisZaman = vg.getGirisHareket() != null ? vg.getGirisHareket().getOrjinalZaman() : null;
-
-								if (girisZaman != null) {
-									// Long dts = vardiya.getBasZaman().getTime() - vg.getGirisHareket().getOrjinalZaman().getTime() - zoneOffSet;
-									Long dts = girisZaman.getTime() - basZaman.getTime();
-									farkTime = new Date(dts);
-									// fark = PdksUtil.convertToDateString(farkTime, patternSaat);
-								}
-
-								if (farkTime != null)
-									fark = sdf.format(farkTime);
-
+								String fark = getSaatFarki(vg, vardiya);
 								map.put("Fark", fark);
 								list.add(map);
 							}
@@ -333,8 +349,36 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 				}
 			}
 		}
-		return MenuItemConstant.home;
+		String str = authenticatedUser == null ? MenuItemConstant.home : "";
+		return str;
 
+	}
+
+	/**
+	 * @param vg
+	 * @param vardiya
+	 * @return
+	 */
+	public String getSaatFarki(VardiyaGun vg, Vardiya vardiya) {
+		String patternSaat = PdksUtil.getSaatFormat();
+		SimpleDateFormat sdf = new SimpleDateFormat(patternSaat);
+		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+		String fark = "";
+		if (vardiya == null)
+			vardiya = vg.getIslemVardiya();
+		Date basZaman = vardiya.getVardiyaBasZaman();
+		Date girisZaman = vg.getGirisHareket() != null ? vg.getGirisHareket().getOrjinalZaman() : null;
+		Date farkTime = null;
+		if (girisZaman != null) {
+			// Long dts = vardiya.getBasZaman().getTime() - vg.getGirisHareket().getOrjinalZaman().getTime() - zoneOffSet;
+			Long dts = girisZaman.getTime() - basZaman.getTime();
+			farkTime = new Date(dts);
+			// fark = PdksUtil.convertToDateString(farkTime, patternSaat);
+		}
+
+		if (farkTime != null)
+			fark = sdf.format(farkTime);
+		return fark;
 	}
 
 	public String sayfaMailRaporAction() {
@@ -617,6 +661,120 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		return "";
 	}
 
+	public String excelGecGirenAktar() {
+		ByteArrayOutputStream baosDosya = null;
+		try {
+			baosDosya = excelGecGirenDevam();
+			if (baosDosya != null) {
+				String dosyaAdi = null;
+				if (bitisTarih == null || PdksUtil.tarihKarsilastirNumeric(date, bitisTarih) == 0)
+					dosyaAdi = "GecGirenRaporu_" + PdksUtil.convertToDateString(date, "yyyy_MM_dd") + ".xlsx";
+				else
+					dosyaAdi = "GecGirenRaporu_" + PdksUtil.convertToDateString(date, "yyyyMMdd") + "_" + PdksUtil.convertToDateString(bitisTarih, "yyyyMMdd") + ".xlsx";
+				PdksUtil.setExcelHttpServletResponse(baosDosya, dosyaAdi);
+			}
+		} catch (Exception e) {
+
+		}
+
+		return "";
+	}
+
+	private ByteArrayOutputStream excelGecGirenDevam() {
+		ByteArrayOutputStream baos = null;
+		Workbook wb = new XSSFWorkbook();
+		Sheet sheet = ExcelUtil.createSheet(wb, PdksUtil.convertToDateString(date, "d MMMMM yyyy") + " Devamsizlik Raporu", Boolean.TRUE);
+		CellStyle header = ExcelUtil.getStyleHeader(wb);
+		CellStyle styleOdd = ExcelUtil.getStyleOdd(null, wb);
+		CellStyle styleOddCenter = ExcelUtil.getStyleOdd(ExcelUtil.ALIGN_CENTER, wb);
+		CellStyle styleOddDateTime = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_DATETIME, wb);
+		CellStyle styleEven = ExcelUtil.getStyleEven(null, wb);
+		CellStyle styleEvenCenter = ExcelUtil.getStyleEven(ExcelUtil.ALIGN_CENTER, wb);
+		CellStyle styleEvenDateTime = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_DATETIME, wb);
+
+		int row = 0, col = 0;
+
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.sirketAciklama());
+		boolean tesisDurum = ortakIslemler.getListTesisDurum(vardiyaGunList);
+		if (tesisDurum)
+			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.tesisAciklama());
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.yoneticiAciklama());
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolumAciklama);
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.personelNoAciklama());
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Adı Soyadı");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Tarih");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Giriş");
+		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Fark");
+
+		boolean renk = true;
+		for (VardiyaGun vardiyaGun : vardiyaGunList) {
+			Personel personel = vardiyaGun.getPersonel();
+			Vardiya islemVardiya = vardiyaGun.getIslemVardiya();
+			List hareketler = hareketleriGoster ? vardiyaGun.getHareketler() : null;
+			boolean sifirla = hareketler == null;
+			if (sifirla) {
+				hareketler = new ArrayList<HareketKGS>();
+				hareketler.add(null);
+			}
+
+			row++;
+			col = 0;
+			CellStyle style = null, styleCenter = null, cellStyleDateTime = null;
+			if (renk) {
+
+				cellStyleDateTime = styleOddDateTime;
+				style = styleOdd;
+				styleCenter = styleOddCenter;
+
+			} else {
+
+				cellStyleDateTime = styleEvenDateTime;
+				style = styleEven;
+				styleCenter = styleEvenCenter;
+			}
+			renk = !renk;
+			ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getSirket().getAd());
+			if (tesisDurum)
+				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getTesis() != null ? personel.getTesis().getAciklama() : "");
+			if (personel.getYoneticisi() != null) {
+				Personel yonetici = personel.getYoneticisi();
+				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(yonetici.getPdksSicilNo() + " - " + yonetici.getAdSoyad());
+			} else {
+				ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
+			}
+			ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() : "");
+			ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(personel.getPdksSicilNo());
+			ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getAdSoyad());
+
+			ExcelUtil.getCell(sheet, row, col++, cellStyleDateTime).setCellValue(islemVardiya.getVardiyaBasZaman());
+
+			if (vardiyaGun.getGirisHareketleri() != null)
+				ExcelUtil.getCell(sheet, row, col++, cellStyleDateTime).setCellValue(vardiyaGun.getGirisHareket().getOrjinalZaman());
+			else
+				ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
+			ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(getSaatFarki(vardiyaGun, islemVardiya));
+			if (sifirla)
+				hareketler = null;
+		}
+
+		try {
+
+			for (int i = 0; i <= col; i++)
+				sheet.autoSizeColumn(i);
+
+			baos = new ByteArrayOutputStream();
+			wb.write(baos);
+		} catch (Exception e) {
+			logger.error("Pdks hata in : \n");
+			e.printStackTrace();
+			logger.error("Pdks hata out : " + e.getMessage());
+			baos = null;
+		}
+
+		return baos;
+
+	}
+
 	private ByteArrayOutputStream excelAktarDevam() {
 		ByteArrayOutputStream baos = null;
 		Workbook wb = new XSSFWorkbook();
@@ -768,15 +926,12 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 				aciklama += " (Geçiş bilgisi mevcut)";
 			aciklama += ".";
 		} else if (vg.isVardiyaOnay()) {
-
 			Vardiya vardiya = vg.getIslemVardiya();
 			if (vardiya.isCalisma() == false) {
 				if (girisAdet + cikisAdet > 0)
 					aciklama = "Plansız Giriş.";
 			} else {
-				if (vg.getNormalSure() > 0.0) {
-					aciklama = "";
-				} else if (girisAdet + cikisAdet == 0) {
+				if (girisAdet + cikisAdet == 0) {
 					if (vardiya.isCalisma()) {
 						aciklama = "Kart Basılmadı.";
 						if (vardiya.isIcapVardiyasi())
@@ -785,11 +940,12 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 				} else {
 					StringBuffer sb = new StringBuffer();
-
 					Date giris = null;
 					try {
 						if (girisAdet > 0) {
-							giris = vg.getGirisHareketleri().get(0).getOrjinalZaman();
+
+							HareketKGS girisHareket = vg.getGirisHareket();
+							giris = girisHareket.getOrjinalZaman();
 							if (giris.before(vardiya.getVardiyaTelorans1BasZaman()))
 								sb.append("Erken Giriş.");
 							else if (giris.after(vardiya.getVardiyaTelorans2BasZaman()))
@@ -799,7 +955,8 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					}
 					try {
 						if (cikisAdet > 0) {
-							Date cikis = vg.getGirisHareketleri().get(cikisAdet - 1).getOrjinalZaman();
+							HareketKGS cikisHareket = vg.getCikisHareket();
+							Date cikis = cikisHareket.getOrjinalZaman();
 							if (cikis.after(vardiya.getVardiyaTelorans2BitZaman()))
 								sb.append("Geç Çıkış.");
 							else if (cikis.before(vardiya.getVardiyaTelorans1BitZaman()))
@@ -1001,12 +1158,14 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							vardiyaGun.setGecersizHareketler(null);
 							Long id = vardiyaGun.getPersonel().getId();
 							if (hareketMap.containsKey(id)) {
-								List<HareketKGS> list = hareketMap.get(id);
+								List<HareketKGS> list = new ArrayList<HareketKGS>();
+								list.addAll(hareketMap.get(id));
 								for (Iterator iterator1 = list.iterator(); iterator1.hasNext();) {
 									HareketKGS kgsHareket = (HareketKGS) iterator1.next();
-									if (vardiyaGun.addHareket(kgsHareket, Boolean.TRUE))
+									if (vardiyaGun.addHareket(kgsHareket, Boolean.FALSE))
 										iterator1.remove();
 								}
+								list = null;
 							}
 
 							boolean yaz = Boolean.TRUE;

@@ -107,22 +107,28 @@ public class MenuLoaderActionBean implements Serializable {
 
 	public HtmlDropDownMenu getRaporIslemleri() {
 		raporIslemleri = createMenu(MenuItemConstant.raporIslemleri, true);
-		String menuAdi = "dinamikRapor";
-		if (raporIslemleri != null && authenticatedUser != null && userHome != null && userHome.hasPermission(menuAdi, "view")) {
-			if (pdksEntityController.isSessionKapali(null, session)) {
-				session = authenticatedUser.getSessionSQL();
-				if (pdksEntityController.isSessionKapali(null, session))
-					session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-			}
+		try {
+			String menuAdi = "dinamikRapor";
+			if (raporIslemleri != null && authenticatedUser != null && userHome != null && userHome.hasPermission(menuAdi, "view")) {
+				if (pdksEntityController.isSessionKapali(null, session)) {
+					session = authenticatedUser.getSessionSQL();
+					if (pdksEntityController.isSessionKapali(null, session))
+						session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+				}
 
-			session.clear();
-			try {
-				dinamikRaporUpdate(menuAdi);
-			} catch (Exception e) {
-				logger.error(e);
-				e.printStackTrace();
+				session.clear();
+				try {
+					dinamikRaporUpdate(menuAdi);
+				} catch (Exception ex) {
+					logger.error(ex);
+					ex.printStackTrace();
+				}
 			}
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
 		}
+
 		return raporIslemleri;
 	}
 
