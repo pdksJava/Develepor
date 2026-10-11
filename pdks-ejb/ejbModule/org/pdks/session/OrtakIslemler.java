@@ -15495,7 +15495,7 @@ public class OrtakIslemler implements Serializable {
 		if (object != null) {
 			HashMap<String, Object> veriMap = new HashMap<String, Object>();
 			veriMap.put("spCalismaSaatGuncelleVar", FazlaMesaiOrtakIslemler.isSpCalismaSaatGuncelleVar());
-			veriMap.put("spPersonelDenklestirmeGuncelleVar", FazlaMesaiOrtakIslemler.isSpPersonelDenklestirmeGuncelleVar());
+			veriMap.put("spPersonelDenklestirmeGuncelleVar", FazlaMesaiOrtakIslemler.isSpPersonelDenklestirmeGuncelleVar() || FazlaMesaiOrtakIslemler.isSpPersonelDenklestirmeJsonVar());
 			veriMap.put("user", user != null ? user : authenticatedUser);
 			veriMap.put("planEkran", Boolean.FALSE);
 			islem = saveOrUpdate(session, veriMap, object);
