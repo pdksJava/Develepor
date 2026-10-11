@@ -15559,7 +15559,8 @@ public class OrtakIslemler implements Serializable {
 			veriMap.put("id", pd.getId());
 			veriMap.put("durum", pd.getDurum() ? 1 : 0);
 			veriMap.put("guncelleyen", user != null ? user.getId() : null);
-			veriMap.put("aksamVardiyaSayisi", pd.getAksamVardiyaSaatSayisi());
+			veriMap.put("aksamVardiyaSaatSayisi", pd.getAksamVardiyaSaatSayisi());
+			veriMap.put("aksamVardiyaSayisi", pd.getAksamVardiyaSayisi());
 			veriMap.put("devredenSure", pd.getDevredenSure());
 			veriMap.put("eksikCalismaSure", pd.getEksikCalismaSure());
 			veriMap.put("fazlaMesaiSure", pd.getFazlaMesaiSure());
@@ -15573,8 +15574,7 @@ public class OrtakIslemler implements Serializable {
 			try {
 				list = pdksEntityController.execSPList(session, veriMap, FazlaMesaiOrtakIslemler.SP_UPDATE_PERSONEL_DENKLESME_GUNCELLEME, PersonelDenklestirme.class);
 			} catch (Exception e) {
-
-				logger.error(e);
+ 				logger.error(e);
 			}
 			if (list != null) {
 				islem = list.isEmpty() == false;
