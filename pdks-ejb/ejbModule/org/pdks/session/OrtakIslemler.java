@@ -11071,8 +11071,7 @@ public class OrtakIslemler implements Serializable {
 					pd.setDurum(false);
 					pd.setGuncelleyenUser(guncelleyenUser);
 					pd.setGuncellemeTarihi(new Date());
-					// pdksEntityController.saveOrUpdate(session, null, pd);
-					saveOrUpdate(pd, guncelleyenUser, session);
+ 					saveOrUpdate(pd, guncelleyenUser, session);
 					try {
 						pdksEntityController.sessionFlush(session);
 					} catch (Exception e) {
@@ -11467,8 +11466,7 @@ public class OrtakIslemler implements Serializable {
 											vardiyaGun.setVardiya(vg.getVardiya());
 											vardiyaGun.setVardiyaOnayli(vg.isVardiyaOnay());
 											vardiyaGun.setGuncellendi(Boolean.TRUE);
-											// pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
-											saveOrUpdate(vardiyaGun, guncelleyenUser, session);
+ 											saveOrUpdate(vardiyaGun, guncelleyenUser, session);
 										} else {
 											HashMap<String, Object> vGunMap = new HashMap<String, Object>();
 											vGunMap.put("id", vardiyaGun);
@@ -11500,8 +11498,7 @@ public class OrtakIslemler implements Serializable {
 													vardiyaGun.setGuncelleyenUser(guncelleyenUser);
 													vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
 													vardiyaGun.setGuncellendi(Boolean.TRUE);
-													// pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
-													saveOrUpdate(vardiyaGun, guncelleyenUser, session);
+ 													saveOrUpdate(vardiyaGun, guncelleyenUser, session);
 												} else {
 													HashMap<String, Object> vGunMap = new HashMap<String, Object>();
 													vGunMap.put("id", vardiyaGun);
@@ -11531,8 +11528,7 @@ public class OrtakIslemler implements Serializable {
 								vardiyaGun.setGuncelleyenUser(guncelleyenUser);
 								vardiyaGun.setGuncellemeTarihi(guncellemeTarihi);
 								vardiyaGun.setGuncellendi(Boolean.TRUE);
-								// pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
-								saveOrUpdate(vardiyaGun, guncelleyenUser, session);
+ 								saveOrUpdate(vardiyaGun, guncelleyenUser, session);
 							} else {
 								HashMap<String, Object> vGunMap = new HashMap<String, Object>();
 								vGunMap.put("id", vardiyaGun);
@@ -11563,8 +11559,7 @@ public class OrtakIslemler implements Serializable {
 					pd.setOnaylandi(false);
 					pd.setGuncellemeTarihi(guncellemeTarihi);
 					pd.setGuncelleyenUser(guncelleyenUser);
-					// pdksEntityController.saveOrUpdate(session, null, pd);
-					saveOrUpdate(pd, guncelleyenUser, session);
+ 					saveOrUpdate(pd, guncelleyenUser, session);
 				}
 				ArrayList<VardiyaGun> vardiyalar = new ArrayList<VardiyaGun>(vgMap.values());
 				calismaPlaniMap.put(perId, vardiyalar);
@@ -15399,9 +15394,8 @@ public class OrtakIslemler implements Serializable {
 							try {
 								if (!vardiyaMap.containsKey(vardiyaKey)) {
 									if (veriYaz) {
-										saveOrUpdate(vardiyaGun, null, session);
-										// pdksEntityController.saveOrUpdate(session, null, vardiyaGun);
-										pdksEntityController.sessionFlush(session);
+										saveObject(session, vardiyaGun);
+ 										pdksEntityController.sessionFlush(session);
 									}
 									vardiyaMap.put(vardiyaKey, vardiyaGun);
 								}
@@ -22185,10 +22179,7 @@ public class OrtakIslemler implements Serializable {
 					if (kgsIdList.isEmpty() == false) {
 						List<PdksLog> list = pdksEntityController.getSQLParamByFieldList(PdksLog.TABLE_NAME, PdksLog.COLUMN_NAME_ID, kgsIdList, PdksLog.class, session);
 						for (PdksLog pdksLog : list) {
-							// pdksLog.setDurum(false);
-							// pdksLog.setGuncellemeZamani(guncellemeZamani);
-							// pdksEntityController.saveOrUpdate(session, null, pdksLog);
-							Long id = pdksEntityController.hareketSil(pdksLog.getKgsId(), 0, guncelleyen, mukerrerHareketIptalNeden.getId(), "Mükerrer geçiş iptal", pdksLog.getKgsSirketId(), session);
+ 							Long id = pdksEntityController.hareketSil(pdksLog.getKgsId(), 0, guncelleyen, mukerrerHareketIptalNeden.getId(), "Mükerrer geçiş iptal", pdksLog.getKgsSirketId(), session);
 							if (id != null && pdksLog.getKgsId().equals(id))
 								flush = true;
 						}
