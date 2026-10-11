@@ -102,7 +102,9 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 	public static final String PERSONEL_TANIM_SECIM_MUDUR_ALT_SEVIYE = "mudurAltSeviye";
 	public static final String SP_CALISMA_PLANI_GUNCELLEME_ADI = "SP_UPDATE_CALISMA_PLANI_GUNCELLEME";
 	public static final String SP_UPDATE_PERSONEL_DENKLESME_GUNCELLEME = "SP_UPDATE_PER_DENKLESME_GUNCELLEME";
-	private static boolean spCalismaSaatGuncelleVar = false, spPersonelDenklestirmeGuncelleVar = false;
+	public static final String SP_UPDATE_PER_DENKLESME_JSON = "SP_UPDATE_PER_DENKLESME_JSON";
+
+	private static boolean spCalismaSaatGuncelleVar = false, spPersonelDenklestirmeGuncelleVar = false, spPersonelDenklestirmeJsonVar = false;
 
 	@In
 	Identity identity;
@@ -1556,7 +1558,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 			if (donemAy == 0) {
 				donemAy = (Integer) aylar.get(aylar.size() - 1).getValue();
 			}
-		} 
+		}
 
 		return donemAy;
 	}
@@ -3945,5 +3947,13 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 	public static void setSpPersonelDenklestirmeGuncelleVar(boolean value) {
 		FazlaMesaiOrtakIslemler.spPersonelDenklestirmeGuncelleVar = value;
+	}
+
+	public static boolean isSpPersonelDenklestirmeJsonVar() {
+		return spPersonelDenklestirmeJsonVar;
+	}
+
+	public static void setSpPersonelDenklestirmeJsonVar(boolean value) {
+		FazlaMesaiOrtakIslemler.spPersonelDenklestirmeJsonVar = value;
 	}
 }

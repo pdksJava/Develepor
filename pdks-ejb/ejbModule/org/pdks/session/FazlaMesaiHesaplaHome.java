@@ -166,7 +166,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	private Sirket sirket;
 
 	private DenklestirmeAy denklestirmeAy, gecenAy = null;
-	private boolean spPersonelDenklestirmeGuncelleVar = false, spCalismaSaatGuncelleVar = false;
+	private boolean spPersonelDenklestirmeGuncelleVar = false, spCalismaSaatGuncelleVar = false, spPersonelDenklestirmeJsonVar = false;
 
 	private Boolean hataYok, calisiyor = Boolean.FALSE, fazlaMesaiIzinKullan = Boolean.FALSE, fazlaMesaiOde = Boolean.FALSE, fazlaMesaiTalepSil = Boolean.FALSE, yetkili = Boolean.FALSE, resmiTatilVar = Boolean.FALSE, haftaTatilVar = Boolean.FALSE, kaydetDurum = Boolean.FALSE;
 	private Boolean sutIzniGoster = Boolean.FALSE, suaGoster, gebeGoster = Boolean.FALSE, partTimeGoster = Boolean.FALSE, onayla, hastaneSuperVisor = Boolean.FALSE, sirketIzinGirisDurum = Boolean.FALSE;
@@ -1946,6 +1946,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						String spVardiyaGuncelleme = FazlaMesaiOrtakIslemler.SP_CALISMA_PLANI_GUNCELLEME_ADI;
 						spPersonelDenklestirmeGuncelleVar = ortakIslemler.isExisStoreProcedure(FazlaMesaiOrtakIslemler.SP_UPDATE_PERSONEL_DENKLESME_GUNCELLEME, session);
 						spCalismaSaatGuncelleVar = ortakIslemler.isExisStoreProcedure(FazlaMesaiOrtakIslemler.SP_CALISMA_PLANI_GUNCELLEME_ADI, session);
+						spPersonelDenklestirmeJsonVar = ortakIslemler.isExisStoreProcedure(FazlaMesaiOrtakIslemler.SP_UPDATE_PER_DENKLESME_JSON, session);
+						FazlaMesaiOrtakIslemler.setSpPersonelDenklestirmeJsonVar(spPersonelDenklestirmeJsonVar);
 						FazlaMesaiOrtakIslemler.setSpCalismaSaatGuncelleVar(spCalismaSaatGuncelleVar);
 						FazlaMesaiOrtakIslemler.setSpPersonelDenklestirmeGuncelleVar(spPersonelDenklestirmeGuncelleVar);
 						boolean spVardiyaGuncellemeVar = ortakIslemler.isExisStoreProcedure(spVardiyaGuncelleme, session);

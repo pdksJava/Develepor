@@ -15575,19 +15575,25 @@ public class OrtakIslemler implements Serializable {
 			veriMap.put("odenenSure", pd.getOdenenSure());
 			veriMap.put("planlanSure", pd.getPlanlanSure());
 			veriMap.put("resmiTatilSure", pd.getResmiTatilSure());
- 			Gson gson = new Gson();
+			Gson gson = new Gson();
 			List<PersonelDenklestirme> list = null;
-			LinkedHashMap<String, Object> veriJsonMap = new LinkedHashMap<String, Object>();
-			veriJsonMap.put("json", gson.toJson(veriMap));
-			try {
-				list = pdksEntityController.execSPList(session, veriJsonMap, "SP_UPDATE_PER_DENKLESME_JSON", PersonelDenklestirme.class);
-			} catch (Exception e) {
+			LinkedHashMap<String, Object> veriJsonMap = null;
+
+			if (FazlaMesaiOrtakIslemler.isSpPersonelDenklestirmeJsonVar()) {
+				veriJsonMap = new LinkedHashMap<String, Object>();
 				try {
+					veriJsonMap.put("json", gson.toJson(veriMap));
+					list = pdksEntityController.execSPList(session, veriJsonMap, FazlaMesaiOrtakIslemler.SP_UPDATE_PER_DENKLESME_JSON, PersonelDenklestirme.class);
+ 				} catch (Exception e) {
+ 				}
+				veriJsonMap = null;
+			}
+
+			try {
+				if (list == null && FazlaMesaiOrtakIslemler.isSpPersonelDenklestirmeGuncelleVar())
 					list = pdksEntityController.execSPList(session, veriMap, FazlaMesaiOrtakIslemler.SP_UPDATE_PERSONEL_DENKLESME_GUNCELLEME, PersonelDenklestirme.class);
-				} catch (Exception e2) {
-					// TODO: handle exception
-				}
-				logger.error(e);
+			} catch (Exception e2) {
+				logger.error(e2);
 			}
 			if (list != null) {
 				islem = list.isEmpty() == false;
@@ -15595,7 +15601,7 @@ public class OrtakIslemler implements Serializable {
 			}
 			gson = null;
 			veriMap = null;
-			veriJsonMap = null;
+
 		}
 		return islem;
 
