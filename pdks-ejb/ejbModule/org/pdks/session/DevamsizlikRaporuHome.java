@@ -117,9 +117,8 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		Integer gunSayisi = null, adetSayisi = null, dakika = null;
 		String parametreler = null;
 		hepsiniGoster = true;
-
-		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-		if (req.getParameterNames() != null) {
+ 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+		if (req != null && req.getParameterNames() != null) {
 			Enumeration<String> paramNames = req.getParameterNames();
 			while (paramNames.hasMoreElements()) {
 				String paramName = paramNames.nextElement();
