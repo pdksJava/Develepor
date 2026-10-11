@@ -112,12 +112,6 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		super.create();
 	}
 
-	@Begin(join = true, flushMode = FlushModeType.MANUAL)
-	public String sayfaGecGelenGirisRaporAction() {
-		String str = sayfaGecGelenRaporAction();
-		return str;
-	}
-
 	public String sayfaGecGelenRaporAction() {
 		Long agentId = null;
 		Integer gunSayisi = null, adetSayisi = null, dakika = null;
@@ -661,120 +655,6 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		}
 
 		return "";
-	}
-
-	public String excelGecGirenAktar() {
-		ByteArrayOutputStream baosDosya = null;
-		try {
-			baosDosya = excelGecGirenDevam();
-			if (baosDosya != null) {
-				String dosyaAdi = null;
-				if (bitisTarih == null || PdksUtil.tarihKarsilastirNumeric(date, bitisTarih) == 0)
-					dosyaAdi = "GecGirenRaporu_" + PdksUtil.convertToDateString(date, "yyyy_MM_dd") + ".xlsx";
-				else
-					dosyaAdi = "GecGirenRaporu_" + PdksUtil.convertToDateString(date, "yyyyMMdd") + "_" + PdksUtil.convertToDateString(bitisTarih, "yyyyMMdd") + ".xlsx";
-				PdksUtil.setExcelHttpServletResponse(baosDosya, dosyaAdi);
-			}
-		} catch (Exception e) {
-
-		}
-
-		return "";
-	}
-
-	private ByteArrayOutputStream excelGecGirenDevam() {
-		ByteArrayOutputStream baos = null;
-		Workbook wb = new XSSFWorkbook();
-		Sheet sheet = ExcelUtil.createSheet(wb, PdksUtil.convertToDateString(date, "d MMMMM yyyy") + " Devamsizlik Raporu", Boolean.TRUE);
-		CellStyle header = ExcelUtil.getStyleHeader(wb);
-		CellStyle styleOdd = ExcelUtil.getStyleOdd(null, wb);
-		CellStyle styleOddCenter = ExcelUtil.getStyleOdd(ExcelUtil.ALIGN_CENTER, wb);
-		CellStyle styleOddDateTime = ExcelUtil.getStyleOdd(ExcelUtil.FORMAT_DATETIME, wb);
-		CellStyle styleEven = ExcelUtil.getStyleEven(null, wb);
-		CellStyle styleEvenCenter = ExcelUtil.getStyleEven(ExcelUtil.ALIGN_CENTER, wb);
-		CellStyle styleEvenDateTime = ExcelUtil.getStyleEven(ExcelUtil.FORMAT_DATETIME, wb);
-
-		int row = 0, col = 0;
-
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.sirketAciklama());
-		boolean tesisDurum = ortakIslemler.getListTesisDurum(vardiyaGunList);
-		if (tesisDurum)
-			ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.tesisAciklama());
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.yoneticiAciklama());
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(bolumAciklama);
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue(ortakIslemler.personelNoAciklama());
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Adı Soyadı");
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Tarih");
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Giriş");
-		ExcelUtil.getCell(sheet, row, col++, header).setCellValue("Fark");
-
-		boolean renk = true;
-		for (VardiyaGun vardiyaGun : vardiyaGunList) {
-			Personel personel = vardiyaGun.getPersonel();
-			Vardiya islemVardiya = vardiyaGun.getIslemVardiya();
-			List hareketler = hareketleriGoster ? vardiyaGun.getHareketler() : null;
-			boolean sifirla = hareketler == null;
-			if (sifirla) {
-				hareketler = new ArrayList<HareketKGS>();
-				hareketler.add(null);
-			}
-
-			row++;
-			col = 0;
-			CellStyle style = null, styleCenter = null, cellStyleDateTime = null;
-			if (renk) {
-
-				cellStyleDateTime = styleOddDateTime;
-				style = styleOdd;
-				styleCenter = styleOddCenter;
-
-			} else {
-
-				cellStyleDateTime = styleEvenDateTime;
-				style = styleEven;
-				styleCenter = styleEvenCenter;
-			}
-			renk = !renk;
-			ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getSirket().getAd());
-			if (tesisDurum)
-				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getTesis() != null ? personel.getTesis().getAciklama() : "");
-			if (personel.getYoneticisi() != null) {
-				Personel yonetici = personel.getYoneticisi();
-				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(yonetici.getPdksSicilNo() + " - " + yonetici.getAdSoyad());
-			} else {
-				ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
-			}
-			ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() : "");
-			ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(personel.getPdksSicilNo());
-			ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getAdSoyad());
-
-			ExcelUtil.getCell(sheet, row, col++, cellStyleDateTime).setCellValue(islemVardiya.getVardiyaBasZaman());
-
-			if (vardiyaGun.getGirisHareketleri() != null)
-				ExcelUtil.getCell(sheet, row, col++, cellStyleDateTime).setCellValue(vardiyaGun.getGirisHareket().getOrjinalZaman());
-			else
-				ExcelUtil.getCell(sheet, row, col++, style).setCellValue("");
-			ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(getSaatFarki(vardiyaGun, islemVardiya));
-			if (sifirla)
-				hareketler = null;
-		}
-
-		try {
-
-			for (int i = 0; i <= col; i++)
-				sheet.autoSizeColumn(i);
-
-			baos = new ByteArrayOutputStream();
-			wb.write(baos);
-		} catch (Exception e) {
-			logger.error("Pdks hata in : \n");
-			e.printStackTrace();
-			logger.error("Pdks hata out : " + e.getMessage());
-			baos = null;
-		}
-
-		return baos;
-
 	}
 
 	private ByteArrayOutputStream excelAktarDevam() {
