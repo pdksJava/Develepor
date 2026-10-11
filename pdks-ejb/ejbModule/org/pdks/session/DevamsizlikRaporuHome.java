@@ -280,7 +280,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							LinkedHashMap<String, Object> outputMap = new LinkedHashMap<String, Object>();
 							LinkedHashMap<String, Object> parametreMap = new LinkedHashMap<String, Object>();
 							parametreMap.put("personelNoAciklama", "C");
-							parametreMap.put("Vardiya Başlangıç Zaman", "dt");
+							parametreMap.put("Başlangıç Zaman", "dt");
 							parametreMap.put("Giriş", "dt");
 							parametreMap.put("Fark", "C");
 							inputMap.put("parametre", parametreMap);
@@ -313,7 +313,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 								map.put("Adı Soyad", personel.getAdSoyad());
 								map.put("personelNoAciklama", personel.getPdksSicilNo());
 								map.put("bolumAciklama", personel.getEkSaha3() != null ? personel.getEkSaha3().getAciklama() : "");
-								map.put("Vardiya Başlangıç Zaman", sistemAdmin.dateTimeFormatla(vardiya.getVardiyaBasZaman()));
+								map.put("Başlangıç Zaman", sistemAdmin.dateTimeFormatla(vardiya.getVardiyaBasZaman()));
 								map.put("Giriş", vg.getGirisHareket() != null ? sistemAdmin.dateTimeFormatla(vg.getGirisHareket().getOrjinalZaman()) : "");
 								String fark = getSaatFarki(vg, vardiya);
 								map.put("Fark", fark);
