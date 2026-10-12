@@ -20,6 +20,7 @@
 			<property name="hibernate.query.timeout" value="30" />
 			<property name="hibernate.connection.characterEncoding" value="UTF-8" />
 			<!-- glassfish -->
+			<property name="hibernate.connection.release_mode" value="after_statement" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect" />
 			<property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.SunONETransactionManagerLookup" />
 			<property name="hibernate.connection.autoReconnect" value="true" />
