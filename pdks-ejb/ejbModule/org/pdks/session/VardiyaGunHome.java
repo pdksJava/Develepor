@@ -390,9 +390,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			veriMap.put("planEkran", Boolean.TRUE);
 			if (object instanceof PersonelDenklestirme) {
 				PersonelDenklestirme pd = (PersonelDenklestirme) object;
-				pd.setFazlaMesaiEkran(false);
-			}
-			islem = ortakIslemler.saveOrUpdate(session, veriMap, object);
+				savePersonelDenklestirme(pd);
+				islem = true;
+			} else
+				islem = ortakIslemler.saveOrUpdate(session, veriMap, object);
 			veriMap = null;
 		}
 		return islem;
@@ -4352,7 +4353,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					personelDenklestirme.setFazlaMesaiOde(Boolean.FALSE);
 				personelDenklestirme.setDurum(Boolean.FALSE);
 				personelAylikPuantaj.setPersonelDenklestirme(personelDenklestirme);
-				savePersonelDenklestirme(personelDenklestirme);
+				saveOrUpdate(personelDenklestirme);
 				if (personelDenklestirme.getCalismaModeliAy() != null && personelDenklestirme.getCalismaModeliAy().getDurum().booleanValue() == false) {
 					CalismaModeliAy cma = personelDenklestirme.getCalismaModeliAy();
 					cma.setDurum(Boolean.TRUE);
@@ -11832,9 +11833,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				flush = false;
 				ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 				for (PersonelDenklestirme personelDenklestirme : list) {
-					savePersonelDenklestirme(personelDenklestirme);
+					saveOrUpdate(personelDenklestirme);
 					flush = true;
-
 				}
 				if (flush)
 					try {
@@ -11975,6 +11975,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		pd.setOnaylandi(Boolean.FALSE);
 		pd.setGuncellemeTarihi(new Date());
 		pd.setDevredenSure(null);
+		pd.setFazlaMesaiEkran(false);
 		pdksEntityController.saveOrUpdate(session, entityManager, pd);
 		if (pd.getPersonelDenklestirmeGecenAy() == null && pd.getCalismaModeliAy() != null) {
 			try {
