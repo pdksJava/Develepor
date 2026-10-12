@@ -229,6 +229,7 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 		Date tarih4 = null;
 		perIdList.clear();
 		List<Long> idList = new ArrayList<Long>();
+		tarih1 = PdksUtil.tariheGunEkleCikar(date, -1);
 		for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 			VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
 			Personel personel = pdksVardiyaGun.getPersonel();

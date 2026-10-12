@@ -260,7 +260,7 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 			}
 			Date bugun = new Date();
 			List<Long> perIdList = new ArrayList<Long>();
-
+			tarih1 = PdksUtil.tariheGunEkleCikar(basTarih, -1);
 			for (Iterator iterator = vardiyaGunList.iterator(); iterator.hasNext();) {
 				VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
 				Vardiya islemVardiya = pdksVardiyaGun.getIslemVardiya(), vardiya = pdksVardiyaGun.getVardiya();
