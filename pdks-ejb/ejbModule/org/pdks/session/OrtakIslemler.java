@@ -1357,22 +1357,22 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
-	 * @param pd
+	 * @param personelDenklestirme
 	 * @param list
 	 * @param session
 	 */
-	public void setPersonelDenklestirmeDevir(PersonelDenklestirme pd, List<PersonelDenklestirme> list, Session session) {
+	public void setPersonelDenklestirmeDevir(PersonelDenklestirme personelDenklestirme, List<PersonelDenklestirme> list, Session session) {
 		if (session != null) {
-			if (pd != null || (list != null && list.isEmpty() == false)) {
+			if (personelDenklestirme != null || (list != null && list.isEmpty() == false)) {
 				List<PersonelDenklestirme> denklestirmeList = new ArrayList<PersonelDenklestirme>();
-				if (pd != null)
-					denklestirmeList.add(pd);
+				if (personelDenklestirme != null)
+					denklestirmeList.add(personelDenklestirme);
 				if (list != null && list.isEmpty() == false)
 					denklestirmeList.addAll(list);
 				HashMap<Long, PersonelDenklestirme> pdMap = new HashMap<Long, PersonelDenklestirme>();
-				for (PersonelDenklestirme pd1 : denklestirmeList) {
-					if (pd1 != null && pd.getId() != null)
-						pdMap.put(pd1.getId(), pd1);
+				for (PersonelDenklestirme pd : denklestirmeList) {
+					if (pd != null && pd.getId() != null)
+						pdMap.put(pd.getId(), pd);
 				}
 				if (pdMap.isEmpty() == false) {
 					List<PersonelDenklestirmeDevir> devirList = pdksEntityController.getSQLParamByFieldList(PersonelDenklestirmeDevir.TABLE_NAME, PersonelDenklestirmeDevir.COLUMN_NAME_PERSONEL_DENKLESTIRME, new ArrayList(pdMap.keySet()), PersonelDenklestirmeDevir.class, session);
