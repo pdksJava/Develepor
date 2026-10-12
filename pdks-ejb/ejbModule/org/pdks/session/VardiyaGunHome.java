@@ -11972,12 +11972,13 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 */
 
 	private void savePersonelDenklestirme(PersonelDenklestirme pd) {
+		long donem = ikRole ? Long.parseLong(PdksUtil.convertToDateString(new Date(), "yyyyMM")) : 999999L;
 		pd.setOnaylandi(Boolean.FALSE);
 		pd.setGuncellemeTarihi(new Date());
 		pd.setDevredenSure(null);
 		pd.setFazlaMesaiEkran(false);
 		pdksEntityController.saveOrUpdate(session, entityManager, pd);
-		if (pd.getPersonelDenklestirmeGecenAy() == null && pd.getCalismaModeliAy() != null) {
+		if (pd.getCalismaModeliAy() != null && (denklestirmeAy.getDonem() >= donem) || pd.getPersonelDenklestirmeGecenAy() == null) {
 			try {
 				CalismaModeli cm = pd.getCalismaModeliAy().getCalismaModeli();
 				if (cm != null) {
