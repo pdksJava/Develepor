@@ -21,6 +21,7 @@
 			<property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.SunONETransactionManagerLookup" />
 			<property name="hibernate.connection.autoReconnect" value="true" />
 			<property name="javax.persistence.query.timeout" value="30000" />
+			<property name="hibernate.connection.release_mode" value="after_statement" />
 
 		</properties>
 	</persistence-unit>
