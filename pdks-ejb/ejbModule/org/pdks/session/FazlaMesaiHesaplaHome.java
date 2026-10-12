@@ -1788,6 +1788,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						boolean denkDurum = denklestirmeAy.getDurum();
 						List<AylikPuantaj> puantajList = denkDurum && (adminRole || ikRole) ? new ArrayList<AylikPuantaj>() : null;
 						HashMap<Long, PersonelDenklestirme> pdMap = new HashMap<Long, PersonelDenklestirme>();
+						aylikPuantajSablon.setFazlaMesaiEkran(true);
 						for (Iterator iterator1 = list.iterator(); iterator1.hasNext();) {
 							PersonelDenklestirmeTasiyici denklestirmeTasiyici = (PersonelDenklestirmeTasiyici) iterator1.next();
 							AylikPuantaj puantaj = (AylikPuantaj) aylikPuantajSablon.clone();

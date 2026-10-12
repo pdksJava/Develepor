@@ -81,7 +81,15 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	private String trClass;
 
-	private boolean kaydet, calisiyor = true, gorevYeriSec = false, yoneticiZorunlu = true, secili, onayDurum, vardiyaOlustu = Boolean.FALSE, vardiyaDegisti = Boolean.FALSE, fiiliHesapla = Boolean.FALSE;
+	private boolean kaydet, calisiyor = true, fazlaMesaiEkran = false, gorevYeriSec = false, yoneticiZorunlu = true, secili, onayDurum, vardiyaOlustu = Boolean.FALSE, vardiyaDegisti = Boolean.FALSE, fiiliHesapla = Boolean.FALSE;
+
+	public boolean isFazlaMesaiEkran() {
+		return fazlaMesaiEkran;
+	}
+
+	public void setFazlaMesaiEkran(boolean fazlaMesaiEkran) {
+		this.fazlaMesaiEkran = fazlaMesaiEkran;
+	}
 
 	private boolean donemBitti = Boolean.TRUE, ayrikHareketVar = Boolean.FALSE, fazlaMesaiIzinKontrol = Boolean.TRUE, gebeDurum = Boolean.FALSE, sutIzniDurumu = Boolean.FALSE;
 
