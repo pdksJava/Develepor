@@ -1357,22 +1357,22 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
-	 * @param personelDenklestirme
+	 * @param pd
 	 * @param list
 	 * @param session
 	 */
-	public void setPersonelDenklestirmeDevir(PersonelDenklestirme personelDenklestirme, List<PersonelDenklestirme> list, Session session) {
+	public void setPersonelDenklestirmeDevir(PersonelDenklestirme pd, List<PersonelDenklestirme> list, Session session) {
 		if (session != null) {
-			if (personelDenklestirme != null || (list != null && list.isEmpty() == false)) {
+			if (pd != null || (list != null && list.isEmpty() == false)) {
 				List<PersonelDenklestirme> denklestirmeList = new ArrayList<PersonelDenklestirme>();
-				if (personelDenklestirme != null)
-					denklestirmeList.add(personelDenklestirme);
+				if (pd != null)
+					denklestirmeList.add(pd);
 				if (list != null && list.isEmpty() == false)
 					denklestirmeList.addAll(list);
 				HashMap<Long, PersonelDenklestirme> pdMap = new HashMap<Long, PersonelDenklestirme>();
-				for (PersonelDenklestirme pd : denklestirmeList) {
-					if (pd != null && pd.getId() != null)
-						pdMap.put(pd.getId(), pd);
+				for (PersonelDenklestirme pd1 : denklestirmeList) {
+					if (pd1 != null && pd.getId() != null)
+						pdMap.put(pd1.getId(), pd1);
 				}
 				if (pdMap.isEmpty() == false) {
 					List<PersonelDenklestirmeDevir> devirList = pdksEntityController.getSQLParamByFieldList(PersonelDenklestirmeDevir.TABLE_NAME, PersonelDenklestirmeDevir.COLUMN_NAME_PERSONEL_DENKLESTIRME, new ArrayList(pdMap.keySet()), PersonelDenklestirmeDevir.class, session);
@@ -15584,17 +15584,15 @@ public class OrtakIslemler implements Serializable {
 				try {
 					veriJsonMap.put("json", gson.toJson(veriMap));
 					list = pdksEntityController.execSPList(session, veriJsonMap, FazlaMesaiOrtakIslemler.SP_UPDATE_PER_DENKLESME_JSON, PersonelDenklestirme.class);
- 				} catch (Exception e) {
- 				}
+				} catch (Exception e) {
+				}
 				veriJsonMap = null;
-			}
-
-			try {
-				if (list == null && FazlaMesaiOrtakIslemler.isSpPersonelDenklestirmeGuncelleVar())
+			} else if (FazlaMesaiOrtakIslemler.isSpPersonelDenklestirmeGuncelleVar())
+				try {
 					list = pdksEntityController.execSPList(session, veriMap, FazlaMesaiOrtakIslemler.SP_UPDATE_PERSONEL_DENKLESME_GUNCELLEME, PersonelDenklestirme.class);
-			} catch (Exception e2) {
-				logger.error(e2);
-			}
+				} catch (Exception e2) {
+				}
+
 			if (list != null) {
 				islem = list.isEmpty() == false;
 				list = null;
@@ -20965,7 +20963,7 @@ public class OrtakIslemler implements Serializable {
 	 * @return
 	 */
 	public PersonelDenklestirme aylikPlanSureHesapla(KapiView girisKapiView, KapiView cikisKapiView, boolean filliHesapla, Vardiya normalCalismaVardiya, boolean yemekHesapla, AylikPuantaj puantajData, boolean kaydet, TreeMap<String, Tatil> tatilGunleriMap, Session session) {
-		PersonelDenklestirme personelDenklestirme = null;
+		PersonelDenklestirme pd = null;
 		int yarimYuvarla = puantajData.getYarimYuvarla();
 		Integer rtYuvarla = null, ucmYuvarla = yarimYuvarla;
 		DenklestirmeTipi dt = null;
@@ -21052,17 +21050,17 @@ public class OrtakIslemler implements Serializable {
 					if (pdksVardiyaGunSablon.isAyinGunu())
 						ayinGunleri.put(pdksVardiyaGunSablon.getVardiyaDateStr(), pdksVardiyaGunSablon);
 				}
-				personelDenklestirme = puantajData.getPersonelDenklestirme();
+				pd = puantajData.getPersonelDenklestirme();
 				CalismaModeli calismaModeli = null;
-				if (personelDenklestirme != null && personelDenklestirme.getCalismaModeliAy() != null) {
-					calismaModeli = personelDenklestirme.getCalismaModeli();
+				if (pd != null && pd.getCalismaModeliAy() != null) {
+					calismaModeli = pd.getCalismaModeli();
 
 				}
-				boolean maxSureDurum = calismaModeli.isFazlaMesaiVarMi() && personelDenklestirme.getCalismaModeliAy().isGunMaxCalismaOdenir();
+				boolean maxSureDurum = calismaModeli.isFazlaMesaiVarMi() && pd.getCalismaModeliAy().isGunMaxCalismaOdenir();
 
 				puantajData.setIzinSuresi(0d);
-				boolean suaVar = personelDenklestirme.isSuaDurumu();
-				Personel personel = personelDenklestirme.getPersonel();
+				boolean suaVar = pd.isSuaDurumu();
+				Personel personel = pd.getPersonel();
 				Departman departman = personel != null ? personel.getSirket().getDepartman() : null;
 
 				double gecenAyResmiTatilSure = 0;
@@ -21104,7 +21102,7 @@ public class OrtakIslemler implements Serializable {
 								puantajData.setResmiTatilToplami(0.0d);
 							ilkGiris = false;
 							if (pdksVardiyaGun.getVardiya() != null && pdksVardiyaGun.getVardiya().isHaftaTatil()) {
-								personelDenklestirme.setIzinVardiyaGun(pdksVardiyaGun);
+								pd.setIzinVardiyaGun(pdksVardiyaGun);
 							}
 							List<YemekIzin> yemekList = yemekHesapla ? pdksVardiyaGun.getYemekList() : yemekBosList;
 
@@ -21114,19 +21112,19 @@ public class OrtakIslemler implements Serializable {
 								pdksVardiyaGun.setTatil(tatilGunleriMap.get(key));
 							boolean arifeGunu = false;
 							Vardiya vardiyaIzin = pdksVardiyaGun.getVardiya();
-							if (personelDenklestirme != null && personelDenklestirme.getCalismaModeliAy() != null) {
-								pdksVardiyaGun.setCalismaModeli(personelDenklestirme.getCalismaModeliAy().getCalismaModeli());
-								CalismaModeli calismaModeliAy = pdksVardiyaGun.getCalismaModeli() != null ? pdksVardiyaGun.getCalismaModeli() : personelDenklestirme.getCalismaModeli();
-								calismaModeliAy.setCalismaModeliGunler(personelDenklestirme.getCalismaModeliGunler());
+							if (pd != null && pd.getCalismaModeliAy() != null) {
+								pdksVardiyaGun.setCalismaModeli(pd.getCalismaModeliAy().getCalismaModeli());
+								CalismaModeli calismaModeliAy = pdksVardiyaGun.getCalismaModeli() != null ? pdksVardiyaGun.getCalismaModeli() : pd.getCalismaModeli();
+								calismaModeliAy.setCalismaModeliGunler(pd.getCalismaModeliGunler());
 								izinSaat = pdksVardiyaGun.isIzinli() ? calismaModeliAy.getIzinSaat(pdksVardiyaGun) : 0.0d;
 								if (pdksVardiyaGun.isIzinli() && calismaModeli.isHaftaTatilSabitDegil()) {
 									Vardiya vardiya = pdksVardiyaGun.getVardiya();
 									if (izinSaat == 0 || vardiya.isHaftaTatil()) {
 										if (vardiya.isHaftaTatil()) {
-											personelDenklestirme.setIzinVardiyaGun(pdksVardiyaGun);
+											pd.setIzinVardiyaGun(pdksVardiyaGun);
 											izinSaat = 0.0d;
-										} else if (personelDenklestirme.getIzinVardiyaGun() != null) {
-											VardiyaGun izinVardiyaGun = personelDenklestirme.getIzinVardiyaGun();
+										} else if (pd.getIzinVardiyaGun() != null) {
+											VardiyaGun izinVardiyaGun = pd.getIzinVardiyaGun();
 											int haftaGun = PdksUtil.getDateField(izinVardiyaGun.getVardiyaDate(), Calendar.DAY_OF_WEEK);
 											izinSaat = calismaModeli.getSaat(haftaGun);
 										}
@@ -21146,7 +21144,7 @@ public class OrtakIslemler implements Serializable {
 
 							double normalCalismaSuresi = izinSaat != null ? izinSaat : normalCalismaVardiya.getNetCalismaSuresi();
 							mesaiMaxSure = fazlaMesaiMaxSure;
-							if (personelDenklestirme.isSuaDurumu()) {
+							if (pd.isSuaDurumu()) {
 								if (radyolojiFazlaMesaiMaxSure == null) {
 									radyolojiFazlaMesaiMaxSure = denklestirmeAy.getRadyolojiFazlaMesaiMaxSure();
 									if (radyolojiFazlaMesaiMaxSure == null)
@@ -21231,7 +21229,7 @@ public class OrtakIslemler implements Serializable {
 									if (gebeMi)
 										ozelDurumSaat = AylikPuantaj.getGunlukAnneCalismaSuresi();
 									else if (suaMi)
-										ozelDurumSaat = personelDenklestirme.getCalismaSuaSaati();
+										ozelDurumSaat = pd.getCalismaSuaSaati();
 
 								}
 								Vardiya vardiyaTatil = null;
@@ -21287,20 +21285,20 @@ public class OrtakIslemler implements Serializable {
 									boolean normalDurum = isNormalGunMu(pdksVardiyaGun);
 									if (normalDurum && pdksVardiyaGun.getTatil() != null && pdksVardiyaGun.getVardiya() != null && pdksVardiyaGun.getVardiya().isHaftaTatil() && pdksVardiyaGun.getTatil().isYarimGunMu()) {
 										normalDurum = false;
-										double kontrolSure = getVardiyaIzinSuresi(normalCalismaSuresi, pdksVardiyaGun, personelDenklestirme, null);
+										double kontrolSure = getVardiyaIzinSuresi(normalCalismaSuresi, pdksVardiyaGun, pd, null);
 										izinSuresi += kontrolSure;
 									}
 									if (normalDurum) {
 										normalGun = Boolean.TRUE;
-										if (pdksVardiyaGun.getVardiya().isCalisma() || (personelDenklestirme.getFazlaMesaiIzinKullan() != null && personelDenklestirme.getFazlaMesaiIzinKullan() && pdksVardiyaGun.getVardiya().isOffGun())) {
+										if (pdksVardiyaGun.getVardiya().isCalisma() || (pd.getFazlaMesaiIzinKullan() != null && pd.getFazlaMesaiIzinKullan() && pdksVardiyaGun.getVardiya().isOffGun())) {
 											if (pdksVardiyaGun.isIzinli() == false || !raporIzni)
 												++calismaGunSayisi;
 										}
 										if (sure > 0) {
 
 											if (raporIzni) {
-												if (personelDenklestirme.isSuaDurumu())
-													sure = sure * personelDenklestirme.getCalismaSuaSaati() / AylikPuantaj.getGunlukCalismaSuresi();
+												if (pd.isSuaDurumu())
+													sure = sure * pd.getCalismaSuaSaati() / AylikPuantaj.getGunlukCalismaSuresi();
 												++raporGunSayisi;
 											}
 
@@ -21398,7 +21396,7 @@ public class OrtakIslemler implements Serializable {
 												if (sure > 0 || pdksVardiyaGun.getIzin() != null) {
 													Tatil tatilIzin = pdksVardiyaGun.getTatil();
 													pdksVardiyaGun.setTatil(tatilGunleriMap.get(pdksVardiyaGun.getVardiyaDateStr()));
-													kontrolSure = getVardiyaIzinSuresi(izinTarihKontrolTarihi == null ? sure : 0.0d, pdksVardiyaGun, personelDenklestirme, izinTarihKontrolTarihi);
+													kontrolSure = getVardiyaIzinSuresi(izinTarihKontrolTarihi == null ? sure : 0.0d, pdksVardiyaGun, pd, izinTarihKontrolTarihi);
 													pdksVardiyaGun.setTatil(tatilIzin);
 													if (pdksVardiyaGun.isIzinli() && izinSaat != null && (pdksVardiyaGun.getVardiya().isIzinVardiya() || kontrolSure > izinSaat))
 														kontrolSure = izinSaat;
@@ -21545,7 +21543,7 @@ public class OrtakIslemler implements Serializable {
 											}
 										}
 									}
-									double kontrolSure = getVardiyaIzinSuresi(yarimGun - arifeSure, pdksVardiyaGun, personelDenklestirme, null);
+									double kontrolSure = getVardiyaIzinSuresi(yarimGun - arifeSure, pdksVardiyaGun, pd, null);
 									izinSuresi += kontrolSure;
 								}
 							}
@@ -21641,7 +21639,7 @@ public class OrtakIslemler implements Serializable {
 						if (puantajData.getResmiTatilToplami() > 0)
 							resmiTatilSure = puantajData.getResmiTatilToplami();
 						else {
-							if (resmiTatilSure == 0 && personelDenklestirme != null && personelDenklestirme.getDurum().booleanValue())
+							if (resmiTatilSure == 0 && pd != null && pd.getDurum().booleanValue())
 								resmiTatilSure = tatilSuresi;
 							if (rtYuvarla != null)
 								resmiTatilSure = PdksUtil.setSureDoubleTypeRounded(resmiTatilSure, rtYuvarla);
@@ -21678,8 +21676,8 @@ public class OrtakIslemler implements Serializable {
 
 						}
 					}
-					boolean bakiyeSifirlaDurum = personelDenklestirme != null && personelDenklestirme.getBakiyeSifirlaDurum() != null && personelDenklestirme.getBakiyeSifirlaDurum().booleanValue();
-					boolean mesaiDevret = personelDenklestirme.getFazlaMesaiIzinKullan() && personel.isCalisiyorGun(puantajData.getSonGun());
+					boolean bakiyeSifirlaDurum = pd != null && pd.getBakiyeSifirlaDurum() != null && pd.getBakiyeSifirlaDurum().booleanValue();
+					boolean mesaiDevret = pd.getFazlaMesaiIzinKullan() && personel.isCalisiyorGun(puantajData.getSonGun());
 					PersonelDenklestirme hesaplananDenklestirme = null;
 
 					hesaplananDenklestirme = puantajData.getPersonelDenklestirme(fazlaMesaiOde, hesaplananBuAySure, gecenAydevredenSure, denklestirmeAy, departman, dt);
@@ -21701,7 +21699,7 @@ public class OrtakIslemler implements Serializable {
 						}
 						hesaplananDenklestirme.setDevredenSure(0.0d);
 					}
-					double personelDevredenSure = personelDenklestirme == null || personelDenklestirme.getBakiyeSifirlaDurum() == null || personelDenklestirme.getBakiyeSifirlaDurum().booleanValue() == false ? hesaplananDenklestirme.getDevredenSure() : 0.0d;
+					double personelDevredenSure = pd == null || pd.getBakiyeSifirlaDurum() == null || pd.getBakiyeSifirlaDurum().booleanValue() == false ? hesaplananDenklestirme.getDevredenSure() : 0.0d;
 					puantajData.setDevredenSure(PdksUtil.setSureDoubleTypeRounded(personelDevredenSure, yarimYuvarla));
 
 					if (puantajData.getDevredenSure() > 0.0d && !personelCalisiyor) {
@@ -21727,13 +21725,13 @@ public class OrtakIslemler implements Serializable {
 					if (mesaiDevret) {
 						// TODO KISMI UCRET_ODE
 						double aylikNetFazlaMesai = new BigDecimal(puantajData.getDevredenSure() + puantajData.getFazlaMesaiSure()).doubleValue();
-						boolean otomatikFazlaCalismaOnaylansin = personelDenklestirme.getCalismaModeliAy() != null ? personelDenklestirme.getCalismaModeliAy().isOtomatikFazlaCalismaOnaylansinmi() : true;
+						boolean otomatikFazlaCalismaOnaylansin = pd.getCalismaModeliAy() != null ? pd.getCalismaModeliAy().isOtomatikFazlaCalismaOnaylansinmi() : true;
 						Double ucretiOdenenMesaiSureAylik = otomatikFazlaCalismaOnaylansin ? puantajData.getUcretiOdenenMesaiSure() : 0.0d;
 						aylikNetFazlaMesai = aylikNetFazlaMesai - ucretiOdenenMesaiSureAylik;
-						if (personelDenklestirme.isFazlaMesaiIzinKullanacak() && personelDenklestirme.getKismiOdemeSure() != null && personelDenklestirme.getKismiOdemeSure() > 0 && personelDenklestirme.getKismiOdemeSure() <= aylikNetFazlaMesai) {
-							BigDecimal devredenSure = new BigDecimal(aylikNetFazlaMesai - personelDenklestirme.getKismiOdemeSure());
+						if (pd.isFazlaMesaiIzinKullanacak() && pd.getKismiOdemeSure() != null && pd.getKismiOdemeSure() > 0 && pd.getKismiOdemeSure() <= aylikNetFazlaMesai) {
+							BigDecimal devredenSure = new BigDecimal(aylikNetFazlaMesai - pd.getKismiOdemeSure());
 							puantajData.setDevredenSure(devredenSure.doubleValue());
-							puantajData.setFazlaMesaiSure(PdksUtil.setSureDoubleTypeRounded(personelDenklestirme.getKismiOdemeSure() + ucretiOdenenMesaiSureAylik, ucmYuvarla));
+							puantajData.setFazlaMesaiSure(PdksUtil.setSureDoubleTypeRounded(pd.getKismiOdemeSure() + ucretiOdenenMesaiSureAylik, ucmYuvarla));
 							puantajData.setUcretiOdenenMesaiSure(0.0d);
 						} else {
 							puantajData.setDevredenSure(aylikNetFazlaMesai);
@@ -21742,22 +21740,22 @@ public class OrtakIslemler implements Serializable {
 						}
 
 					}
-					if (((loginUser.isIK() || loginUser.isAdmin()) && personelDenklestirme.getDevredenSure() == null) || (kaydet && !personelDenklestirme.isKapandi(loginUser))) {
+					if (((loginUser.isIK() || loginUser.isAdmin()) && pd.getDevredenSure() == null) || (kaydet && !pd.isKapandi(loginUser))) {
 						if (puantajData.getPersonelDenklestirme().getId() != null) {
 							try {
-								personelDenklestirme = (PersonelDenklestirme) pdksEntityController.getSQLParamByFieldObject(PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.COLUMN_NAME_ID, puantajData.getPersonelDenklestirme().getId(), PersonelDenklestirme.class, session);
+								pd = (PersonelDenklestirme) pdksEntityController.getSQLParamByFieldObject(PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.COLUMN_NAME_ID, puantajData.getPersonelDenklestirme().getId(), PersonelDenklestirme.class, session);
 							} catch (Exception ex) {
 								logger.error(ex);
 							}
-							if (personelDenklestirme != null && kaydet) {
-								setPersonelDenklestirmeDevir(personelDenklestirme, null, session);
-								personelDenklestirme.setGuncellendi(Boolean.FALSE);
-								if (personelDenklestirme.getCalismaModeliAy() == null || personelDenklestirme.getCalismaModeli().getToplamGunGuncelle().equals(Boolean.FALSE))
-									personelDenklestirme.setPlanlanSure(planlanSure);
-								// personelDenklestirme.setDevredenSure(puantajData.getDevredenSure());
-								if (personelDenklestirme.isGuncellendi())
-									saveObject(session, personelDenklestirme);
-								puantajData.setPersonelDenklestirme(personelDenklestirme);
+							if (pd != null && kaydet) {
+								setPersonelDenklestirmeDevir(pd, null, session);
+								pd.setGuncellendi(Boolean.FALSE);
+								if (pd.getCalismaModeliAy() == null || pd.getCalismaModeli().getToplamGunGuncelle().equals(Boolean.FALSE))
+									pd.setPlanlanSure(planlanSure);
+								// pd.setDevredenSure(puantajData.getDevredenSure());
+								if (pd.isGuncellendi())
+									saveObject(session, pd);
+								puantajData.setPersonelDenklestirme(pd);
 							}
 						}
 
@@ -21778,7 +21776,7 @@ public class OrtakIslemler implements Serializable {
 			logger.error(exx);
 			exx.printStackTrace();
 		}
-		return personelDenklestirme;
+		return pd;
 
 	}
 
