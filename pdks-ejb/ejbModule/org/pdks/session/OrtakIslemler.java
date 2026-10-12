@@ -15616,6 +15616,7 @@ public class OrtakIslemler implements Serializable {
 		veriMap.put("id", pd.getId());
 		veriMap.put("durum", pd.getDurum() ? 1 : 0);
 		veriMap.put("onaylandi", pd.isOnaylandi() ? 1 : 0);
+		veriMap.put("denklestirme", pd.isDenklestirme() ? 1 : 0);
 		veriMap.put("guncelleyen", user != null ? user.getId() : null);
 		veriMap.put("devredenSure", pd.getDevredenSure());
 		if (json == false || pd.isFazlaMesaiEkran()) {

@@ -388,6 +388,10 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			veriMap.put("spPersonelDenklestirmeGuncelleVar", spPersonelDenklestirmeGuncelleVar);
 			veriMap.put("user", getPdksUser());
 			veriMap.put("planEkran", Boolean.TRUE);
+			if (object instanceof PersonelDenklestirme) {
+				PersonelDenklestirme pd = (PersonelDenklestirme) object;
+				pd.setFazlaMesaiEkran(false);
+			}
 			islem = ortakIslemler.saveOrUpdate(session, veriMap, object);
 			veriMap = null;
 		}
@@ -1432,6 +1436,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		vg.setBitDakika(null);
 		Personel personel = personelAylikPuantaj.getPdksPersonel();
 		PersonelDenklestirme seciliPersonelDenklestirme = personelAylikPuantaj.getPersonelDenklestirme();
+		seciliPersonelDenklestirme.setFazlaMesaiEkran(false);
 		boolean sutIzin = personel.isSutIzniKullan() || seciliPersonelDenklestirme.isSutIzniVar();
 		if (!sutIzin && AylikPuantaj.getGebelikGuncelle()) {
 			if (vg.getVardiya().isGebelikMi() || vg.isGebeMi())
@@ -10945,7 +10950,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		spPersonelDenklestirmeJsonVar = ortakIslemler.isExisStoreProcedure(FazlaMesaiOrtakIslemler.SP_UPDATE_PER_DENKLESME_JSON, session);
 
 		FazlaMesaiOrtakIslemler.setSpPersonelDenklestirmeJsonVar(spPersonelDenklestirmeJsonVar);
- 		FazlaMesaiOrtakIslemler.setSpCalismaSaatGuncelleVar(spCalismaSaatGuncelleVar);
+		FazlaMesaiOrtakIslemler.setSpCalismaSaatGuncelleVar(spCalismaSaatGuncelleVar);
 		FazlaMesaiOrtakIslemler.setSpPersonelDenklestirmeGuncelleVar(spPersonelDenklestirmeGuncelleVar);
 		topluGuncelleme = false;
 		setPdksUser(authenticatedUser);
@@ -11970,7 +11975,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		pd.setOnaylandi(Boolean.FALSE);
 		pd.setGuncellemeTarihi(new Date());
 		pd.setDevredenSure(null);
-		saveOrUpdate(pd);
+		pdksEntityController.saveOrUpdate(session, entityManager, pd);
 		if (pd.getPersonelDenklestirmeGecenAy() == null && pd.getCalismaModeliAy() != null) {
 			try {
 				CalismaModeli cm = pd.getCalismaModeliAy().getCalismaModeli();
