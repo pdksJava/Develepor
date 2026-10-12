@@ -805,13 +805,17 @@ public class VardiyaGun extends BaseObject {
 
 	@Transient
 	public HareketKGS getGirisHareket() {
-		HareketKGS hareket = girisHareketleri != null ? girisHareketleri.get(0) : null;
+		HareketKGS hareket = ilkGiris;
+		if (hareket == null)
+			hareket = girisHareketleri != null ? girisHareketleri.get(0) : null;
 		return hareket;
 	}
 
 	@Transient
 	public HareketKGS getCikisHareket() {
-		HareketKGS hareket = cikisHareketleri != null ? cikisHareketleri.get(cikisHareketleri.size() - 1) : null;
+		HareketKGS hareket = sonCikis;
+		if (hareket == null)
+			hareket = cikisHareketleri != null ? cikisHareketleri.get(cikisHareketleri.size() - 1) : null;
 		return hareket;
 	}
 

@@ -117,7 +117,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 		Integer gunSayisi = null, adetSayisi = null, dakika = null;
 		String parametreler = null;
 		hepsiniGoster = true;
- 		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+		HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		if (req != null && req.getParameterNames() != null) {
 			Enumeration<String> paramNames = req.getParameterNames();
 			while (paramNames.hasMoreElements()) {
@@ -824,7 +824,6 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					Date giris = null;
 					try {
 						if (girisAdet > 0) {
-
 							HareketKGS girisHareket = vg.getGirisHareket();
 							giris = girisHareket.getOrjinalZaman();
 							if (giris.before(vardiya.getVardiyaTelorans1BasZaman()))
@@ -938,6 +937,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 				Date date2 = bitisTarih == null ? date : bitisTarih;
 				Date basTarih = ortakIslemler.tariheGunEkleCikar(cal, date, -2);
 				Date bitTarih = ortakIslemler.tariheGunEkleCikar(cal, date2, 1);
+				HashMap<Long, Personel> perMap = new HashMap<Long, Personel>();
 				TreeMap<String, VardiyaGun> vardiyaMap = null;
 				try {
 					vardiyaMap = ortakIslemler.getIslemVardiyalar(tumPersoneller, basTarih, bitTarih, Boolean.FALSE, session, Boolean.TRUE);
@@ -947,6 +947,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 				}
 				vardiyaList = vardiyaMap != null ? new ArrayList<VardiyaGun>(vardiyaMap.values()) : new ArrayList<VardiyaGun>();
 				ortakIslemler.sonrakiGunVardiyalariAyikla(date2, vardiyaList, session);
+				tarih1 = PdksUtil.tariheGunEkleCikar(basTarih, -1);
 				for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 					VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
 					if (pdksVardiyaGun.getVardiyaDate().before(date) || pdksVardiyaGun.getVardiyaDate().after(date2)) {
@@ -959,6 +960,8 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							continue;
 						}
 					}
+
+					perMap.put(pdksVardiyaGun.getPersonel().getId(), pdksVardiyaGun.getPersonel());
 					if (tarih1 == null || pdksVardiyaGun.getIslemVardiya().getVardiyaTelorans1BasZaman().getTime() < tarih1.getTime())
 						tarih1 = pdksVardiyaGun.getIslemVardiya().getVardiyaTelorans1BasZaman();
 
@@ -966,6 +969,9 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 						tarih2 = pdksVardiyaGun.getIslemVardiya().getVardiyaTelorans2BitZaman();
 
 				}
+				if (tumPersoneller.size() > perMap.size())
+					tumPersoneller = new ArrayList<Personel>(perMap.values());
+				perMap = null;
 				if (tarih1 != null && tarih2 != null) {
 
 					List<Long> kapiIdler = ortakIslemler.getPdksDonemselKapiIdler(tarih1, tarih2, session);
@@ -996,7 +1002,7 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 
 						}
 						if (kgsList.size() > 1)
-							kgsList = PdksUtil.sortListByAlanAdi(kgsList, "zaman", Boolean.FALSE);
+							kgsList = PdksUtil.sortListByAlanAdi(kgsList, "orjinalZaman", Boolean.FALSE);
 
 					}
 
@@ -1039,14 +1045,12 @@ public class DevamsizlikRaporuHome extends EntityHome<VardiyaGun> implements Ser
 							vardiyaGun.setGecersizHareketler(null);
 							Long id = vardiyaGun.getPersonel().getId();
 							if (hareketMap.containsKey(id)) {
-								List<HareketKGS> list = new ArrayList<HareketKGS>();
-								list.addAll(hareketMap.get(id));
+								List<HareketKGS> list = hareketMap.get(id);
 								for (Iterator iterator1 = list.iterator(); iterator1.hasNext();) {
 									HareketKGS kgsHareket = (HareketKGS) iterator1.next();
 									if (vardiyaGun.addHareket(kgsHareket, Boolean.FALSE))
 										iterator1.remove();
 								}
-								list = null;
 							}
 
 							boolean yaz = Boolean.TRUE;

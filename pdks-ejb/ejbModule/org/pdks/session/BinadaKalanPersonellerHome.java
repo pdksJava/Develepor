@@ -259,6 +259,7 @@ public class BinadaKalanPersonellerHome extends EntityHome<VardiyaGun> implement
 		Date tarih2 = null;
 		Date tarih3 = null;
 		Date tarih4 = null;
+		tarih1 = PdksUtil.tariheGunEkleCikar(date, -1);
 		for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 			VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
 			if (PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) != 0) {

@@ -220,7 +220,7 @@ public class GirisCikisKontrolHome extends EntityHome<VardiyaGun> implements Ser
 		// buyuk tarih araligini kullanacaktir
 		// bu araliktaki tum hareketleri cekecektir.
 		Date simdikiZaman = Calendar.getInstance().getTime();
-
+		tarih1 = PdksUtil.tariheGunEkleCikar(date, -1);
 		for (Iterator iterator = vardiyaList.iterator(); iterator.hasNext();) {
 			VardiyaGun pdksVardiyaGun = (VardiyaGun) iterator.next();
 			if (PdksUtil.tarihKarsilastirNumeric(pdksVardiyaGun.getVardiyaDate(), date) != 0) {
