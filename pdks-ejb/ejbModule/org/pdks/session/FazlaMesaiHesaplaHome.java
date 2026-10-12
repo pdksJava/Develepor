@@ -263,6 +263,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			veriMap.put("spPersonelDenklestirmeGuncelleVar", spPersonelDenklestirmeGuncelleVar);
 			veriMap.put("user", getPdksUser());
 			veriMap.put("planEkran", Boolean.FALSE);
+			if (object instanceof PersonelDenklestirme) {
+				PersonelDenklestirme pd = (PersonelDenklestirme) object;
+				pd.setFazlaMesaiEkran(true);
+			}
 			islem = ortakIslemler.saveOrUpdate(session, veriMap, object);
 			veriMap = null;
 		}
@@ -2705,13 +2709,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 														vg.setGuncellemeTarihi(guncellemeTarihi);
 													}
 												}
-												if (vg.isGuncellendi()) {
-													// if (spVardiyaGuncellemeVar)
-													saveVardiyaGunMap.put(vg.getId(), vg);
-													// else
-													// pdksEntityController.saveOrUpdate(session, null, vg);
-													// flush = true;
-												}
+												if (vg.isGuncellendi())  
+	 												saveVardiyaGunMap.put(vg.getId(), vg);
+												 
 											}
 										}
 									}

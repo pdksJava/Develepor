@@ -1412,6 +1412,9 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		return personelDenklestirme;
 	}
 
+	/**
+	 * @param pd
+	 */
 	public void setPersonelDenklestirmeData(PersonelDenklestirme pd) {
 		if (pd != null) {
 			this.personelDenklestirme = pd;
@@ -1424,9 +1427,13 @@ public class AylikPuantaj implements Serializable, Cloneable {
 			this.setSaatToplami(pd.getHesaplananSure());
 			this.setDevredenSure(pd.getDevredenSure());
 			this.setPersonelDenklestirme(pd);
+			pd.setFazlaMesaiEkran(fazlaMesaiEkran);
 		}
 	}
 
+	/**
+	 * @param pd
+	 */
 	public void setPersonelDenklestirme(PersonelDenklestirme pd) {
 		if (pd != null) {
 			pd.setGuncellendi(false);
@@ -1435,7 +1442,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 			this.setCalismaModeliAy(pd.getCalismaModeliAy());
 			if (calismaModeliAy != null)
 				this.setCalismaModeli(calismaModeliAy.getCalismaModeli());
-
+			pd.setFazlaMesaiEkran(fazlaMesaiEkran);
 		}
 		this.personelDenklestirme = pd;
 	}

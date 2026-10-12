@@ -8658,7 +8658,7 @@ public class OrtakIslemler implements Serializable {
 		Parameter parameter = null;
 		HashMap fields = new HashMap();
 		if (list != null & !list.isEmpty()) {
- 			boolean update = false;
+			boolean update = false;
 			StringBuilder sb = new StringBuilder("select ");
 			boolean personelIdVar = authenticatedUser != null && authenticatedUser.isAdmin();
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
@@ -8668,7 +8668,7 @@ public class OrtakIslemler implements Serializable {
 					iterator.remove();
 					break;
 				}
- 			}
+			}
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				Tanim tanim = (Tanim) iterator.next();
 				String erpAlan = (PdksUtil.hasStringValue(tanim.getErpKodu()) ? tanim.getErpKodu() : "null");
@@ -15572,26 +15572,13 @@ public class OrtakIslemler implements Serializable {
 			if (pd.getGuncelleyenUser() != null)
 				if (user == null || (authenticatedUser == null && user.isAdmin()))
 					user = pd.getGuncelleyenUser();
-			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
-			veriMap.put("id", pd.getId());
-			veriMap.put("durum", pd.getDurum() ? 1 : 0);
-			veriMap.put("guncelleyen", user != null ? user.getId() : null);
-			veriMap.put("aksamVardiyaSaatSayisi", pd.getAksamVardiyaSaatSayisi());
-			veriMap.put("aksamVardiyaSayisi", pd.getAksamVardiyaSayisi());
-			veriMap.put("devredenSure", pd.getDevredenSure());
-			veriMap.put("eksikCalismaSure", pd.getEksikCalismaSure());
-			veriMap.put("fazlaMesaiSure", pd.getFazlaMesaiSure());
-			veriMap.put("haftaCalismaSuresi", pd.getHaftaCalismaSuresi());
-			veriMap.put("hesaplananSure", pd.getHesaplananSure());
-			veriMap.put("kesilenSure", pd.getKesilenSure());
-			veriMap.put("odenenSure", pd.getOdenenSure());
-			veriMap.put("planlanSure", pd.getPlanlanSure());
-			veriMap.put("resmiTatilSure", pd.getResmiTatilSure());
+			LinkedHashMap<String, Object> veriMap = null;
 			Gson gson = new Gson();
 			List<PersonelDenklestirme> list = null;
 			LinkedHashMap<String, Object> veriJsonMap = null;
 
 			if (FazlaMesaiOrtakIslemler.isSpPersonelDenklestirmeJsonVar()) {
+				veriMap = getPersonelDenklestirmeVeriMap(pd, user, true);
 				veriJsonMap = new LinkedHashMap<String, Object>();
 				try {
 					veriJsonMap.put("json", gson.toJson(veriMap));
@@ -15601,6 +15588,7 @@ public class OrtakIslemler implements Serializable {
 				veriJsonMap = null;
 			} else if (FazlaMesaiOrtakIslemler.isSpPersonelDenklestirmeGuncelleVar())
 				try {
+					veriMap = getPersonelDenklestirmeVeriMap(pd, user, false);
 					list = pdksEntityController.execSPList(session, veriMap, FazlaMesaiOrtakIslemler.SP_UPDATE_PERSONEL_DENKLESME_GUNCELLEME, PersonelDenklestirme.class);
 				} catch (Exception e2) {
 				}
@@ -15615,6 +15603,34 @@ public class OrtakIslemler implements Serializable {
 		}
 		return islem;
 
+	}
+
+	/**
+	 * @param pd
+	 * @param user
+	 * @param json
+	 * @return
+	 */
+	private LinkedHashMap<String, Object> getPersonelDenklestirmeVeriMap(PersonelDenklestirme pd, User user, boolean json) {
+		LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
+		veriMap.put("id", pd.getId());
+		veriMap.put("durum", pd.getDurum() ? 1 : 0);
+		veriMap.put("onaylandi", pd.isOnaylandi() ? 1 : 0);
+		veriMap.put("guncelleyen", user != null ? user.getId() : null);
+		veriMap.put("devredenSure", pd.getDevredenSure());
+		if (json == false || pd.isFazlaMesaiEkran()) {
+			veriMap.put("aksamVardiyaSaatSayisi", pd.getAksamVardiyaSaatSayisi());
+			veriMap.put("aksamVardiyaSayisi", pd.getAksamVardiyaSayisi());
+			veriMap.put("eksikCalismaSure", pd.getEksikCalismaSure());
+			veriMap.put("fazlaMesaiSure", pd.getFazlaMesaiSure());
+			veriMap.put("haftaCalismaSuresi", pd.getHaftaCalismaSuresi());
+			veriMap.put("hesaplananSure", pd.getHesaplananSure());
+			veriMap.put("kesilenSure", pd.getKesilenSure());
+			veriMap.put("odenenSure", pd.getOdenenSure());
+			veriMap.put("planlanSure", pd.getPlanlanSure());
+			veriMap.put("resmiTatilSure", pd.getResmiTatilSure());
+		}
+		return veriMap;
 	}
 
 	/**
