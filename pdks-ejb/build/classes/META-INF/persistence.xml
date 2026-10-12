@@ -6,7 +6,10 @@
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<jta-data-source>jdbc/pdks</jta-data-source>
 		<properties>
-			<!-- CANLI <property name="hibernate.hbm2ddl.auto" value="update"/> <property name="javax.persistence.query.timeout" value="30" /> Dev -->
+			<!-- CANLI <property name="hibernate.hbm2ddl.auto" value="update"/> 
+						<property name="hibernate.connection.release_mode" value="on_close" />
+			
+			<property name="javax.persistence.query.timeout" value="30" /> Dev -->
 			<property name="hibernate.format_sql" value="false" />
 			<property name="hibernate.show_sql" value="false" />
  			<property name="hibernate.max_fetch_depth" value="2" />
@@ -17,11 +20,10 @@
 			<property name="hibernate.query.timeout" value="30" />
 			<property name="hibernate.connection.characterEncoding" value="UTF-8" />
 			<!-- glassfish -->
-			<property name="hibernate.connection.release_mode" value="on_close" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect" />
 			<property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.SunONETransactionManagerLookup" />
 			<property name="hibernate.connection.autoReconnect" value="true" />
-			<property name="javax.persistence.query.timeout" value="30000" />
+			<property name="javax.persistence.query.timeout" value="10000" />
 
 		</properties>
 	</persistence-unit>
