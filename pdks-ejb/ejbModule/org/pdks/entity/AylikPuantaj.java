@@ -83,14 +83,6 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	private boolean kaydet, calisiyor = true, fazlaMesaiEkran = false, gorevYeriSec = false, yoneticiZorunlu = true, secili, onayDurum, vardiyaOlustu = Boolean.FALSE, vardiyaDegisti = Boolean.FALSE, fiiliHesapla = Boolean.FALSE;
 
-	public boolean isFazlaMesaiEkran() {
-		return fazlaMesaiEkran;
-	}
-
-	public void setFazlaMesaiEkran(boolean fazlaMesaiEkran) {
-		this.fazlaMesaiEkran = fazlaMesaiEkran;
-	}
-
 	private boolean donemBitti = Boolean.TRUE, ayrikHareketVar = Boolean.FALSE, fazlaMesaiIzinKontrol = Boolean.TRUE, gebeDurum = Boolean.FALSE, sutIzniDurumu = Boolean.FALSE;
 
 	private Double saatToplami = 0d, resmiTatilKanunenEklenenSure = 0d, resmiTatilToplami = 0d, haftaCalismaSuresi = 0d, icapciMesaiSure = 0d, ucretiOdenenMesaiSure = 0d, fazlaMesaiSure = 0d, odenenSure = 0d, planlananSure = 0d, offSure = 0.0d;
@@ -1550,4 +1542,11 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		this.aylikBrutUcret = aylikBrutUcret;
 	}
 
+	public boolean isFazlaMesaiEkran() {
+		return fazlaMesaiEkran;
+	}
+
+	public void setFazlaMesaiEkran(boolean fazlaMesaiEkran) {
+		this.fazlaMesaiEkran = fazlaMesaiEkran;
+	}
 }

@@ -44,7 +44,7 @@ public class PersonelDenklestirmeTasiyici extends BaseObject {
 
 	private int denklestirmeHaftasi = 0;
 
-	private Boolean mesaiSapDurum = Boolean.FALSE, partTime = Boolean.FALSE;
+	private Boolean mesaiSapDurum = Boolean.FALSE, partTime = Boolean.FALSE, fazlaMesaiEkran = Boolean.FALSE;
 	private int yarimYuvarla = PdksUtil.getYarimYuvarlaLast();
 	private TreeMap<String, Integer> genelHaftaMap;
 	private TreeMap<Integer, TreeMap> vardiyaHaftaMap;
@@ -487,6 +487,14 @@ public class PersonelDenklestirmeTasiyici extends BaseObject {
 	@Transient
 	public String getTableName() {
 		return null;
+	}
+
+	public Boolean getFazlaMesaiEkran() {
+		return fazlaMesaiEkran;
+	}
+
+	public void setFazlaMesaiEkran(Boolean fazlaMesaiEkran) {
+		this.fazlaMesaiEkran = fazlaMesaiEkran;
 	}
 
 }

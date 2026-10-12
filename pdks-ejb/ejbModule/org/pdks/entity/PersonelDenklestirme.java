@@ -93,7 +93,7 @@ public class PersonelDenklestirme extends BaseObject {
 
 	private Boolean suaDurum, fazlaMesaiIzinKullan = Boolean.FALSE, fazlaMesaiOde, sutIzniDurum, partTime, bakiyeSifirlaDurum = Boolean.FALSE;
 
-	private boolean erpAktarildi = Boolean.FALSE, onaylandi = Boolean.FALSE, denklestirme;
+	private boolean erpAktarildi = Boolean.FALSE, onaylandi = Boolean.FALSE, denklestirme, fazlaMesaiEkran = false;
 
 	// private HashMap<PersonelDurumTipi, PersonelDonemselDurum> donemselDurumMap = new HashMap<PersonelDurumTipi, PersonelDonemselDurum>();
 	private HashMap<PersonelDurumTipi, List<PersonelDonemselDurum>> donemselDurumlarMap = new HashMap<PersonelDurumTipi, List<PersonelDonemselDurum>>();
@@ -1082,6 +1082,15 @@ public class PersonelDenklestirme extends BaseObject {
 
 	public void setPersonelDenklestirmeDevir(PersonelDenklestirmeDevir personelDenklestirmeDevir) {
 		this.personelDenklestirmeDevir = personelDenklestirmeDevir;
+	}
+
+	@Transient
+	public boolean isFazlaMesaiEkran() {
+		return fazlaMesaiEkran;
+	}
+
+	public void setFazlaMesaiEkran(boolean fazlaMesaiEkran) {
+		this.fazlaMesaiEkran = fazlaMesaiEkran;
 	}
 
 	@Transient

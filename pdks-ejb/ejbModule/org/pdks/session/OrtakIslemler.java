@@ -8658,9 +8658,17 @@ public class OrtakIslemler implements Serializable {
 		Parameter parameter = null;
 		HashMap fields = new HashMap();
 		if (list != null & !list.isEmpty()) {
-
-			boolean update = false;
+ 			boolean update = false;
 			StringBuilder sb = new StringBuilder("select ");
+			boolean personelIdVar = authenticatedUser != null && authenticatedUser.isAdmin();
+			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+				Tanim tanim = (Tanim) iterator.next();
+				if (tanim.getKodu().equalsIgnoreCase("PERSONEL_ID")) {
+					personelIdVar = true;
+					iterator.remove();
+					break;
+				}
+ 			}
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				Tanim tanim = (Tanim) iterator.next();
 				String erpAlan = (PdksUtil.hasStringValue(tanim.getErpKodu()) ? tanim.getErpKodu() : "null");
@@ -8683,8 +8691,10 @@ public class OrtakIslemler implements Serializable {
 						sb.append(" where " + PersonelERPDB.COLUMN_NAME_ISTEN_AYRILMA_TARIHI + " >= :t ");
 					} else {
 						tarih = getERPManuelTarih(tarih, null);
-						sb.append(" where " + PersonelERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + " >= :t ");
+						sb.append(" where " + PersonelERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + " >= :t");
 					}
+					if (personelIdVar)
+						sb.append(" or PERSONEL_ID is null");
 					fields.put("t", PdksUtil.getDate(tarih));
 				}
 			}
@@ -10614,6 +10624,7 @@ public class OrtakIslemler implements Serializable {
 					if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
 						++denklestirmeHaftasi;
 						donemi = new PersonelDenklestirmeTasiyici();
+						donemi.setFazlaMesaiEkran(pdks);
 						donemi.setDenklestirmeHaftasi(denklestirmeHaftasi);
 						donemi.setVardiyalar(new ArrayList<VardiyaGun>());
 						departmanDenklestirmeDonemi = new DepartmanDenklestirmeDonemi();
@@ -10704,6 +10715,7 @@ public class OrtakIslemler implements Serializable {
 					List<Long> pdIdList = new ArrayList<Long>(), suaPerIdList = new ArrayList<Long>();
 					for (Personel personel : perList) {
 						PersonelDenklestirmeTasiyici personelDenklestirmeTasiyici = new PersonelDenklestirmeTasiyici();
+						personelDenklestirmeTasiyici.setFazlaMesaiEkran(pdks);
 						String donem = "";
 						CalismaModeli cm = null;
 						DenklestirmeAy denklestirmeAy = null;
@@ -25944,6 +25956,7 @@ public class OrtakIslemler implements Serializable {
 				normalFazlaMesai = 0;
 				++denklestirmeHaftasi;
 				PersonelDenklestirmeTasiyici denklestirme = new PersonelDenklestirmeTasiyici();
+				denklestirme.setFazlaMesaiEkran(personelDenklestirmeTasiyici.getFazlaMesaiEkran());
 				denklestirme.setCalismaModeli(personelDenklestirmeTasiyici.getCalismaModeli());
 				denklestirme.setOncekiVardiyaGun(oncekiVardiyaGun);
 				denklestirme.setPersonel(personelDenklestirmeTasiyici.getPersonel());
