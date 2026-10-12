@@ -1370,9 +1370,9 @@ public class OrtakIslemler implements Serializable {
 				if (list != null && list.isEmpty() == false)
 					denklestirmeList.addAll(list);
 				HashMap<Long, PersonelDenklestirme> pdMap = new HashMap<Long, PersonelDenklestirme>();
-				for (PersonelDenklestirme pd : denklestirmeList) {
-					if (pd != null && pd.getId() != null)
-						pdMap.put(pd.getId(), pd);
+				for (PersonelDenklestirme pd1 : denklestirmeList) {
+					if (pd1 != null && pd1.getId() != null)
+						pdMap.put(pd1.getId(), pd1);
 				}
 				if (pdMap.isEmpty() == false) {
 					List<PersonelDenklestirmeDevir> devirList = pdksEntityController.getSQLParamByFieldList(PersonelDenklestirmeDevir.TABLE_NAME, PersonelDenklestirmeDevir.COLUMN_NAME_PERSONEL_DENKLESTIRME, new ArrayList(pdMap.keySet()), PersonelDenklestirmeDevir.class, session);
