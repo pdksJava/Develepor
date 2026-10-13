@@ -1,4 +1,4 @@
-package org.pdks.session;
+package org.pdks.security.action;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -19,7 +19,10 @@ import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.framework.EntityHome;
 import org.pdks.entity.CertificatePdks;
 import org.pdks.entity.Parameter;
+import org.pdks.security.entity.SSLImport;
 import org.pdks.security.entity.User;
+import org.pdks.session.OrtakIslemler;
+import org.pdks.session.PdksUtil;
 
 import sun.security.x509.X509CertImpl;
 
