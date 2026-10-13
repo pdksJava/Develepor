@@ -4353,6 +4353,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					personelDenklestirme.setFazlaMesaiOde(Boolean.FALSE);
 				personelDenklestirme.setDurum(Boolean.FALSE);
 				personelAylikPuantaj.setPersonelDenklestirme(personelDenklestirme);
+				personelDenklestirme.setOnaylandi(false);
 				saveOrUpdate(personelDenklestirme);
 				if (personelDenklestirme.getCalismaModeliAy() != null && personelDenklestirme.getCalismaModeliAy().getDurum().booleanValue() == false) {
 					CalismaModeliAy cma = personelDenklestirme.getCalismaModeliAy();
@@ -7600,7 +7601,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							}
 							if (personelDenklestirme.getCalismaModeliAy() != null && personelDenklestirme.getPlanlanSure().doubleValue() == 0.0d && personelDenklestirme.getCalismaModeli().getToplamGunGuncelle()) {
 								personelDenklestirme.setPlanlanSure(personelDenklestirme.getCalismaModeliAy().getSure());
-								personelDenklestirme.setOnaylandi(Boolean.FALSE);
 								boolean islemDurum = saveOrUpdate(personelDenklestirme);
 								if (islemDurum)
 									flush = true;
@@ -7654,7 +7654,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								if (!personelDenklestirme.isKapandi())
 									personelDenklestirme.setDevredenSure(null);
 								if (personelDenklestirme.isGuncellendi()) {
-									personelDenklestirme.setOnaylandi(Boolean.FALSE);
 									boolean islemDurum = saveOrUpdate(personelDenklestirme);
 									if (islemDurum)
 										flush = true;
@@ -7967,7 +7966,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								personelDenklestirme.setPlanlanSure(saatToplami);
 							if (!personelDenklestirme.isKapandi())
 								personelDenklestirme.setDevredenSure(null);
-							personelDenklestirme.setOnaylandi(Boolean.FALSE);
 							boolean islemDurum = saveOrUpdate(personelDenklestirme);
 							if (islemDurum)
 								flush = true;
@@ -7982,7 +7980,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 									Double sutIzniSaatSayisi = sutIzniGuncelle(aylikPuantaj, sutIzniDurum);
 									personelDenklestirme.setSutIzniSaatSayisi(sutIzniSaatSayisi);
 									personelDenklestirme.setSutIzniDurum(true);
-									personelDenklestirme.setOnaylandi(Boolean.FALSE);
 									boolean islemDurum = saveOrUpdate(personelDenklestirme);
 									if (islemDurum)
 										flush = true;
@@ -7994,7 +7991,6 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 							if (personelDenklestirme.getCalismaModeliAy() == null && personel.getCalismaModeli() != null && modelMap.containsKey(personel.getCalismaModeli().getId())) {
 								personelDenklestirme.setCalismaModeliAy(modelMap.get(personel.getCalismaModeli().getId()));
-								personelDenklestirme.setOnaylandi(Boolean.FALSE);
 								boolean islemDurum = saveOrUpdate(personelDenklestirme);
 								if (islemDurum)
 									flush = true;
@@ -11838,7 +11834,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				flush = false;
 				ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 				for (PersonelDenklestirme personelDenklestirme : list) {
-					saveOrUpdate(personelDenklestirme);
+					personelDenklestirme.setOnaylandi(false);
+ 					saveOrUpdate(personelDenklestirme);
 					flush = true;
 				}
 				if (flush)
