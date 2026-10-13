@@ -252,18 +252,25 @@ public class CalismaSaatleriHome extends EntityHome<VardiyaGun> implements Seria
 						sil = true;
 				}
 			}
-			if (sil) {
+			if (sil || islemVardiya == null) {
+				if (islemVardiya == null)
+					logger.debug("");
 				iterator.remove();
 				continue;
 			} else if (islemVardiya.isCalisma())
 				logger.debug(pdksVardiyaGun.getVardiyaDateStr() + " " + islemVardiya.getAdi());
 			perIdList.add(personelId);
+			try {
+				if ((tarih1 == null && tarih3 == null) || tarih3 == null || islemVardiya.getVardiyaBasZaman().getTime() < tarih3.getTime()) {
+					tarih3 = islemVardiya.getVardiyaBasZaman();
+					if (tarih1 == null || tarih1.after(islemVardiya.getVardiyaFazlaMesaiBasZaman()))
+						tarih1 = islemVardiya.getVardiyaFazlaMesaiBasZaman();
 
-			if ((tarih1 == null && tarih3 == null) || islemVardiya.getVardiyaBasZaman().getTime() < tarih3.getTime()) {
-				tarih3 = islemVardiya.getVardiyaBasZaman();
-				tarih1 = islemVardiya.getVardiyaFazlaMesaiBasZaman();
-
+				}
+			} catch (Exception e) {
+				logger.error(e);
 			}
+
 			if (pdksVardiyaGun.getId() != null)
 				idList.add(pdksVardiyaGun.getId());
 			if (tarih2 == null || islemVardiya.getVardiyaBitZaman().getTime() > tarih4.getTime()) {

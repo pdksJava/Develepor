@@ -784,7 +784,7 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 					List<HareketKGS> kgsList = new ArrayList<HareketKGS>();
 
-					Date tarih1 = null;
+					Date tarih1 = ortakIslemler.tariheGunEkleCikar(cal, date, -1);
 					Date tarih2 = null;
 					Date tarih3 = null;
 					Date tarih4 = null;
@@ -922,9 +922,11 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						pdksVardiyaGun.setCikisHareketleri(null);
 						pdksVardiyaGun.setGecersizHareketler(null);
 						Vardiya islemVardiya = pdksVardiyaGun.getIslemVardiya();
-						if ((tarih1 == null && tarih3 == null) || islemVardiya.getVardiyaBasZaman().getTime() < tarih3.getTime()) {
+						if ((tarih1 == null && tarih3 == null) || tarih3 == null || islemVardiya.getVardiyaBasZaman().getTime() < tarih3.getTime()) {
 							tarih3 = islemVardiya.getVardiyaBasZaman();
-							tarih1 = islemVardiya.getVardiyaFazlaMesaiBasZaman();
+							if (tarih1 == null || tarih1.after(islemVardiya.getVardiyaFazlaMesaiBasZaman()))
+								tarih1 = islemVardiya.getVardiyaFazlaMesaiBasZaman();
+
 						}
 						if (tarih2 == null || islemVardiya.getVardiyaBitZaman().getTime() > tarih4.getTime()) {
 							tarih4 = islemVardiya.getVardiyaBitZaman();

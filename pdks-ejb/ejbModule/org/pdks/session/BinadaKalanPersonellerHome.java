@@ -267,11 +267,14 @@ public class BinadaKalanPersonellerHome extends EntityHome<VardiyaGun> implement
 				continue;
 
 			}
-			if (!pdksVardiyaGun.getVardiya().isCalisma())
+			Vardiya islemVardiya = pdksVardiyaGun.getIslemVardiya(), vardiya = pdksVardiyaGun.getVardiya();
+
+			if (vardiya == null || !vardiya.isCalisma())
 				continue;
-			if ((tarih1 == null && tarih3 == null) || pdksVardiyaGun.getIslemVardiya().getVardiyaBasZaman().getTime() < tarih3.getTime()) {
-				tarih3 = pdksVardiyaGun.getIslemVardiya().getVardiyaBasZaman();
-				tarih1 = pdksVardiyaGun.getIslemVardiya().getVardiyaFazlaMesaiBasZaman();
+			if ((tarih1 == null && tarih3 == null) || tarih3 == null || islemVardiya.getVardiyaBasZaman().getTime() < tarih3.getTime()) {
+				tarih3 = islemVardiya.getVardiyaBasZaman();
+				if (tarih1 == null || tarih1.after(islemVardiya.getVardiyaFazlaMesaiBasZaman()))
+					tarih1 = islemVardiya.getVardiyaFazlaMesaiBasZaman();
 
 			}
 
