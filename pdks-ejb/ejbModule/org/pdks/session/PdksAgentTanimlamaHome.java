@@ -101,7 +101,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 
 			if (mailId != null || PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
 
-	 			if (pdksEntityController.isSessionKapali(null, session)) {
+				if (pdksEntityController.isSessionKapali(null, session)) {
 					if (authenticatedUser != null)
 						session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 					else
@@ -134,14 +134,22 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 			for (Iterator iterator = mailList.iterator(); iterator.hasNext();) {
 				ServiceData sd = (ServiceData) iterator.next();
 				if (sd.getId() != null) {
-					session.delete(sd);
-					flush = true;
+					try {
+						session.refresh(sd);
+						if (sd != null && session.contains(sd)) {
+							session.delete(sd);
+							flush = true;
+						}
+					} catch (Exception e) {
+						continue;
+					}
+
 				}
-
 				MailStatu mailStatu = mailGonderServisData(sd);
-				if (mailStatu != null && mailStatu.getDurum())
-					iterator.remove();
+				if (mailStatu != null && mailStatu.getDurum()) {
 
+					iterator.remove();
+				}
 			}
 			try {
 				if (flush)
