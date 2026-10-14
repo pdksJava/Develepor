@@ -75,6 +75,7 @@ import org.pdks.erp.action.SapRfcManager;
 import org.pdks.erp.entity.SAPSunucu;
 import org.pdks.security.entity.KullaniciSession;
 import org.pdks.security.entity.MenuItemConstant;
+import org.pdks.security.entity.SSLImport;
 import org.pdks.security.entity.User;
 import org.pdks.security.entity.UserDigerOrganizasyon;
 import org.pdks.security.entity.UserRoles;
@@ -84,7 +85,6 @@ import org.pdks.session.LDAPUserManager;
 import org.pdks.session.OrtakIslemler;
 import org.pdks.session.PdksEntityController;
 import org.pdks.session.PdksUtil;
-import org.pdks.session.SSLImport;
 import org.pdks.system.filter.RequestEncodingFilter;
 
 import com.google.gson.Gson;

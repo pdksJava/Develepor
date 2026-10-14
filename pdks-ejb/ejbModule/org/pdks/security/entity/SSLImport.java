@@ -1,4 +1,4 @@
-package org.pdks.session;
+package org.pdks.security.entity;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -30,6 +30,7 @@ import javax.net.ssl.X509TrustManager;
 import oracle.net.jndi.TrustManager;
 
 import org.apache.log4j.Logger;
+import org.pdks.session.PdksUtil;
 
 public class SSLImport implements Serializable {
 

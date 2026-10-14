@@ -16,8 +16,8 @@ import org.jboss.seam.annotations.async.Asynchronous;
 import org.jboss.seam.annotations.async.Expiration;
 import org.jboss.seam.annotations.async.IntervalCron;
 import org.jboss.seam.async.QuartzTriggerHandle;
+import org.pdks.security.entity.SSLImport;
 import org.pdks.session.PdksUtil;
-import org.pdks.session.SSLImport;
 
 @Name("sertifikaSSLKontrol")
 @AutoCreate
