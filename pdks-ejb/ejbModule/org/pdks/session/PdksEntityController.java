@@ -631,18 +631,20 @@ public class PdksEntityController implements Serializable {
 	 */
 	public TreeMap getTreeMapByList(List list, String method, boolean uzerineYaz) {
 		TreeMap treeMap = new TreeMap();
-		for (Iterator iter = list.iterator(); iter.hasNext();) {
-			Object object = (Object) iter.next();
-			try {
-				Object key = PdksUtil.getMethodObject(object, method, null);
-				if (key != null)
-					if (uzerineYaz || !treeMap.containsKey(key))
-						treeMap.put(key, object);
-			} catch (Exception e) {
-				logger.error("PDKS hata in : \n");
-				e.printStackTrace();
-				logger.error("PDKS hata out : " + e.getMessage());
+		if (list != null) {
+			for (Iterator iter = list.iterator(); iter.hasNext();) {
+				Object object = (Object) iter.next();
+				try {
+					Object key = PdksUtil.getMethodObject(object, method, null);
+					if (key != null)
+						if (uzerineYaz || !treeMap.containsKey(key))
+							treeMap.put(key, object);
+				} catch (Exception e) {
+					logger.error("PDKS hata in : \n");
+					e.printStackTrace();
+					logger.error("PDKS hata out : " + e.getMessage());
 
+				}
 			}
 		}
 		return treeMap;
@@ -747,10 +749,10 @@ public class PdksEntityController implements Serializable {
 		if (session != null) {
 			logger.debug("session : open --> " + session.isOpen() + " connected --> " + session.isConnected());
 			if (session.isOpen() || session.isConnected()) {
-//				if (authenticatedUser == null)
-//					session.close();
-//				else
-//					connection = session.disconnect();
+				// if (authenticatedUser == null)
+				// session.close();
+				// else
+				// connection = session.disconnect();
 
 			}
 		}

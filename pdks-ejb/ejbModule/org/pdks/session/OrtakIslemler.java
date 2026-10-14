@@ -27248,9 +27248,8 @@ public class OrtakIslemler implements Serializable {
 						ikinciYoneticiOlmazList = pdksEntityController.getObjectByInnerObjectListInLogic(fields, PersonelDinamikAlan.class);
 					} else
 						ikinciYoneticiOlmazList = new ArrayList<Long>();
-
-					TreeMap<Long, User> personelMap = pdksEntityController.getTreeMapByList(pdksEntityController.getSQLParamByAktifFieldList(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, id2List, User.class, session), "getPersonelId", false);
-
+					List<User> userList = id2List != null && id2List.isEmpty() == false ? pdksEntityController.getSQLParamByAktifFieldList(User.TABLE_NAME, User.COLUMN_NAME_PERSONEL, id2List, User.class, session) : null;
+					TreeMap<Long, User> personelMap = pdksEntityController.getTreeMapByList(userList, "getPersonelId", false);
 					if (personelMap.size() <= id2List.size()) {
 						for (AylikPuantaj aylikPuantaj : aylikPuantajList) {
 							if (aylikPuantaj.getYonetici2() == null)
