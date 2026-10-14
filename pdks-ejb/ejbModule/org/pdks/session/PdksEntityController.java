@@ -1612,36 +1612,47 @@ public class PdksEntityController implements Serializable {
 		HashMap<String, Object> fields = new HashMap<String, Object>();
 		sb.append("select * from " + tableName + " " + selectLOCK);
 		Collection collection = null;
+		boolean degerVar = true;
 		if (value instanceof Collection) {
 			collection = (Collection) value;
-			if (collection.size() == 1) {
-				for (Iterator iterator = collection.iterator(); iterator.hasNext();) {
-					Object object = (Object) iterator.next();
-					value = object;
+			if (value != null && collection.isEmpty() == false) {
+				if (collection.size() == 1) {
+					for (Iterator iterator = collection.iterator(); iterator.hasNext();) {
+						Object object = (Object) iterator.next();
+						value = object;
+					}
 				}
-			}
-		}
-		if (value instanceof Collection) {
-			String key = "v";
-			sb.append(" where " + fieldName + " :" + key);
-			fields.put(key, value);
-			list = getSQLParamList((List) collection, sb, key, fields, class1, session);
-		} else {
-			if (PdksUtil.hasStringValue(fieldName)) {
-				if (value != null && value instanceof Boolean)
-					value = (Boolean) value ? 1 : 0;
-				if (fieldName != null) {
+				if (value instanceof Collection) {
 					String key = "v";
-					sb.append(" where " + fieldName + " = :" + key);
+					sb.append(" where " + fieldName + " :" + key);
 					fields.put(key, value);
+					list = getSQLParamList((List) collection, sb, key, fields, class1, session);
 				}
+			} else
+				degerVar = false;
 
-				if (session != null)
-					fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-			}
+		}
+
+		if (PdksUtil.hasStringValue(fieldName)) {
+			if (degerVar) {
+				if (value instanceof Collection == false) {
+					if (value != null && value instanceof Boolean)
+						value = (Boolean) value ? 1 : 0;
+					if (fieldName != null) {
+						String key = "v";
+						sb.append(" where " + fieldName + " = :" + key);
+						fields.put(key, value);
+					}
+				}
+			} else
+				sb.append(" where 1 = 2");
+
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+		}
+		if (list == null)
 			list = getObjectBySQLList(sb.toString(), fields, class1);
 
-		}
 		return list;
 	}
 
