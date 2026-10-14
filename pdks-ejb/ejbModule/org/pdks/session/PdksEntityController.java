@@ -1612,10 +1612,10 @@ public class PdksEntityController implements Serializable {
 		HashMap<String, Object> fields = new HashMap<String, Object>();
 		sb.append("select * from " + tableName + " " + selectLOCK);
 		Collection collection = null;
-		boolean degerVar = true;
+		boolean degerVar = PdksUtil.hasStringValue(fieldName);
 		if (value instanceof Collection) {
 			collection = (Collection) value;
-			if (value != null && collection.isEmpty() == false) {
+			if (degerVar && value != null && collection.isEmpty() == false) {
 				if (collection.size() == 1) {
 					for (Iterator iterator = collection.iterator(); iterator.hasNext();) {
 						Object object = (Object) iterator.next();
@@ -1630,26 +1630,24 @@ public class PdksEntityController implements Serializable {
 				}
 			} else
 				degerVar = false;
-
 		}
 
-		if (PdksUtil.hasStringValue(fieldName)) {
-			if (degerVar) {
-				if (value instanceof Collection == false) {
-					if (value != null && value instanceof Boolean)
-						value = (Boolean) value ? 1 : 0;
-					if (fieldName != null) {
-						String key = "v";
-						sb.append(" where " + fieldName + " = :" + key);
-						fields.put(key, value);
-					}
+		if (degerVar) {
+			if (value instanceof Collection == false) {
+				if (value != null && value instanceof Boolean)
+					value = (Boolean) value ? 1 : 0;
+				if (fieldName != null) {
+					String key = "v";
+					sb.append(" where " + fieldName + " = :" + key);
+					fields.put(key, value);
 				}
-			} else
-				sb.append(" where 1 = 2");
+			}
+		} else
+			sb.append(" where 1 = 2");
 
-			if (session != null)
-				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		}
+		if (session != null)
+			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+
 		if (list == null)
 			list = getObjectBySQLList(sb.toString(), fields, class1);
 
