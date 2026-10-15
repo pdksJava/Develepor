@@ -225,7 +225,7 @@ public class StartupAction implements Serializable {
 			session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		fillAccountPermission(session, null);
 
-		List<MenuItem> menuItemList = pdksEntityController.getSQLParamByFieldList(MenuItem.TABLE_NAME, null, null, MenuItem.class, session);
+		List<MenuItem> menuItemList = pdksEntityController.getSQLTableList(MenuItem.TABLE_NAME, MenuItem.class, session);
 		if (menuItemList.size() > 1)
 			menuItemList = PdksUtil.sortListByAlanAdi(menuItemList, "orderNo", false);
 		HashMap<String, MenuItem> menuItemMapYeni = new HashMap<String, MenuItem>();
@@ -1157,7 +1157,7 @@ public class StartupAction implements Serializable {
 			session = PdksUtil.getSession(entityManager, Boolean.FALSE);
 		HashMap fields = new HashMap();
 		fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List ldapUserList = pdksEntityController.getSQLParamByFieldList(LDAPDomain.TABLE_NAME, null, null, LDAPDomain.class, session);
+		List ldapUserList = pdksEntityController.getSQLTableList(LDAPDomain.TABLE_NAME, LDAPDomain.class, session);
 		LDAPDomain ldapUser = LDAPUserManager.getDefaultLDAPUser();
 		LDAPDomain ldapUserAna = null;
 		if (!ldapUserList.isEmpty()) {

@@ -7545,7 +7545,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 							personelDenklestirme = new PersonelDenklestirme(personel, denklestirmeAy, cma);
 							if (fazlaMesaiHesaplaTumPersonel)
 								personelDenklestirme.setDenklestirme(Boolean.TRUE);
- 							boolean islemDurum = saveOrUpdate(personelDenklestirme);
+							boolean islemDurum = saveOrUpdate(personelDenklestirme);
 							if (islemDurum)
 								flush = true;
 
@@ -7563,7 +7563,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								gunSaatGuncelle = true;
 							}
 							personelDenklestirme.setCalismaModeliAy(cma);
- 							boolean islemDurum = saveOrUpdate(personelDenklestirme);
+							boolean islemDurum = saveOrUpdate(personelDenklestirme);
 							if (islemDurum)
 								flush = true;
 							cmaMap.put(cmaKey, cma);
@@ -11835,7 +11835,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
 				for (PersonelDenklestirme personelDenklestirme : list) {
 					personelDenklestirme.setOnaylandi(false);
- 					saveOrUpdate(personelDenklestirme);
+					saveOrUpdate(personelDenklestirme);
 					flush = true;
 				}
 				if (flush)
@@ -12017,7 +12017,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (session != null)
 				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 			TreeMap<Long, TreeMap<String, IzinTipi>> calIzinMap = new TreeMap<Long, TreeMap<String, IzinTipi>>();
-			List<IzinTipi> izinList = pdksEntityController.getSQLParamByFieldList(IzinTipi.TABLE_NAME, null, null, IzinTipi.class, session);
+			List<IzinTipi> izinList = pdksEntityController.getSQLTableList(IzinTipi.TABLE_NAME, IzinTipi.class, session);
 			for (IzinTipi izinTipi : izinList) {
 				if (izinTipi.getKisaAciklama() != null) {
 					Long key = izinTipi.getDepartman() != null ? izinTipi.getDepartman().getId() : 0L;
