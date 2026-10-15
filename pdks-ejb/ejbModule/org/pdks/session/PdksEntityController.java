@@ -1605,8 +1605,7 @@ public class PdksEntityController implements Serializable {
 	 * @return
 	 */
 	public List getSQLParamByFieldList(String tableName, String fieldName, Object value, Class class1, Session session) {
-
-		StringBuffer sb = new StringBuffer();
+ 		StringBuffer sb = new StringBuffer();
 		List list = null;
 		boolean degerVar = PdksUtil.hasStringValue(fieldName);
 		if (degerVar == false && value == null) {
