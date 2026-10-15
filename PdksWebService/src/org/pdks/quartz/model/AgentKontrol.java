@@ -142,6 +142,7 @@ public final class AgentKontrol extends QuartzJobBean {
 					if (dakikaCalistir && saatCalistir && gunCalistir && haftaCalistir) {
 						try {
 							ThreadAgent ta = new ThreadAgent(pa, dAO);
+							logger.info(pa.getId() + " " + pa.getAciklama() + " çalıştı. [ " + saat + " ] ");
 							ta.start();
 						} catch (Exception e) {
 							logger.error(e);
