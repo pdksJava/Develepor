@@ -6591,7 +6591,11 @@ public class OrtakIslemler implements Serializable {
 				}
 			}
 			if (!perNoList.isEmpty()) {
-				List<PersonelERPDB> personelERPDBList = getPersonelERPDBList(false, perNoList, parametreKey, session);
+				HashMap<String, Object> dataMap = new HashMap<String, Object>();
+				dataMap.put("guncellemeDurum", false);
+				dataMap.put("perNoList", perNoList);
+				dataMap.put("parameterName", parametreKey);
+				List<PersonelERPDB> personelERPDBList = getPersonelERPDBList(dataMap, session);
 				if (personelERPDBList != null && !personelERPDBList.isEmpty()) {
 					List<String> perNoDbList = new ArrayList<String>();
 					for (PersonelERPDB personelERPDB : personelERPDBList) {
@@ -7822,6 +7826,7 @@ public class OrtakIslemler implements Serializable {
 		List<PersonelERP> personelERPReturnList = null;
 		String parameterName = getParametrePersonelERPTableView();
 		String personelERPTableViewAdi = getParameterKey(parameterName);
+		HashMap<String, Object> dataMap = new HashMap<String, Object>();
 		if (PdksUtil.hasStringValue(personelERPTableViewAdi)) {
 			boolean tarihGuncelle = perNoList == null;
 			List<PersonelERP> personelERPList = new ArrayList<PersonelERP>();
@@ -7839,19 +7844,25 @@ public class OrtakIslemler implements Serializable {
 				yeniNoList = pdksEntityController.getObjectBySQLList(sb, fields, null);
 				if (yeniNoList != null) {
 					if (yeniNoList.isEmpty() == false) {
-						List<PersonelERPDB> personelYeniList = getPersonelERPDBList(guncellemeDurum, perNoList, parameterName, session);
+						dataMap.put("guncellemeDurum", guncellemeDurum);
+						dataMap.put("perNoList", yeniNoList);
+						dataMap.put("parameterName", parameterName);
+						List<PersonelERPDB> personelYeniList = getPersonelERPDBList(dataMap, session);
+						dataMap.put("personelIdVar", false);
 						if (personelYeniList != null) {
 							for (Iterator iterator = personelYeniList.iterator(); iterator.hasNext();) {
 								PersonelERPDB personelERPDB = (PersonelERPDB) iterator.next();
 								personelERPList.add(personelERPDB.getPersonelERP());
 							}
 						}
-
-					} else
+ 					} else
 						yeniNoList = null;
 				}
 			}
-			List<PersonelERPDB> personelList = getPersonelERPDBList(guncellemeDurum, perNoList, parameterName, session);
+			dataMap.put("guncellemeDurum", guncellemeDurum);
+			dataMap.put("perNoList", perNoList);
+			dataMap.put("parameterName", parameterName);
+			List<PersonelERPDB> personelList = getPersonelERPDBList(dataMap, session);
 			if (personelList != null) {
 				for (Iterator iterator = personelList.iterator(); iterator.hasNext();) {
 					PersonelERPDB personelERPDB = (PersonelERPDB) iterator.next();
@@ -8645,31 +8656,42 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
-	 * @param guncellemeDurum
-	 * @param perNoList
-	 * @param parameterName
+	 * @param dataMap
 	 * @param session
 	 * @return
 	 * @throws Exception
 	 */
-	public List<PersonelERPDB> getPersonelERPDBList(boolean guncellemeDurum, List<String> perNoList, String parameterName, Session session) throws Exception {
+	public List<PersonelERPDB> getPersonelERPDBList(HashMap<String, Object> dataMap, Session session) throws Exception {
+		boolean guncellemeDurum = dataMap.containsKey("guncellemeDurum") ? (Boolean) dataMap.get("guncellemeDurum") : false;
+		boolean personelIdVar = dataMap.containsKey("personelIdVar") ? (Boolean) dataMap.get("personelIdVar") : false;
+		List<String> perNoList = dataMap.containsKey("perNoList") ? (List<String>) dataMap.get("perNoList") : null;
+		String parameterName = dataMap.containsKey("parameterName") ? (String) dataMap.get("parameterName") : null;
 		String personelERPTableViewAdi = getParameterKey(parameterName);
-		List<Tanim> list = isExisView(personelERPTableViewAdi, session) ? getTanimList(Tanim.TIPI_ERP_PERSONEL_DB, session) : null;
+		List<Tanim> list = null;
+		if (dataMap.containsKey("tanimList"))
+			list = (List<Tanim>) dataMap.get("tanimList");
+		boolean veriYok = personelIdVar && list == null;
+		if (veriYok)
+			list = isExisView(personelERPTableViewAdi, session) ? getTanimList(Tanim.TIPI_ERP_PERSONEL_DB, session) : null;
 		List<PersonelERPDB> personelList = null;
 		Parameter parameter = null;
 		HashMap fields = new HashMap();
 		if (list != null & !list.isEmpty()) {
 			boolean update = false;
 			StringBuilder sb = new StringBuilder("select ");
-			boolean personelIdVar = authenticatedUser != null && authenticatedUser.isAdmin();
-			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-				Tanim tanim = (Tanim) iterator.next();
-				if (tanim.getKodu().equalsIgnoreCase("PERSONEL_ID")) {
-					personelIdVar = true;
-					iterator.remove();
-					break;
+			if (personelIdVar == false && dataMap.containsKey("tanimList") == false) {
+				personelIdVar = authenticatedUser != null && authenticatedUser.isAdmin();
+				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+					Tanim tanim = (Tanim) iterator.next();
+					if (tanim.getKodu().equalsIgnoreCase("PERSONEL_ID")) {
+						personelIdVar = true;
+						iterator.remove();
+						break;
+					}
 				}
 			}
+			dataMap.put("tanimList", list);
+			dataMap.put("personelIdVar", personelIdVar);
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 				Tanim tanim = (Tanim) iterator.next();
 				String erpAlan = (PdksUtil.hasStringValue(tanim.getErpKodu()) ? tanim.getErpKodu() : "null");
@@ -8694,7 +8716,7 @@ public class OrtakIslemler implements Serializable {
 						tarih = getERPManuelTarih(tarih, null);
 						sb.append(" where " + PersonelERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + " >= :t");
 					}
-					if (personelIdVar)
+					if (personelIdVar && veriYok)
 						sb.append(" or PERSONEL_ID is null");
 					fields.put("t", PdksUtil.getDate(tarih));
 				}
