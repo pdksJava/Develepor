@@ -7846,7 +7846,9 @@ public class OrtakIslemler implements Serializable {
 					if (yeniNoList.isEmpty() == false) {
 						dataMap.put("guncellemeDurum", guncellemeDurum);
 						dataMap.put("perNoList", yeniNoList);
+						dataMap.put("yeniNoList", yeniNoList);
 						dataMap.put("parameterName", parameterName);
+						dataMap.put("personelIdVar", false);
 						List<PersonelERPDB> personelYeniList = getPersonelERPDBList(dataMap, session);
 						dataMap.put("personelIdVar", false);
 						if (personelYeniList != null) {
@@ -7855,13 +7857,15 @@ public class OrtakIslemler implements Serializable {
 								personelERPList.add(personelERPDB.getPersonelERP());
 							}
 						}
- 					} else
+					} else
 						yeniNoList = null;
 				}
 			}
 			dataMap.put("guncellemeDurum", guncellemeDurum);
 			dataMap.put("perNoList", perNoList);
 			dataMap.put("parameterName", parameterName);
+			if (dataMap.containsKey("yeniNoList"))
+				dataMap.remove("yeniNoList");
 			List<PersonelERPDB> personelList = getPersonelERPDBList(dataMap, session);
 			if (personelList != null) {
 				for (Iterator iterator = personelList.iterator(); iterator.hasNext();) {
@@ -8665,15 +8669,16 @@ public class OrtakIslemler implements Serializable {
 		boolean guncellemeDurum = dataMap.containsKey("guncellemeDurum") ? (Boolean) dataMap.get("guncellemeDurum") : false;
 		boolean personelIdVar = dataMap.containsKey("personelIdVar") ? (Boolean) dataMap.get("personelIdVar") : false;
 		List<String> perNoList = dataMap.containsKey("perNoList") ? (List<String>) dataMap.get("perNoList") : null;
+		List<String> yeniNoList = dataMap.containsKey("yeniNoList") ? (List<String>) dataMap.get("yeniNoList") : null;
 		String parameterName = dataMap.containsKey("parameterName") ? (String) dataMap.get("parameterName") : null;
 		String personelERPTableViewAdi = getParameterKey(parameterName);
 		List<Tanim> list = null;
 		if (dataMap.containsKey("tanimList"))
 			list = (List<Tanim>) dataMap.get("tanimList");
-		boolean veriYok = personelIdVar && list == null;
-		if (veriYok)
+		if (list == null)
 			list = isExisView(personelERPTableViewAdi, session) ? getTanimList(Tanim.TIPI_ERP_PERSONEL_DB, session) : null;
 		List<PersonelERPDB> personelList = null;
+		String idColumnName = "PERSONEL_ID";
 		Parameter parameter = null;
 		HashMap fields = new HashMap();
 		if (list != null & !list.isEmpty()) {
@@ -8683,8 +8688,8 @@ public class OrtakIslemler implements Serializable {
 				personelIdVar = authenticatedUser != null && authenticatedUser.isAdmin();
 				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 					Tanim tanim = (Tanim) iterator.next();
-					if (tanim.getKodu().equalsIgnoreCase("PERSONEL_ID")) {
-						personelIdVar = true;
+					if (tanim.getKodu().equalsIgnoreCase(idColumnName)) {
+						personelIdVar = perNoList == null;
 						iterator.remove();
 						break;
 					}
@@ -8709,16 +8714,27 @@ public class OrtakIslemler implements Serializable {
 				parameter = getParameter(session, parameterName);
 				tarih = parameter.getChangeDate();
 				if (tarih != null) {
+					sb.append(" where (");
 					if (guncellemeDurum == false) {
 						tarih = PdksUtil.tariheAyEkleCikar(PdksUtil.getDate(tarih), -5);
-						sb.append(" where " + PersonelERPDB.COLUMN_NAME_ISTEN_AYRILMA_TARIHI + " >= :t ");
+						sb.append(PersonelERPDB.COLUMN_NAME_ISTEN_AYRILMA_TARIHI + " >= :t ");
 					} else {
 						tarih = getERPManuelTarih(tarih, null);
-						sb.append(" where " + PersonelERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + " >= :t");
+						sb.append(PersonelERPDB.COLUMN_NAME_GUNCELLEME_TARIHI + " >= :t");
 					}
-					if (personelIdVar && veriYok)
-						sb.append(" or PERSONEL_ID is null");
+					if (personelIdVar)
+						sb.append(" or " + idColumnName + " is null");
+					sb.append(" ) ");
 					fields.put("t", PdksUtil.getDate(tarih));
+					if (yeniNoList != null && yeniNoList.isEmpty() == false) {
+						if (yeniNoList.size() > 1) {
+							sb.append(" and " + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " not :k");
+							fields.put("k", yeniNoList);
+						} else {
+							sb.append(" and " + PersonelERPDB.COLUMN_NAME_PERSONEL_NO + " <> :k");
+							fields.put("k", yeniNoList.get(0));
+						}
+					}
 				}
 			}
 			if (update) {
