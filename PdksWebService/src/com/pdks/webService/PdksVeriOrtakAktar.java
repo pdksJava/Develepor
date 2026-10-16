@@ -4219,7 +4219,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 						List<Personel> personelPDKSList = pdksDAO.getObjectByInnerObjectList(map, Personel.class);
 						if (!personelPDKSList.isEmpty())
 							personelKGSBos = null;
-						else if (digerSicilNo.startsWith("K" + kapiSirket.getId() + "_")) {
+						else if (digerSicilNo != null && kapiSirket != null && digerSicilNo.startsWith("K" + kapiSirket.getId() + "_")) {
 							String spName = "SP_KGS_PERSONEL_SICIL_NO";
 							if (isExisStoreProcedure(spName, pdksDAO)) {
 								LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();

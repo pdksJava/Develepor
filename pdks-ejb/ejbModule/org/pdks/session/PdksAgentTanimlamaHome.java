@@ -69,6 +69,7 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 	public static String sayfaURL = "pdksAgentTanimlama";
 	private PdksAgent currentAgent;
 	private List<PdksAgent> pdksAgentList;
+	private static Boolean calisiyor = false;
 
 	private Boolean helpDesk, pasifGoster, admin;
 	private Long mailId = null;
@@ -89,35 +90,39 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 		super.create();
 	}
 
-	@Transactional
 	public String mailDataGonderBasla() {
-
 		try {
 			HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 			mailId = req != null ? Long.parseLong(req.getParameter("mailId")) : null;
 		} catch (Exception e) {
 		}
 		try {
+			boolean sunucuDurum = PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum();
+			if (mailId != null || sunucuDurum || (sunucuDurum == false && mailId == null)) {
+				if (calisiyor == false) {
+					calisiyor = true;
+					if (pdksEntityController.isSessionKapali(null, session)) {
+						if (authenticatedUser != null)
+							session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+						else
+							session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+					}
+					List<ServiceData> mailList = null;
+					if (mailId != null)
+						mailList = pdksEntityController.getSQLParamByFieldList(ServiceData.TABLE_NAME, ServiceData.COLUMN_NAME_ID, mailId, ServiceData.class, session);
 
-			if (mailId != null || PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
-
-				if (pdksEntityController.isSessionKapali(null, session)) {
-					if (authenticatedUser != null)
-						session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-					else
-						session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+					mailDataGonder(mailList, session);
+					calisiyor = false;
 				}
-				List<ServiceData> mailList = null;
-				if (mailId != null)
-					mailList = pdksEntityController.getSQLParamByFieldList(ServiceData.TABLE_NAME, ServiceData.COLUMN_NAME_ID, mailId, ServiceData.class, session);
 
-				mailDataGonder(mailList, session);
 			}
 		} catch (Exception e) {
+			calisiyor = false;
 			logger.error(e);
 			e.printStackTrace();
 		}
-		pdksEntityController.sessionClose(session);
+		if (session != null)
+			pdksEntityController.sessionClose(session);
 		return mailId == null ? MenuItemConstant.home : "";
 	}
 
@@ -135,21 +140,23 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 				ServiceData sd = (ServiceData) iterator.next();
 				if (sd.getId() != null) {
 					try {
-						session.refresh(sd);
-						if (sd != null && session.contains(sd)) {
-							session.delete(sd);
-							flush = true;
+						if (session.contains(sd)) {
+							sd.setFonksiyonAdi("mailDataGonderiliyor");
+							ortakIslemler.saveOrUpdate(sd, null, session);
+							pdksEntityController.sessionFlush(session);
+							flush = false;
 						}
 					} catch (Exception e) {
 						continue;
 					}
-
 				}
 				MailStatu mailStatu = mailGonderServisData(sd);
 				if (mailStatu != null && mailStatu.getDurum()) {
-
+					session.delete(sd);
+					flush = true;
 					iterator.remove();
 				}
+
 			}
 			try {
 				if (flush)
@@ -349,11 +356,10 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 					mail.setBody(sb.toString());
 
 					if (toList.size() + ccList.size() + bccList.size() > 0) {
-						if (mailId != null || PdksUtil.getCanliSunucuDurum() == true || PdksUtil.getTestSunucuDurum() == true) {
-							adet += mailListKontrol(userMap, toList, mail.getToList());
-							adet += mailListKontrol(userMap, ccList, mail.getCcList());
-							adet += mailListKontrol(userMap, bccList, mail.getBccList());
-						}
+						adet += mailListKontrol(userMap, toList, mail.getToList());
+						adet += mailListKontrol(userMap, ccList, mail.getCcList());
+						adet += mailListKontrol(userMap, bccList, mail.getBccList());
+
 					}
 					toList = null;
 					ccList = null;
@@ -390,7 +396,6 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 			try {
 				pdksEntityController.sessionFlush(session);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -440,8 +445,8 @@ public class PdksAgentTanimlamaHome extends EntityHome<PdksAgent> implements Ser
 	 * @return
 	 */
 	private List<ServiceData> getMailList(Session session) {
-		List<ServiceData> mailList = pdksEntityController.getSQLParamByFieldList(ServiceData.TABLE_NAME, ServiceData.COLUMN_NAME_FONKSIYON_ADI, "mailDosyaGonder", ServiceData.class, session);
 		Date bugun = ortakIslemler.getBugun();
+		List<ServiceData> mailList = pdksEntityController.getSQLParamByFieldList(ServiceData.TABLE_NAME, ServiceData.COLUMN_NAME_FONKSIYON_ADI, "mailDosyaGonder", ServiceData.class, session);
 		boolean flush = false;
 		for (Iterator iterator = mailList.iterator(); iterator.hasNext();) {
 			ServiceData sd = (ServiceData) iterator.next();
