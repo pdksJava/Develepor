@@ -126,6 +126,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 	private List<CalismaModeli> modeller;
 	private List<VardiyaSablonu> sablonlar;
+	private List<MailObject> mailList;
 	private LinkedHashMap<String, HashMap<String, List<User>>> ikUserMap;
 	private LinkedHashMap<String, HashMap<String, List>> hataIKMap;
 	private Sirket personelSirket;
@@ -882,8 +883,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 						MailManager.addMailAdresBCC(mailObject, "bccAdres", mailMap);
 
 					}
-
-					mailMap.put("mailObject", mailObject);
+					mailObjectKontrol(mailObject);
 					MailStatu statu = MailManager.ePostaGonder(mailMap);
 					if (mailGonderildi == false)
 						this.setMailGonderildi(statu != null && statu.isDurum());
@@ -896,6 +896,17 @@ public class PdksVeriOrtakAktar implements Serializable {
 			}
 		}
 
+	}
+
+	/**
+	 * @param object
+	 */
+	private void mailObjectKontrol(MailObject object) {
+		if (mailList.contains(object) == false) {
+			mailMap.put("mailObject", object);
+			mailList.add(object);
+		} else if (mailMap.containsKey("mailObject"))
+			mailMap.remove("mailObject");
 	}
 
 	/**
@@ -1102,11 +1113,12 @@ public class PdksVeriOrtakAktar implements Serializable {
 				mailService.getAttachmentFiles().add(mailFile);
 			}
 		}
-		sb = new StringBuffer();
+	 
 
 		sb = null;
 
-		mailDataMap.put("mailObject", mailService);
+	 
+		mailObjectKontrol(mailService);
 		return mailService;
 	}
 
@@ -1166,6 +1178,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				hataListesi = new ArrayList<Liste>();
 			else
 				hataListesi.clear();
+			mailList = new ArrayList<MailObject>();
 			mailGonderildi = false;
 			boolean td = getTestDurum();
 			if (td)
@@ -1480,7 +1493,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 				String smtpUserName = mailMap.containsKey("smtpUserName") ? (String) mailMap.get("smtpUserName") : "";
 				String smtpPassword = mailMap.containsKey("smtpPassword") ? (String) mailMap.get("smtpPassword") : "";
 				if (mailObject.getSmtpUser().equals(smtpUserName) && mailObject.getSmtpPassword().equals(smtpPassword)) {
-					mailMap.put("mailObject", mailObject);
+					mailObjectKontrol(mailObject);
 
 					// mailAdresKontrol(mailObject, pasifPersonelSB);
 					String body = mailObject.getBody();
@@ -1942,7 +1955,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 								mailFile.setDisplayName(dosyaAdi);
 								mailFile.setIcerik(PdksUtil.getBytesUTF8(xml));
 								mailObject.getAttachmentFiles().add(mailFile);
-								mailMap.put("mailObject", mailObject);
+								mailObjectKontrol(mailObject);
 								MailStatu statu = MailManager.ePostaGonder(mailMap);
 								if (mailGonderildi == false)
 									this.setMailGonderildi(statu != null && statu.isDurum());
