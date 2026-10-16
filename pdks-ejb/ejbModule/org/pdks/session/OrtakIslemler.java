@@ -7848,8 +7848,8 @@ public class OrtakIslemler implements Serializable {
 						dataMap.put("perNoList", yeniNoList);
 						dataMap.put("yeniNoList", yeniNoList);
 						dataMap.put("parameterName", parameterName);
-						dataMap.put("personelIdVar", false);
 						List<PersonelERPDB> personelYeniList = getPersonelERPDBList(dataMap, session);
+						dataMap.put("personelIdVar", false);
 						dataMap.put("personelIdVar", false);
 						if (personelYeniList != null) {
 							for (Iterator iterator = personelYeniList.iterator(); iterator.hasNext();) {
