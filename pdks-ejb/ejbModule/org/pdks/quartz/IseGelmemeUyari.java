@@ -63,6 +63,7 @@ import org.pdks.enums.OrganizasyonTipi;
 import org.pdks.enums.PersonelTipi;
 import org.pdks.enums.PuantajKatSayiTipi;
 import org.pdks.security.entity.DefaultPasswordGenerator;
+import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.Role;
 import org.pdks.security.entity.User;
 import org.pdks.security.entity.UserDigerOrganizasyon;
@@ -283,7 +284,7 @@ public class IseGelmemeUyari implements Serializable {
 			devam = bugun.getTime() > tarih.getTime();
 		islemTarihi = tarih;
 		if (devam) {
- 			if (pdksEntityController.isSessionKapali(null, session))
+			if (pdksEntityController.isSessionKapali(null, session))
 				session = PdksUtil.getSession(entityManager, islemYapan == null);
 
 			setEkSaha1(null);
@@ -2385,6 +2386,27 @@ public class IseGelmemeUyari implements Serializable {
 		}
 
 		return ekle;
+	}
+
+	public String iseGelmeDurumuGiris() {
+		Session session = null;
+		try {
+			if (pdksEntityController != null && !isCalisiyor()) {
+				if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
+					setCalisiyor(Boolean.TRUE);
+					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+					iseGelmemeDurumuCalistir(null, null, session, null, false, true);
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		} finally {
+			pdksEntityController.sessionClose(session);
+			setCalisiyor(Boolean.FALSE);
+		}
+
+		return MenuItemConstant.home;
 	}
 
 	/**
