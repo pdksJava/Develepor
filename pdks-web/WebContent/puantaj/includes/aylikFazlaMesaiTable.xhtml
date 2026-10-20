@@ -137,7 +137,7 @@
 
 			</rich:column>
 			<rich:column class="#{aylikPuantaj.trSonucClass}" style="width: 40px;width:autostretch ;white-space: nowrap;"
-				rendered="#{fazlaMesaiHesaplaHome.fazlaMesaiHesaplaHome.seciliEkSaha3Id eq 0}">
+				rendered="#{fazlaMesaiHesaplaHome.seciliEkSaha3Id eq 0}">
 				<f:facet name="header">
 					<h:outputText value="#{fazlaMesaiHesaplaHome.bolumAciklama}" />
 				</f:facet>
@@ -287,7 +287,11 @@
 					</f:facet>
 					<a4j:repeat value="#{aylikPuantaj.vardiyalar}" var="vardiyaGun">
 						<h:panelGrid columns="1" rendered="#{ortakIslemler.tarihEsit(vardiyaGun.vardiyaDate,vardiya.vardiyaDate) }">
-							<ui:include src="/puantaj/includes/gunlukVardiyaIslem.xhtml" />
+							<table>
+								<tr>
+									<ui:include src="/puantaj/includes/gunlukVardiyaIslem.xhtml" />
+								</tr>
+							</table>
 						</h:panelGrid>
 
 					</a4j:repeat>
