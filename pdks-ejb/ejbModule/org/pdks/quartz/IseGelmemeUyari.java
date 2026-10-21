@@ -2402,7 +2402,8 @@ public class IseGelmemeUyari implements Serializable {
 			logger.error(e);
 			e.printStackTrace();
 		} finally {
-			pdksEntityController.sessionClose(session);
+			if (session != null)
+				pdksEntityController.sessionClose(session);
 			setCalisiyor(Boolean.FALSE);
 		}
 
