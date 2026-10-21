@@ -74,6 +74,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_SUT_IZNI_SABIT = "SUT_IZNI_SABIT";
 	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 	public static final String COLUMN_NAME_FM_SURE_HESAPLA = "FM_SURE_HESAPLA";
+	public static final String COLUMN_NAME_ARGE = "ARGE";
 
 	private Sirket sirket;
 	private Tanim tesis;
@@ -86,7 +87,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	private Boolean haftaTatilMesaiOde = Boolean.FALSE, geceHaftaTatilMesaiParcala = Boolean.FALSE, geceCalismaOdemeVar = Boolean.FALSE, otomatikFazlaCalismaOnaylansin = Boolean.FALSE;
 	private Boolean ortakVardiya = Boolean.FALSE, fazlaMesaiGoruntulensin = Boolean.TRUE, ilkPlanOnayliDurum = Boolean.FALSE, gunMaxCalismaOdemeDurum = Boolean.TRUE;
 	private Boolean genelModel = Boolean.TRUE, idariModel = Boolean.FALSE, suaDurum = Boolean.FALSE, haftaTatilHareketGuncelle = Boolean.FALSE, offHareketGuncelle = Boolean.FALSE;
-	private Boolean yoneticiGuncelle = Boolean.FALSE;
+	private Boolean yoneticiGuncelle = Boolean.FALSE, arge = Boolean.FALSE;
 	private Integer haftaTatilGun = Calendar.SUNDAY;
 	private VardiyaSablonu bagliVardiyaSablonu;
 	private Departman departman;
@@ -345,6 +346,15 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 
 	public void setFazlaMesaiSureHesapla(Boolean fazlaMesaiSureHesapla) {
 		this.fazlaMesaiSureHesapla = fazlaMesaiSureHesapla;
+	}
+
+	@Column(name = COLUMN_NAME_ARGE)
+	public Boolean getArge() {
+		return arge;
+	}
+
+	public void setArge(Boolean arge) {
+		this.arge = arge;
 	}
 
 	@Column(name = COLUMN_NAME_ORTAK_VARDIYA)
@@ -852,8 +862,21 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	}
 
 	@Transient
-	public Boolean isSua() {
+	public boolean isSua() {
 		return suaDurum != null && suaDurum.booleanValue();
+	}
+
+	@Transient
+	public String getOzelAciklama() {
+		String ozelAciklama = aciklama;
+		if (isArgemi())
+			ozelAciklama += " [ Arge ]";
+		return ozelAciklama;
+	}
+
+	@Transient
+	public boolean isArgemi() {
+		return arge != null && arge.booleanValue();
 	}
 
 	public void entityRefresh() {

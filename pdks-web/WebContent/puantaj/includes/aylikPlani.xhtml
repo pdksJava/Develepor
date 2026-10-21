@@ -410,7 +410,7 @@
 							<ui:fragment rendered="#{vardiyaGunHome.modelGoster}">
 								<td class="#{aylikPuantaj.trClass}" style="width: 20px" align="left"><ui:fragment
 										rendered="#{aylikPuantaj.personelDenklestirme != null and aylikPuantaj.personelDenklestirme.calismaModeliAy != null}">
-										#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama }
+										#{aylikPuantaj.personelDenklestirme.calismaModeliAy.aciklama }
 									</ui:fragment></td>
 							</ui:fragment>
 
@@ -540,7 +540,7 @@
 									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.planlananSure)}" rendered="#{aylikPuantaj.planlananSure != 0}" />
 								</DIV> <ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy != null and aylikPuantaj.sutIzniDurum == false}">
 									<rich:toolTip for="planlananSureAciklama#{aylikPuantaj.personelDenklestirme.id}">
-										#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama} :
+										#{aylikPuantaj.personelDenklestirme.calismaModeliAy.aciklama} :
 										<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.toplamGunGuncelle == false}">
 											      #{authenticatedUser.sayiFormatliGoster(aylikPuantaj.personelDenklestirme.calismaModeliAy.sure)}  
 										</ui:fragment>

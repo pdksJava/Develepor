@@ -2171,7 +2171,7 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 						if (aylikPuantaj.getPersonelDenklestirme() != null && aylikPuantaj.getPersonelDenklestirme().getCalismaModeliAy() != null) {
 							CalismaModeliAy calismaModeliAy = aylikPuantaj.getPersonelDenklestirme().getCalismaModeliAy();
 							if (calismaModeliAy.getCalismaModeli() != null)
-								modelAciklama = calismaModeliAy.getCalismaModeli().getAciklama();
+								modelAciklama = calismaModeliAy.getCalismaModeli().getOzelAciklama();
 						}
 						ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(modelAciklama);
 					}
@@ -2256,7 +2256,7 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 						setCell(sheet, row, col++, styleTutar, aylikPuantaj.getSaatToplami());
 						Cell planlananCell = setCell(sheet, row, col++, styleTutar, aylikPuantaj.getPlanlananSure());
 						if (aylikPuantaj.getCalismaModeliAy() != null && planlananCell != null && aylikPuantaj.getSutIzniDurum().equals(Boolean.FALSE)) {
-							String title = aylikPuantaj.getCalismaModeli().getAciklama() + " : ";
+							String title = aylikPuantaj.getCalismaModeli().getOzelAciklama() + " : ";
 							if (aylikPuantaj.getCalismaModeli().getToplamGunGuncelle().equals(Boolean.FALSE))
 								title += authenticatedUser.sayiFormatliGoster(aylikPuantaj.getCalismaModeliAy().getSure());
 							else
@@ -2483,7 +2483,7 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 			if (modelGoster) {
 				String modelAciklama = "";
 				if (aylikPuantaj.getCalismaModeli() != null)
-					modelAciklama = aylikPuantaj.getCalismaModeli().getAciklama();
+					modelAciklama = aylikPuantaj.getCalismaModeli().getOzelAciklama();
 				ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(modelAciklama);
 			}
 			ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(personel.getGorevTipi() != null ? personel.getGorevTipi().getAciklama() : "");

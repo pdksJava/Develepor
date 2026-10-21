@@ -66,11 +66,11 @@
 									</f:facet>
 									<h:outputText value="#{calismaModeli.id}" />
 								</rich:column>
-								<rich:column filterBy="#{calismaModeli.aciklama}" filterEvent="onkeyup">
+								<rich:column filterBy="#{calismaModeli.ozelAciklama}" filterEvent="onkeyup">
 									<f:facet name="header">
 										<h:outputText value="Adı" />
 									</f:facet>
-									<h:outputText value="#{calismaModeli.aciklama}" />
+									<h:outputText value="#{calismaModeli.ozelAciklama}" />
 								</rich:column>
 								<rich:column rendered="#{calismaModeliHome.sirketGoster}">
 									<f:facet name="header">
@@ -255,6 +255,12 @@
 										<h:outputText value="Şua" />
 									</f:facet>
 									<h:outputText value="#{authenticatedUser.getYesNo(calismaModeli.suaDurum)}" />
+								</rich:column>
+								<rich:column rendered="#{calismaModeliHome.argeGoster}">
+									<f:facet name="header">
+										<h:outputText value="Arge" />
+									</f:facet>
+									<h:outputText value="#{authenticatedUser.getYesNo(calismaModeli.arge)}" />
 								</rich:column>
 								<rich:column rendered="#{calismaModeliHome.yoneticiGuncelleGoster}">
 									<f:facet name="header">
@@ -576,6 +582,12 @@
 						<s:decorate template="/layout/edit.xhtml" rendered="#{calismaModeliHome.calismaModeli.departman.suaOlabilir}">
 							<ui:define name="label">Şua</ui:define>
 							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.suaDurum}" disabled="#{authenticatedUser.admin == false}">
+
+							</h:selectBooleanCheckbox>
+						</s:decorate>
+						<s:decorate template="/layout/edit.xhtml" >
+							<ui:define name="label">Arge</ui:define>
+							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.arge}" disabled="#{authenticatedUser.admin == false}">
 
 							</h:selectBooleanCheckbox>
 						</s:decorate>

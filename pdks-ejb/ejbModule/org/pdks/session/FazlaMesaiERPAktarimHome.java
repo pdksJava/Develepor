@@ -890,7 +890,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				if (mesai.getCalismaModeliAy() != null) {
 					CalismaModeliAy calismaModeliAy = mesai.getCalismaModeliAy();
 					if (calismaModeliAy.getCalismaModeli() != null)
-						modelAciklama = calismaModeliAy.getCalismaModeli().getAciklama();
+						modelAciklama = calismaModeliAy.getCalismaModeli().getOzelAciklama();
 				}
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(modelAciklama);
 			}
@@ -1047,7 +1047,7 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				if (mesai.getCalismaModeliAy() != null) {
 					CalismaModeliAy calismaModeliAy = mesai.getCalismaModeliAy();
 					if (calismaModeliAy.getCalismaModeli() != null)
-						modelAciklama = calismaModeliAy.getCalismaModeli().getAciklama();
+						modelAciklama = calismaModeliAy.getCalismaModeli().getOzelAciklama();
 				}
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(modelAciklama);
 			}

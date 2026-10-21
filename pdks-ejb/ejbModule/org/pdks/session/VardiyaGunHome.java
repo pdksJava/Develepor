@@ -2153,7 +2153,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 				if (sbCalismaModeliUyumsuz.length() > 0) {
 					String str = sbCalismaModeliUyumsuz.toString();
 					if (userLoginOldu)
-						PdksUtil.addMessageAvailableWarn(mesaj + str + " " + (cm != null ? cm.getAciklama() + " vardiyalarına " : ortakIslemler.calismaModeliAciklama() + "ne") + " uymayan hatalı " + (str.indexOf(",") < 0 ? "vardiyadır!" : "vardiyalardır"));
+						PdksUtil.addMessageAvailableWarn(mesaj + str + " " + (cm != null ? cm.getOzelAciklama() + " vardiyalarına " : ortakIslemler.calismaModeliAciklama() + "ne") + " uymayan hatalı " + (str.indexOf(",") < 0 ? "vardiyadır!" : "vardiyalardır"));
 				}
 				if (personelDenklestirme != null) {
 					if (userLoginOldu == false)
@@ -2576,7 +2576,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 
 					if (aylikPuantaj.getCalismaModeliAy() != null && planlananCell != null && aylikPuantaj.getSutIzniDurum().equals(Boolean.FALSE)) {
 						Comment comment1 = drawing.createCellComment(anchor);
-						String title = aylikPuantaj.getCalismaModeli().getAciklama() + " : ";
+						String title = aylikPuantaj.getCalismaModeli().getOzelAciklama() + " : ";
 						if (aylikPuantaj.getCalismaModeli().getToplamGunGuncelle().equals(Boolean.FALSE))
 							title += getPdksUser().sayiFormatliGoster(aylikPuantaj.getCalismaModeliAy().getSure());
 						else
@@ -2619,7 +2619,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					if (modelGoster) {
 						String modelAciklama = "";
 						if (calismaModeli != null)
-							modelAciklama = calismaModeli.getAciklama();
+							modelAciklama = calismaModeli.getOzelAciklama();
 						ExcelUtil.getCell(sheet, row, col++, styleGenelLeft).setCellValue(modelAciklama);
 					}
 					if (dinamikAlanlar != null && !dinamikAlanlar.isEmpty()) {
@@ -2831,11 +2831,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 					Long cmId = calismaModeli.getId();
 					if (!hashMap.containsKey(cmId))
 						continue;
-					Sheet sheetModel = ExcelUtil.createSheet(wb, calismaModeli.getAciklama(), Boolean.TRUE);
+					Sheet sheetModel = ExcelUtil.createSheet(wb, calismaModeli.getOzelAciklama(), Boolean.TRUE);
 					List<Vardiya> vardiyaList = hashMap.get(cmId);
 					row = 0;
 					col = 0;
-					ExcelUtil.getCell(sheetModel, row, col, header).setCellValue(calismaModeli.getAciklama() + " " + ortakIslemler.calismaModeliAciklama() + " Vardiyaları");
+					ExcelUtil.getCell(sheetModel, row, col, header).setCellValue(calismaModeli.getOzelAciklama() + " " + ortakIslemler.calismaModeliAciklama() + " Vardiyaları");
 					int adet = getPdksUser().isAdmin() ? 5 : 4;
 					for (int i = 0; i < adet; i++)
 						ExcelUtil.getCell(sheetModel, row, col + i + 1, header).setCellValue("");

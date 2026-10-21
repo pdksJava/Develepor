@@ -1100,7 +1100,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(da.getAyAdi() + " " + da.getYil());
 				if (eskiKayitDurum)
 					ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(personel.getPdksSicilNo());
-				ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(calismaModeli != null ? calismaModeli.getAciklama() : "");
+				ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(calismaModeli != null ? calismaModeli.getOzelAciklama() : "");
 				if (fazlaMesaiOde)
 					ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(authenticatedUser.getYesNo(personelDenklestirme.getFazlaMesaiOde()));
 				if (fazlaMesaiIzinKullan)
@@ -1164,7 +1164,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				setCell(sheet, row, col++, styleTutar, aylikPuantaj.getSaatToplami());
 				Cell planlananCell = setCell(sheet, row, col++, styleTutar, aylikPuantaj.getPlanlananSure());
 				if (aylikPuantaj.getCalismaModeliAy() != null && planlananCell != null && aylikPuantaj.getSutIzniDurum().equals(Boolean.FALSE)) {
-					String title = aylikPuantaj.getCalismaModeli().getAciklama() + " : ";
+					String title = aylikPuantaj.getCalismaModeli().getOzelAciklama() + " : ";
 					if (aylikPuantaj.getCalismaModeli().getToplamGunGuncelle().equals(Boolean.FALSE))
 						title += authenticatedUser.sayiFormatliGoster(aylikPuantaj.getCalismaModeliAy().getSure());
 					else

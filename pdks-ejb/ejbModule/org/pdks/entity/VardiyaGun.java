@@ -76,8 +76,8 @@ public class VardiyaGun extends BaseObject {
 	private ArrayList<Vardiya> vardiyalar;
 	private VardiyaGun oncekiVardiyaGun, sonrakiVardiyaGun;
 	private int beklemeSuresi = 6;
-	private Double calismaSuaSaati = PersonelDenklestirme.getCalismaSaatiSua(), resmiTatilKanunenEklenenSure = 0.0d, icapciMesaiSaat = 0d;
-	private Boolean izinHaftaTatilDurum;
+	private Double calismaSuaSaati = PersonelDenklestirme.getCalismaSaatiSua(), dgsSuresi = 0.0d, resmiTatilKanunenEklenenSure = 0.0d, icapciMesaiSaat = 0d;
+	private Boolean izinHaftaTatilDurum, ayinIlkGunu;
 	private boolean hareketHatali = Boolean.FALSE, planHareketEkle = Boolean.TRUE, kullaniciYetkili = Boolean.TRUE, zamanGuncelle = Boolean.TRUE, zamanGelmedi = Boolean.FALSE;
 	private boolean fazlaMesaiTalepOnayliDurum = Boolean.FALSE, fazlaMesaiTalepDurum = Boolean.FALSE, ayarlamaBitti = false, bayramAyir = false;
 
@@ -211,6 +211,7 @@ public class VardiyaGun extends BaseObject {
 				VardiyaEkSaat ekSaat = value.getEkSaat();
 				this.setNormalSure(value.getNormalSure());
 				this.setCalismaSuresi(value.getCalismaSuresi());
+				this.setDgsSuresi(value.getDgsSuresi() != null ? value.getDgsSuresi() : 0.0D);
 				if (ekSaat != null) {
 					this.setAksamVardiyaSaatSayisi(ekSaat.getAksamVardiyaSaatSayisi());
 					value.setAksamVardiyaSaatSayisi(ekSaat.getAksamVardiyaSaatSayisi());
@@ -290,6 +291,8 @@ public class VardiyaGun extends BaseObject {
 	@Temporal(value = TemporalType.DATE)
 	@Column(name = COLUMN_NAME_VARDIYA_TARIHI, nullable = false)
 	public Date getVardiyaDate() {
+		if (vardiyaDateStr != null && ayinIlkGunu == null)
+			ayinIlkGunu = vardiyaDateStr.endsWith("01");
 		return vardiyaDate;
 	}
 
@@ -465,10 +468,11 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void setCalismaSuresi(double value) {
-		if (value != 0.0d) {
-			if (this.getVardiyaDateStr().endsWith("0810"))
+
+		if (this.getVardiyaDateStr().endsWith("0914"))
+			if (value != 0.0d) {
 				logger.debug("setCalismaSuresi " + value);
-		}
+			}
 		this.calismaSuresi = value;
 	}
 
@@ -2098,7 +2102,7 @@ public class VardiyaGun extends BaseObject {
 			sirketIdStr = "";
 		Tanim bolum = this.getPersonel().getEkSaha3(), altBolum = this.getPersonel().getEkSaha4();
 		CalismaModeli calismaModeli = this.getPersonel().getCalismaModeli();
-		String sortKey = departmanId + "_" + sirketIdStr + "_" + (yonetici != null ? "_" + yonetici.getAdSoyad() : "") + "_" + (bolum != null ? "_" + bolum.getAciklama() : "") + "_" + (calismaModeli != null ? "_" + calismaModeli.getAciklama() : "");
+		String sortKey = departmanId + "_" + sirketIdStr + "_" + (yonetici != null ? "_" + yonetici.getAdSoyad() : "") + "_" + (bolum != null ? "_" + bolum.getAciklama() : "") + "_" + (calismaModeli != null ? "_" + calismaModeli.getOzelAciklama() : "");
 		sortKey += "_" + (altBolum != null ? "_" + altBolum.getAciklama() : "") + "_" + this.getPersonel().getAdSoyad() + "_" + this.getVardiyaKeyStr();
 		return sortKey;
 	}
@@ -2847,6 +2851,33 @@ public class VardiyaGun extends BaseObject {
 	@Transient
 	public boolean isVardiyaOnay() {
 		return vardiyaOnayli == null || vardiyaOnayli.booleanValue();
+	}
+
+	@Transient
+	public Double getArgeNormalSuresi() {
+		double sure = this.getCalismaSuresi() - this.getDgsSuresi();
+		return sure;
+	}
+
+	@Transient
+	public Double getDgsSuresi() {
+		return dgsSuresi;
+	}
+
+	public void setDgsSuresi(Double dgsSuresi) {
+		this.dgsSuresi = dgsSuresi;
+	}
+
+	@Transient
+	public Boolean getAyinIlkGunu() {
+		if (vardiyaDateStr != null && ayinIlkGunu == null)
+			ayinIlkGunu = vardiyaDateStr.endsWith("01");
+
+		return ayinIlkGunu;
+	}
+
+	public void setAyinIlkGunu(Boolean ayinIlkGunu) {
+		this.ayinIlkGunu = ayinIlkGunu;
 	}
 
 	public void entityRefresh() {

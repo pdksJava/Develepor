@@ -3,6 +3,7 @@ package org.pdks.session;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -22,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import java.sql.Connection;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Begin;
@@ -103,7 +103,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	private List<AylikPuantaj> personelDenklestirmeList;
 	private TreeMap<String, PersonelDinamikAlan> personelDinamikAlanMap;
 
-	private Boolean secimDurum = Boolean.FALSE, sureDurum, fazlaMesaiDurum, haftaTatilDurum, artikGunDurum, resmiTatilGunDurum, resmiTatilDurum, durumERP, onaylanmayanDurum, personelERP, modelGoster = Boolean.FALSE;
+	private Boolean secimDurum = Boolean.FALSE, sureDurum, argeYok = Boolean.TRUE, fazlaMesaiDurum, haftaTatilDurum, artikGunDurum, resmiTatilGunDurum, resmiTatilDurum, durumERP, onaylanmayanDurum, personelERP, modelGoster = Boolean.FALSE;
 	private Boolean normalGunSaatDurum = Boolean.FALSE, haftaTatilSaatDurum = Boolean.FALSE, resmiTatilSaatDurum = Boolean.FALSE, izinSaatDurum = Boolean.FALSE;
 	private Boolean denklestirmeAyDurum, fazlaMesaiHesaplaDurum = false, sadeceHataliGetir = false, login = false;
 	private int ay, yil, maxYil, minYil;
@@ -617,7 +617,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		boolean spPersonelDenklestirmeJsonVar = ortakIslemler.isExisStoreProcedure(FazlaMesaiOrtakIslemler.SP_UPDATE_PER_DENKLESME_JSON, session);
 
 		FazlaMesaiOrtakIslemler.setSpPersonelDenklestirmeJsonVar(spPersonelDenklestirmeJsonVar);
- 		FazlaMesaiOrtakIslemler.setSpCalismaSaatGuncelleVar(spCalismaSaatGuncelleVar);
+		FazlaMesaiOrtakIslemler.setSpCalismaSaatGuncelleVar(spCalismaSaatGuncelleVar);
 		FazlaMesaiOrtakIslemler.setSpPersonelDenklestirmeGuncelleVar(spPersonelDenklestirmeGuncelleVar);
 		if (ekSaha4Tanim == null)
 			ekSaha4Tanim = ortakIslemler.getEkSaha4(sirket, sirketId, session);
@@ -986,6 +986,17 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 		// List<SelectItem> departmanListe = ortakIslemler.getSelectItemList("departman", getPdksUser());
 		List<SelectItem> departmanListe = denklestirmeAy != null ? fazlaMesaiOrtakIslemler.getFazlaMesaiDepartmanList(denklestirmeAy != null ? new AylikPuantaj(denklestirmeAy) : null, true, session) : new ArrayList<SelectItem>();
 		departman = null;
+		argeYok = denklestirmeAy == null;
+		if (denklestirmeAy != null) {
+			List<CalismaModeliAy> cmList = pdksEntityController.getSQLParamByAktifFieldList(CalismaModeliAy.TABLE_NAME, CalismaModeliAy.COLUMN_NAME_DONEM, denklestirmeAy.getId(), CalismaModeliAy.class, session);
+			for (CalismaModeliAy calismaModeliAy : cmList) {
+				if (calismaModeliAy.getCalismaModeli().isArgemi() == false) {
+					argeYok = Boolean.TRUE;
+					break;
+				}
+ 			}
+			cmList = null;
+		}
 
 		if (!departmanListe.isEmpty()) {
 			Long onceki = departmanId;
@@ -2425,4 +2436,13 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	public void setLogin(Boolean login) {
 		this.login = login;
 	}
+
+	public Boolean getArgeYok() {
+		return argeYok;
+	}
+
+	public void setArgeYok(Boolean argeYok) {
+		this.argeYok = argeYok;
+	}
+
 }

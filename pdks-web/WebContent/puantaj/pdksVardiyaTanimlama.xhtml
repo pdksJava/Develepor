@@ -272,18 +272,18 @@
  									</ui:fragment>
 									<h:panelGrid columns="#{vardiyaTanimlaHome.girisKolonSayisi}">
 										<s:decorate template="/layout/edit.xhtml">
-											<ui:define name="label">#{vardiyaTanimlaHome.calismaModeli.aciklama} Süre</ui:define>
+											<ui:define name="label">#{vardiyaTanimlaHome.calismaModeli.ozelAciklama} Süre</ui:define>
 											<h:inputText value="#{vardiyaTanimlaHome.calismaModeliAy.sure}"
 												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false or !(authenticatedUser.admin or authenticatedUser.IKAdmin)}" />
 										</s:decorate>
 										<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaTanimlaHome.calismaModeliAy.calismaModeli.updateCGS == false}">
-											<ui:define name="label">#{vardiyaTanimlaHome.calismaModeli.aciklama} Süt İzni</ui:define>
+											<ui:define name="label">#{vardiyaTanimlaHome.calismaModeli.ozelAciklama} Süt İzni</ui:define>
 											<h:inputText value="#{vardiyaTanimlaHome.calismaModeliAy.toplamIzinSure}"
 												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false or !(authenticatedUser.admin or authenticatedUser.IKAdmin)}" />
 										</s:decorate>
 
 										<s:decorate template="/layout/edit.xhtml" rendered="#{authenticatedUser.admin and vardiyaTanimlaHome.negatifBakiyeDenkSaat}">
-											<ui:define name="label">#{vardiyaTanimlaHome.calismaModeli.aciklama} Negatif Bakiye Max (Saati)</ui:define>
+											<ui:define name="label">#{vardiyaTanimlaHome.calismaModeli.ozelAciklama} Negatif Bakiye Max (Saati)</ui:define>
 											<h:inputText required="true" value="#{vardiyaTanimlaHome.calismaModeliAy.negatifBakiyeDenkSaat}"
 												disabled="#{vardiyaTanimlaHome.denklestirmeAy.durum == false or ( vardiyaTanimlaHome.calismaModeliAy.negatifBakiyeDenkSaat ge 0 and vardiyaTanimlaHome.calismaModeliAy.calismaModeli.negatifBakiyeDenkSaat ge 0)}"
 												size="6" validatorMessage="Negatif bakiye saati giriniz">

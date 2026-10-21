@@ -30,12 +30,12 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 	public static final String TABLE_NAME = "VARDIYA_SAAT";
 	public static final String COLUMN_NAME_NORMAL_SURE = "NORMAL_SURE";
 	public static final String COLUMN_NAME_CALISMA_SURESI = "CALISMA_SURESI";
+	public static final String COLUMN_NAME_DGS_SURESI = "DGS_SURESI";
 	public static final String COLUMN_NAME_VARDIYA_EK_SAAT = "VARDIYA_EK_SAAT_ID";
-
 	public static final String COLUMN_NAME_GUNCELLEME_TARIHI = "GUNCELLEME_TARIHI";
 
 	private double normalSure = 0d, calismaSuresi = 0d, resmiTatilSure = 0d, aksamVardiyaSaatSayisi = 0d;
-	private Double resmiTatilKanunenEklenenSure = 0d, ucretiOdenenFazlaMesaiSaat = 0d, icapciMesaiSaat = 0d;
+	private Double resmiTatilKanunenEklenenSure = 0d, dgsSuresi = 0d, ucretiOdenenFazlaMesaiSaat = 0d, icapciMesaiSaat = 0d;
 
 	private Date guncellemeTarihi;
 
@@ -66,6 +66,17 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 		if (!guncellendi)
 			guncellendi = PdksUtil.isDoubleDegisti(value, calismaSuresi);
 		this.calismaSuresi = value;
+	}
+
+	@Column(name = COLUMN_NAME_DGS_SURESI)
+	public Double getDgsSuresi() {
+		return dgsSuresi;
+	}
+
+	public void setDgsSuresi(Double value) {
+		if (!guncellendi)
+			guncellendi = PdksUtil.isDoubleDegisti(value, dgsSuresi);
+		this.dgsSuresi = value;
 	}
 
 	@ManyToOne(cascade = CascadeType.REFRESH)

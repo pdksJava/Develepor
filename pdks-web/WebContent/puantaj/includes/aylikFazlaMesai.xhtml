@@ -104,7 +104,7 @@
 								</rich:toolTip></th>
 							<th rowspan="#{fazlaMesaiHesaplaHome.rowSpan}"
 								style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;" id="baslikATS"><h:outputText
-									value="DGS" /> <rich:toolTip for="baslikATS">
+									value="ATS" /> <rich:toolTip for="baslikATS">
 									<SPAN style="font-size: 12px; font-weight: normal;"> <B>Saat Toplamı: </B>Çalışanın bu listede aat
 									</SPAN>
 								</rich:toolTip></th>
@@ -531,10 +531,10 @@
 									<td class="#{aylikPuantaj.trClass}" style="width: 20px"><ui:fragment
 											rendered="#{aylikPuantaj.personelDenklestirme != null and aylikPuantaj.personelDenklestirme.calismaModeliAy != null}">
 
-											<ui:fragment rendered="#{aylikPuantaj.pdksPersonel.sanalPersonel == false}">#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama }</ui:fragment>
+											<ui:fragment rendered="#{aylikPuantaj.pdksPersonel.sanalPersonel == false}">#{aylikPuantaj.personelDenklestirme.calismaModeliAy.aciklama}</ui:fragment>
 											<ui:fragment rendered="#{aylikPuantaj.pdksPersonel.sanalPersonel}">
 												<SPAN id="calismaModeliAy#{aylikPuantaj.personelDenklestirme.id}" style="color: red; font-weight: bold;"> <U>#{fazlaMesaiHesaplaHome.sanalPersonelAciklama}</U></SPAN>
-												<rich:toolTip for="calismaModeliAy#{aylikPuantaj.personelDenklestirme.id}">#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama }
+												<rich:toolTip for="calismaModeliAy#{aylikPuantaj.personelDenklestirme.id}">#{aylikPuantaj.personelDenklestirme.calismaModeliAy.aciklama}
 																
 															</rich:toolTip>
 											</ui:fragment>
@@ -678,7 +678,7 @@
 											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.haftaTatilSabitDegil == false}">
 												<rich:toolTip for="planlananSureAciklama#{aylikPuantaj.personelDenklestirme.id}">
 									
-										#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama} :
+										#{aylikPuantaj.personelDenklestirme.calismaModeliAy.aciklama} :
 										<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.toplamGunGuncelle == false}">
 											      #{authenticatedUser.sayiFormatliGoster(aylikPuantaj.personelDenklestirme.calismaModeliAy.sure)}  
 										</ui:fragment>

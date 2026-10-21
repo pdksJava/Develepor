@@ -587,7 +587,7 @@
 						<h:selectOneMenu value="#{vardiyaGunHome.personelDenklestirme.calismaModeliAy}" id="perCalismaModeli"
 							disabled="#{vardiyaGunHome.denklestirmeAyDurum == false}" styleClass="size10" required="true" style="width:85px"
 							requiredMessage="#{ortakIslemler.calismaModeliAciklama()} Seçiniz">
-							<s:selectItems var="comp" value="#{vardiyaGunHome.modelList}" label="#{comp.calismaModeli.aciklama}" noSelectionLabel="Lutfen Seciniz" />
+							<s:selectItems var="comp" value="#{vardiyaGunHome.modelList}" label="#{comp.calismaModeli.ozelAciklama}" noSelectionLabel="Lutfen Seciniz" />
 							<s:convertEntity />
 							<a4j:support event="onchange" action="#{vardiyaGunHome.modelDegisti()}" reRender="digerIslemler,secimler" />
 						</h:selectOneMenu>
@@ -597,7 +597,7 @@
 									<rich:dataTable rowClasses="acik,koyu" value="#{vardiyaGunHome.calismaModeliVardiyaList}" var="vardiya" rows="20" rowKeyVar="row"
 										rendered="#{vardiyaGunHome.calismaModeliVardiyaList != null}" id="vardiyaTable">
 										<f:facet name="header">
-											<h:outputText value="#{vardiyaGunHome.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama} Çalışma Modeli" />
+											<h:outputText value="#{vardiyaGunHome.personelDenklestirme.calismaModeliAy.aciklama} Çalışma Modeli" />
 										</f:facet>
 										<rich:column>
 											<f:facet name="header">

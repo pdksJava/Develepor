@@ -293,7 +293,7 @@ public class VardiyaSablonuHome extends EntityHome<VardiyaSablonu> implements Se
 				if (vardiyaArifeGoster)
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiyaSablon.getVardiyaArife() != null ? vardiyaSablon.getVardiyaArife().getOzelAdi() : "");
 				if (calismaModeliGoster)
-					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiyaSablon.getCalismaModeli() != null ? vardiyaSablon.getCalismaModeli().getAciklama() : "");
+					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vardiyaSablon.getCalismaModeli() != null ? vardiyaSablon.getCalismaModeli().getOzelAciklama() : "");
 				ExcelUtil.getCell(sheet, row, col++, styleCenter).setCellValue(authenticatedUser.getYesNo(vardiyaSablon.getDurum()));
 			}
 

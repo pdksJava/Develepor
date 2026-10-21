@@ -185,11 +185,11 @@
 										</f:facet>
 										<SPAN> <ui:fragment rendered="#{aylikPuantaj.pdksPersonel != null}">
 
-												<ui:fragment rendered="#{aylikPuantaj.pdksPersonel.sanalPersonel == false}">#{aylikPuantaj.pdksPersonel.calismaModeli.aciklama }</ui:fragment>
+												<ui:fragment rendered="#{aylikPuantaj.pdksPersonel.sanalPersonel == false}">#{aylikPuantaj.pdksPersonel.calismaModeli.ozelAciklama }</ui:fragment>
 												<ui:fragment rendered="#{aylikPuantaj.pdksPersonel.sanalPersonel}">
 													<SPAN id="calismaModeliAy#{aylikPuantaj.personelDenklestirme.id}" style="color: red; font-weight: bold;"> <U>#{fazlaMesaiRaporHome.sanalPersonelAciklama}</U>
 													</SPAN>
-													<rich:toolTip for="calismaModeliAy#{aylikPuantaj.personelDenklestirme.id}">#{aylikPuantaj.pdksPersonel.calismaModeli.aciklama }
+													<rich:toolTip for="calismaModeliAy#{aylikPuantaj.personelDenklestirme.id}">#{aylikPuantaj.pdksPersonel.calismaModeli.ozelAciklama }
 
 													</rich:toolTip>
 												</ui:fragment>
@@ -331,7 +331,7 @@
 											</DIV>
 											<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy != null and aylikPuantaj.sutIzniDurum == false }">
 												<rich:toolTip for="planlananSureAciklama#{aylikPuantaj.personelDenklestirme.id}">
-																		#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama} :
+																		#{aylikPuantaj.personelDenklestirme.calismaModeliAy.aciklama} :
 												<ui:fragment rendered="#{aylikPuantaj.personelDenklestirme.calismaModeliAy.calismaModeli.toplamGunGuncelle == false}">
 																			      #{authenticatedUser.sayiFormatliGoster(aylikPuantaj.personelDenklestirme.calismaModeliAy.sure)}  
 												</ui:fragment>

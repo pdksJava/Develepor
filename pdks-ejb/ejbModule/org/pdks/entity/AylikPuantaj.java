@@ -85,7 +85,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	private boolean donemBitti = Boolean.TRUE, ayrikHareketVar = Boolean.FALSE, fazlaMesaiIzinKontrol = Boolean.TRUE, gebeDurum = Boolean.FALSE, sutIzniDurumu = Boolean.FALSE;
 
-	private Double saatToplami = 0d, resmiTatilKanunenEklenenSure = 0d, resmiTatilToplami = 0d, haftaCalismaSuresi = 0d, icapciMesaiSure = 0d, ucretiOdenenMesaiSure = 0d, fazlaMesaiSure = 0d, odenenSure = 0d, planlananSure = 0d, offSure = 0.0d;
+	private Double saatToplami = 0d, dgSaatToplami = 0d, resmiTatilKanunenEklenenSure = 0d, resmiTatilToplami = 0d, haftaCalismaSuresi = 0d, icapciMesaiSure = 0d, ucretiOdenenMesaiSure = 0d, fazlaMesaiSure = 0d, odenenSure = 0d, planlananSure = 0d, offSure = 0.0d;
 
 	private Double izinSuresi = 0d, saatlikIzinSuresi = 0d, fazlaMesaiMaxSure = 0d, eksikCalismaSure = 0d, gecenAyFazlaMesai = 0d, hesaplananSure = 0d, devredenSure = 0d, aksamVardiyaSaatSayisi = 0d, kesilenSure = 0d;
 
@@ -479,6 +479,15 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		}
 		double arifeToplamSure = getArifeToplamSure(tatilGunleriMap, calismaModeli);
 		Double hesaplananSure = (personelDenklestirme != null ? personelDenklestirme.getMaksimumSure(izinSure, arifeToplamSure, vardiyalar) : 0d);
+		dgSaatToplami = 0.0d;
+		if (calismaModeli.isArgemi()) {
+			for (VardiyaGun vg : vardiyalar) {
+				if (vg.isAyinGunu() && vg.getVardiya() != null && vg.getDgsSuresi() != null) {
+					dgSaatToplami += vg.getDgsSuresi();
+				}
+
+			}
+		}
 		if (hesaplananSure < 0)
 			hesaplananSure = 0.0d;
 		if (tatilGunleriMap != null && vardiyalar != null && !vardiyalar.isEmpty()) {
@@ -1114,7 +1123,14 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	}
 
 	public CalismaModeli getCalismaModeli() {
-		return calismaModeli;
+		CalismaModeli cm = calismaModeli;
+		if (cm == null) {
+			if (personelDenklestirme != null)
+				cm = personelDenklestirme.getCalismaModeli();
+			if (cm == null && pdksPersonel != null)
+				cm = pdksPersonel.getCalismaModeli();
+		}
+		return cm;
 	}
 
 	public void setCalismaModeli(CalismaModeli calismaModeli) {
@@ -1555,5 +1571,13 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	public void setFazlaMesaiEkran(boolean fazlaMesaiEkran) {
 		this.fazlaMesaiEkran = fazlaMesaiEkran;
+	}
+
+	public Double getDgSaatToplami() {
+		return dgSaatToplami;
+	}
+
+	public void setDgSaatToplami(Double dgSaatToplami) {
+		this.dgSaatToplami = dgSaatToplami;
 	}
 }

@@ -238,11 +238,11 @@
 											<SPAN style="width: autostretch; white-space: nowrap;"> <ui:fragment
 													rendered="#{ap.personelDenklestirme != null and ap.personelDenklestirme.calismaModeliAy != null}">
 
-													<ui:fragment rendered="#{ap.pdksPersonel.sanalPersonel == false}">#{ap.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama }</ui:fragment>
+													<ui:fragment rendered="#{ap.pdksPersonel.sanalPersonel == false}">#{ap.personelDenklestirme.calismaModeliAy.aciklama }</ui:fragment>
 													<ui:fragment rendered="#{ap.pdksPersonel.sanalPersonel}">
 														<SPAN id="calismaModeliAy#{ap.personelDenklestirme.id}" style="color: red; font-weight: bold;"> <U>#{vardiyaPlaniTopluRaporHome.sanalPersonelAciklama}</U>
 														</SPAN>
-														<rich:toolTip for="calismaModeliAy#{ap.personelDenklestirme.id}">#{ap.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama }
+														<rich:toolTip for="calismaModeliAy#{ap.personelDenklestirme.id}">#{ap.personelDenklestirme.calismaModeliAy.aciklama }
 
 										</rich:toolTip>
 													</ui:fragment>
@@ -425,7 +425,7 @@
 													</DIV>
 													<ui:fragment rendered="#{false and ap.personelDenklestirme.calismaModeliAy != null and ap.sutIzniDurum == false }">
 														<rich:toolTip for="planlananSureAciklama#{ap.personelDenklestirme.id}">
-																		#{ap.personelDenklestirme.calismaModeliAy.calismaModeli.aciklama} :
+																		#{ap.personelDenklestirme.calismaModeliAy.aciklama} :
 												<ui:fragment rendered="#{ap.personelDenklestirme.calismaModeliAy.calismaModeli.toplamGunGuncelle == false}">
 																			      #{authenticatedUser.sayiFormatliGoster(ap.personelDenklestirme.calismaModeliAy.sure)}  
 												</ui:fragment>
@@ -838,7 +838,7 @@
 											</f:facet>
 											<SPAN style="width: autostretch; white-space: nowrap;"> <ui:fragment rendered="#{ap.calismaModeli != null}">
 
-													#{ap.calismaModeli.aciklama } 
+													#{ap.calismaModeli.ozelAciklama } 
 													 
 
 												</ui:fragment></SPAN>

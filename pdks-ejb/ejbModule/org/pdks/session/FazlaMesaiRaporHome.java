@@ -1517,7 +1517,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 						setCell(sheet, row, col++, styleGenel, aylikPuantaj.getSaatToplami());
 						Cell planlananCell = setCell(sheet, row, col++, styleGenel, aylikPuantaj.getPlanlananSure());
 						if (aylikPuantaj.getCalismaModeliAy() != null && planlananCell != null && aylikPuantaj.getSutIzniDurum().equals(Boolean.FALSE)) {
-							String title = aylikPuantaj.getCalismaModeli().getAciklama() + " : ";
+							String title = aylikPuantaj.getCalismaModeli().getOzelAciklama() + " : ";
 							if (aylikPuantaj.getCalismaModeli().getToplamGunGuncelle().equals(Boolean.FALSE))
 								title += authenticatedUser.sayiFormatliGoster(aylikPuantaj.getCalismaModeliAy().getSure());
 							else

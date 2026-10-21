@@ -191,7 +191,7 @@ public class CalismaModeliAy extends BasePDKSObject implements Serializable {
 
 	@Transient
 	public String getAciklama() {
-		String key = calismaModeli != null ? calismaModeli.getAciklama() : "";
+		String key = calismaModeli != null ? calismaModeli.getOzelAciklama() : "";
 		return key;
 	}
 
@@ -202,7 +202,7 @@ public class CalismaModeliAy extends BasePDKSObject implements Serializable {
 			key += (calismaModeli.getDepartman() != null ? calismaModeli.getDepartman().getId() : "0") + "_";
 			key += (calismaModeli.getSirket() != null ? calismaModeli.getSirket().getAd() : "") + "_";
 			key += (calismaModeli.getTesis() != null ? calismaModeli.getTesis().getAciklama() : "") + "_";
-			key += calismaModeli.getAciklama();
+			key += calismaModeli.getOzelAciklama();
 		}
 
 		return key;

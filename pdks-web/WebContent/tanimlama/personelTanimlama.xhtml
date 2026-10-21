@@ -254,7 +254,7 @@
 								<f:facet name="header">
 									<h:outputText value="#{ortakIslemler.calismaModeliAciklama()}" />
 								</f:facet>
-								<h:outputText value="#{personelView.pdksPersonel.calismaModeli.aciklama}" id="calismaModeli" />
+								<h:outputText value="#{personelView.pdksPersonel.calismaModeli.ozelAciklama}" id="calismaModeli" />
 							</rich:column>
 							<rich:column style="text-align:center" rendered="#{authenticatedUser.admin or ortakIslemler.getParameterKey('izinERPUpdate') != '1'}">
 								<f:facet name="header">
@@ -1059,7 +1059,7 @@
 														<rich:dataTable rowClasses="acik,koyu" value="#{pdksPersonelHome.calismaModeliVardiyaList}" var="vardiya" rows="20" rowKeyVar="row"
 															rendered="#{pdksPersonelHome.calismaModeliVardiyaList != null}" id="vardiyaTable">
 															<f:facet name="header">
-																<h:outputText value="#{pdksPersonelHome.instance.calismaModeli.aciklama} Çalışma Modeli" />
+																<h:outputText value="#{pdksPersonelHome.instance.calismaModeli.ozelAciklama} Çalışma Modeli" />
 															</f:facet>
 															<rich:column>
 																<f:facet name="header">

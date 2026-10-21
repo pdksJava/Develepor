@@ -862,7 +862,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						if (pd.getSonDurum().equals(Boolean.TRUE) && (eksikCalisanVeriGetir != null && eksikCalisanVeriGetir)) {
 							double normalSaat = 0.0d, planlananSaaat = 0.0d;
 							CalismaModeli cm = pd.getCalismaModeli();
-							if (cm != null) {
+							if (cm != null && cm.isArgemi() == false) {
 								try {
 									normalSaat = pd.getHesaplananSure().doubleValue();
 								} catch (Exception e) {
@@ -1348,7 +1348,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 					for (String kodu : baslikMap.keySet()) {
 						if (kodu.startsWith(home.COL_CALISMA_MODELI)) {
-							ExcelUtil.getCell(sheet, row, col++, style).setCellValue(ap.getCalismaModeli().getAciklama());
+							ExcelUtil.getCell(sheet, row, col++, style).setCellValue(ap.getCalismaModeli().getOzelAciklama());
 
 							for (Tanim alan : personelDinamikAlanlar) {
 								Tanim deger = ortakIslemler.getTanimDeger(personel, alan, personelDinamikAlanMap);

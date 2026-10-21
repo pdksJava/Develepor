@@ -903,7 +903,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 					for (CalismaModeliVardiya cmv : list) {
 						CalismaModeli calismaModeli = cmv.getCalismaModeli();
 						if (calismaModeli != null && calismaModeli.getDurum()) {
-							list2.add(new Liste(cmv.getVardiya().getId() + "_" + calismaModeli.getAciklama(), cmv));
+							list2.add(new Liste(cmv.getVardiya().getId() + "_" + calismaModeli.getOzelAciklama(), cmv));
 						}
 
 					}
@@ -1045,7 +1045,7 @@ public class VardiyaHome extends EntityHome<Vardiya> implements Serializable {
 					List<CalismaModeli> list = cMap.get(vardiya.getId());
 					for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 						CalismaModeli cm = (CalismaModeli) iterator.next();
-						cmAciklama.append(cm.getAciklama());
+						cmAciklama.append(cm.getOzelAciklama());
 						if (iterator.hasNext())
 							cmAciklama.append(", ");
 					}

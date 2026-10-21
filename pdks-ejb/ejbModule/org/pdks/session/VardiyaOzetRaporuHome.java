@@ -460,7 +460,7 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 								aylikPuantaj = new AylikPuantaj();
 								aylikPuantaj.setIzinSuresi(0.0d);
 								liste = new Liste(veriKey, aylikPuantaj);
-								String str = pdksVardiyaGun.getCalismaModeli() != null ? pdksVardiyaGun.getCalismaModeli().getAciklama() : "";
+								String str = pdksVardiyaGun.getCalismaModeli() != null ? pdksVardiyaGun.getCalismaModeli().getOzelAciklama() : "";
 								liste.setSelected(str + " " + (bolum != null ? bolum.getAciklama() : "") + (altBolum != null ? " " + altBolum.getAciklama() : ""));
 								Personel pdksPersonel = (Personel) personel.clone();
 								pdksPersonel.setCalismaModeli(pdksVardiyaGun.getCalismaModeli());
@@ -909,7 +909,7 @@ public class VardiyaOzetRaporuHome extends EntityHome<VardiyaGun> implements Ser
 					}
 
 				} else if (personel.getCalismaModeli() != null) {
-					aciklama = personel.getCalismaModeli().getAciklama();
+					aciklama = personel.getCalismaModeli().getOzelAciklama();
 					satirStyle = (XSSFCellStyle) styleEven.clone();
 					satirTutarStyle = (XSSFCellStyle) styleEvenTutar.clone();
 				} else

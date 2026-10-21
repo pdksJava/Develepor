@@ -1795,7 +1795,7 @@ public class IseGelmemeUyari implements Serializable {
 						if (!calismaModeliMap.isEmpty()) {
 							List<CalismaModeli> calismaModeliList = new ArrayList<CalismaModeli>(calismaModeliMap.values());
 							if (calismaModeliList.size() == 1)
-								calismaModeliAciklama = " [ " + calismaModeliList.get(0).getAciklama() + " ]";
+								calismaModeliAciklama = " [ " + calismaModeliList.get(0).getOzelAciklama() + " ]";
 							else
 								calismaModeliVar = true;
 							calismaModeliList = null;
@@ -1930,7 +1930,7 @@ public class IseGelmemeUyari implements Serializable {
 								if (bolumVar)
 									ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getEkSaha3() != null && degisti ? personel.getEkSaha3().getAciklama() : "");
 								if (calismaModeliVar)
-									ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vg.getCalismaModeli() != null && degisti ? vg.getCalismaModeli().getAciklama() : "");
+									ExcelUtil.getCell(sheet, row, col++, style).setCellValue(vg.getCalismaModeli() != null && degisti ? vg.getCalismaModeli().getOzelAciklama() : "");
 								if (altBolumVar)
 									ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getEkSaha4() != null && degisti ? personel.getEkSaha4().getAciklama() : "");
 								ExcelUtil.getCell(sheet, row, col++, style).setCellValue(degisti ? personel.getAdSoyad() : "");
@@ -1979,7 +1979,7 @@ public class IseGelmemeUyari implements Serializable {
 							if (bolumVar)
 								sb.append("<td nowrap style=\"border: 1px solid;\">" + (personel.getEkSaha3() != null && degisti ? personel.getEkSaha3().getAciklama() : "") + "</td>");
 							if (calismaModeliVar)
-								sb.append("<td nowrap style=\"border: 1px solid;\">" + (vg.getCalismaModeli() != null && degisti ? vg.getCalismaModeli().getAciklama() : "") + "</td>");
+								sb.append("<td nowrap style=\"border: 1px solid;\">" + (vg.getCalismaModeli() != null && degisti ? vg.getCalismaModeli().getOzelAciklama() : "") + "</td>");
 
 							if (altBolumVar)
 								sb.append("<td nowrap style=\"border: 1px solid;\">" + (personel.getEkSaha4() != null && degisti ? personel.getEkSaha4().getAciklama() : "") + "</td>");
@@ -2120,7 +2120,7 @@ public class IseGelmemeUyari implements Serializable {
 								altBolumIdList.add(altBolum.getId());
 							String key = (departmanId != null ? departmanId : 0L) + "_" + (sirket.getSirketGrup() == null ? sirket.getAd() : sirket.getSirketGrup().getAciklama()) + (tesis != null ? "_" + tesis.getAciklama() : "");
 							key += "_" + yoneticiAdi + (bolum != null ? "_" + bolum.getAciklama() : "") + (altBolum != null ? "_" + altBolum.getAciklama() : "");
-							key += (calismaModeli != null ? "_" + calismaModeli.getAciklama() : "") + "_" + personel.getAdSoyad() + "_" + personel.getSicilNo();
+							key += (calismaModeli != null ? "_" + calismaModeli.getOzelAciklama() : "") + "_" + personel.getAdSoyad() + "_" + personel.getSicilNo();
 							List<String> idList = new ArrayList<String>();
 							for (Iterator iterator = hareketList.iterator(); iterator.hasNext();) {
 								HareketKGS hareketKGS2 = (HareketKGS) iterator.next();
@@ -2167,7 +2167,7 @@ public class IseGelmemeUyari implements Serializable {
 						if (tesisIdList.size() == 1 && tesis != null)
 							baslik += " " + tesis.getAciklama();
 						if (calismaModeliIdList.size() == 1 && calismaModeli != null)
-							baslik += " [ " + calismaModeli.getAciklama() + " ]";
+							baslik += " [ " + calismaModeli.getOzelAciklama() + " ]";
 						int uz = (hariciPersonelPlandaVar ? 1 : 0) + (sirketVar ? 1 : 0) + (tesisVar ? 1 : 0) + (calismaModeliVar ? 1 : 0) + (altBolumVar ? 1 : 0) + 6;
 						for (int i = 0; i < uz; i++) {
 							ExcelUtil.getCell(sheetHareket, row, i, header).setCellValue("");
@@ -2233,7 +2233,7 @@ public class IseGelmemeUyari implements Serializable {
 
 						ExcelUtil.getCell(sheetHareket, row, col++, style).setCellValue(personel.getEkSaha3() != null && degisti ? personel.getEkSaha3().getAciklama() : "");
 						if (calismaModeliVar)
-							ExcelUtil.getCell(sheetHareket, row, col++, style).setCellValue(calismaModeli != null && degisti ? calismaModeli.getAciklama() : "");
+							ExcelUtil.getCell(sheetHareket, row, col++, style).setCellValue(calismaModeli != null && degisti ? calismaModeli.getOzelAciklama() : "");
 						if (altBolumVar)
 							ExcelUtil.getCell(sheetHareket, row, col++, style).setCellValue(personel.getEkSaha4() != null && degisti ? personel.getEkSaha4().getAciklama() : "");
 						ExcelUtil.getCell(sheetHareket, row, col++, style).setCellValue(degisti ? personel.getAdSoyad() : "");

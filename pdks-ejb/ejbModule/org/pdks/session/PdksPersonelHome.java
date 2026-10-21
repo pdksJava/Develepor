@@ -2945,7 +2945,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 			Personel personel = personelView != null ? personelView.getPdksPersonel() : null;
 			String alan = null;
 			try {
-				alan = personel != null && personel.getId() != null ? personel.getBolumOzelAciklama() + "_" + (personel.getCalismaModeli() != null ? personel.getCalismaModeli().getAciklama() : "") + "_" + personel.getAdSoyad() + "_" + personel.getPdksSicilNo() : personelView.getAdSoyad();
+				alan = personel != null && personel.getId() != null ? personel.getBolumOzelAciklama() + "_" + (personel.getCalismaModeli() != null ? personel.getCalismaModeli().getOzelAciklama() : "") + "_" + personel.getAdSoyad() + "_" + personel.getPdksSicilNo() : personelView.getAdSoyad();
 			} catch (Exception e) {
 				alan = personelView.getAdSoyad();
 			}

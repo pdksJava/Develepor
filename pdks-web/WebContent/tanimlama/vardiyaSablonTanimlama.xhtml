@@ -142,7 +142,7 @@
 									<f:facet name="header">
 										<h:outputText value="#{ortakIslemler.calismaModeliAciklama()}" />
 									</f:facet>
-									<h:outputText value="#{vardiyaSablon.calismaModeli.aciklama}" id="calismaModeli" />
+									<h:outputText value="#{vardiyaSablon.calismaModeli.ozelAciklama}" id="calismaModeli" />
 								</rich:column>
 
 								<rich:column>
@@ -269,7 +269,7 @@
 							<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaSablonuHome.modelList != null}">
 								<ui:define name="label">#{ortakIslemler.calismaModeliAciklama()}</ui:define>
 								<h:selectOneMenu value="#{vardiyaSablonuHome.instance.calismaModeli}" style="text-align : left" disabled="#{authenticatedUser.admin == false}">
-									<s:selectItems var="calismaModeli" value="#{vardiyaSablonuHome.modelList}" label="#{calismaModeli.aciklama}"
+									<s:selectItems var="calismaModeli" value="#{vardiyaSablonuHome.modelList}" label="#{calismaModeli.ozelAciklama}"
 										noSelectionLabel="Lütfen seçiniz" />
 									<a4j:support event="onchange" ajaxSingle="true" />
 									<s:convertEntity />

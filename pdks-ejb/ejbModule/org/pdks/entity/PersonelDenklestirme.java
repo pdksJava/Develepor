@@ -55,6 +55,7 @@ public class PersonelDenklestirme extends BaseObject {
 	public static final String COLUMN_NAME_KISMI_ODEME_SAAT = "KISMI_ODEME_SAAT";
 	public static final String COLUMN_NAME_PERSONEL_NO = "PERSONEL_NO";
 	public static final String COLUMN_NAME_EKSIK_CALISMA_SURE = "EKSIK_CALISMA_SURE";
+	public static final String COLUMN_NAME_DG_CALISMA_SURE = "DG_CALISMA_SURE";
 	public static final String COLUMN_NAME_AYLIK_BRUT_UCRET = "AYLIK_BRUT_UCRET";
 	public static final String COLUMN_NAME_AYLIK_NET_UCRET = "AYLIK_NET_UCRET";
 	public static final String COLUMN_NAME_SUA_DURUM = "SUA_DURUM";
@@ -83,7 +84,7 @@ public class PersonelDenklestirme extends BaseObject {
 
 	// private PersonelDonemselDurum sutIzniPersonelDonemselDurum, gebePersonelDonemselDurum, isAramaPersonelDonemselDurum;
 
-	private Double planlanSure = 0d, eksikCalismaSure = 0d, hesaplananSure = 0d, resmiTatilSure = 0d, haftaCalismaSuresi = 0d, fazlaMesaiSure = 0d, odenenSure = 0d;
+	private Double planlanSure = 0d, eksikCalismaSure = 0d, dgSaatToplami = 0d, hesaplananSure = 0d, resmiTatilSure = 0d, haftaCalismaSuresi = 0d, fazlaMesaiSure = 0d, odenenSure = 0d;
 
 	private Double devredenSure, kesilenSure = 0d, calismaSuaSaati = calismaSaatiSua, kismiOdemeSure = 0d, aksamVardiyaSayisi = 0d, aksamVardiyaSaatSayisi = 0d, sutIzniSaatSayisi = 0d;
 
@@ -475,6 +476,20 @@ public class PersonelDenklestirme extends BaseObject {
 
 	public void setAylikBrutUcret(Double aylikBrutUcret) {
 		this.aylikBrutUcret = aylikBrutUcret;
+	}
+
+	@Column(name = COLUMN_NAME_DG_CALISMA_SURE)
+	public Double getDgSaatToplami() {
+		return dgSaatToplami;
+	}
+
+	public void setDgSaatToplami(Double value) {
+		if (guncellendi != null && !guncellendi) {
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, dgSaatToplami));
+			if (guncellendi)
+				logger.debug(value);
+		}
+		this.dgSaatToplami = value;
 	}
 
 	@Column(name = COLUMN_NAME_EKSIK_CALISMA_SURE)

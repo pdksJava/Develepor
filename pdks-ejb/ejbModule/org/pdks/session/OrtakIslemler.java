@@ -5410,9 +5410,9 @@ public class OrtakIslemler implements Serializable {
 				String bolumAdi = (personel.getEkSaha3() != null ? "_" + personel.getEkSaha3().getAciklama() : "_") + (personel.getEkSaha4() != null ? "_" + personel.getEkSaha4().getAciklama() : "");
 				if (cm != null) {
 					if (cm.isSaatlikOdeme() || cm.isFazlaMesaiVarMi() == false)
-						key += cm.getAciklama() + bolumAdi;
+						key += cm.getOzelAciklama() + bolumAdi;
 					else
-						key += bolumAdi + cm.getAciklama();
+						key += bolumAdi + cm.getOzelAciklama();
 				} else
 					key += bolumAdi;
 
@@ -15669,6 +15669,7 @@ public class OrtakIslemler implements Serializable {
 			veriMap.put("odenenSure", pd.getOdenenSure());
 			veriMap.put("planlanSure", pd.getPlanlanSure());
 			veriMap.put("resmiTatilSure", pd.getResmiTatilSure());
+			veriMap.put("dgSaatToplami", pd.getDgSaatToplami());
 		}
 		return veriMap;
 	}
@@ -18467,7 +18468,7 @@ public class OrtakIslemler implements Serializable {
 					ExcelUtil.setCellComment(yonetici2Cell, anchor, helper, drawing, yonetici2.getPdksSicilNo() + " " + yonetici2.getAdSoyad() + "\nİşten ayrılma tarihi : " + user.dateFormatla(yonetici2.getSskCikisTarihi()));
 
 				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getSablon() != null ? personel.getSablon().getAdi() : "");
-				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getCalismaModeli() != null ? personel.getCalismaModeli().getAciklama() : "");
+				ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getCalismaModeli() != null ? personel.getCalismaModeli().getOzelAciklama() : "");
 				if (personelTipiGoster)
 					ExcelUtil.getCell(sheet, row, col++, style).setCellValue(personel.getPersonelTipi() != null ? personel.getPersonelTipi().getAciklama() : "");
 				if (bakiyeTakipEdiliyor || !izinERPUpdate) {
@@ -23132,7 +23133,7 @@ public class OrtakIslemler implements Serializable {
 
 				String modelAciklama = "";
 				if (calismaModeli != null)
-					modelAciklama = calismaModeli.getAciklama();
+					modelAciklama = calismaModeli.getOzelAciklama();
 				ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(modelAciklama);
 				ExcelUtil.getCell(sheet, row, col++, styleGenel).setCellValue(authenticatedUser.getYesNo(pd.getFazlaMesaiOde()));
 				List vardiyaList = aylikPuantaj.getAyinVardiyalari();
@@ -23269,7 +23270,7 @@ public class OrtakIslemler implements Serializable {
 				setCell(sheet, row, col++, styleTutar, aylikPuantaj.getSaatToplami());
 				Cell planlananCell = setCell(sheet, row, col++, styleTutar, aylikPuantaj.getPlanlananSure());
 				if (aylikPuantaj.getCalismaModeliAy() != null && planlananCell != null && aylikPuantaj.getSutIzniDurum().equals(Boolean.FALSE)) {
-					String title = aylikPuantaj.getCalismaModeli().getAciklama() + " : ";
+					String title = aylikPuantaj.getCalismaModeli().getOzelAciklama() + " : ";
 					if (aylikPuantaj.getCalismaModeli().getToplamGunGuncelle().equals(Boolean.FALSE))
 						title += authenticatedUser.sayiFormatliGoster(aylikPuantaj.getCalismaModeliAy().getSure());
 					else
