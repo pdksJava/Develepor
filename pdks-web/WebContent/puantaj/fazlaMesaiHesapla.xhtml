@@ -263,7 +263,7 @@
 							<c:if
 								test="#{fazlaMesaiHesaplaHome.denklestirmeAy != null and (not empty fazlaMesaiHesaplaHome.aylikPuantajList or fazlaMesaiHesaplaHome.tumBolumPersonelleri != null)}">
 								<c:choose>
-									<c:when test="#{authenticatedUser.admin or ortakIslemler.getParameterKey('puantajPageSize') != ''}">
+									<c:when test="#{ortakIslemler.getParameterKey('puantajPageSize') != ''}">
 										<ui:include src="/puantaj/includes/aylikFazlaMesaiTable.xhtml" />
 									</c:when>
 									<c:otherwise>
