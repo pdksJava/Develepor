@@ -52,10 +52,10 @@
 
 	<event type="org.jboss.seam.postInitialization">
 		<action execute="#{zamanlayici.scheduleSertifikaSSLKontrolTimer()}" />
-		<action execute="#{zamanlayici.scheduleIseGelmemeUyariTimer()}" />
 		<action execute="#{zamanlayici.schedulePersonelERPGuncellemeTimer()}" />
 		<action execute="#{zamanlayici.izinBakiyeGuncellemeTimer()}" />
 		<!-- 
+			<action execute="#{zamanlayici.scheduleIseGelmemeUyariTimer()}" />
 			<action execute="#{zamanlayici.scheduleFazlaMesaiGuncellemeTimer()}" />
 		 -->
 	</event>
