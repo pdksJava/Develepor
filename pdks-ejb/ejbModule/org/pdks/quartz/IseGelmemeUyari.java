@@ -13,8 +13,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -2390,11 +2392,19 @@ public class IseGelmemeUyari implements Serializable {
 
 	public String iseGelmeDurumuGiris() {
 		Session session = null;
+		boolean acildi = false;
 		try {
 			if (pdksEntityController != null && !isCalisiyor()) {
-				if (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum()) {
-					setCalisiyor(Boolean.TRUE);
+				setCalisiyor(Boolean.TRUE);
+				acildi = true;
+				if (PdksUtil.getCanliSunucuDurum()) {
+					izinDahil = true;
+					String izinDahilStr = null;
 					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+					HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+					izinDahilStr = req != null ? req.getParameter("izinDahil") : null;
+					if (izinDahilStr != null)
+						izinDahil = izinDahilStr.equals("1");
 					iseGelmemeDurumuCalistir(null, null, session, null, false, true);
 				}
 			}
@@ -2404,7 +2414,8 @@ public class IseGelmemeUyari implements Serializable {
 		} finally {
 			if (session != null)
 				pdksEntityController.sessionClose(session);
-			setCalisiyor(Boolean.FALSE);
+			if (acildi)
+				setCalisiyor(Boolean.FALSE);
 		}
 
 		return MenuItemConstant.home;
