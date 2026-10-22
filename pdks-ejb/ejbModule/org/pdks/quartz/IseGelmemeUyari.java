@@ -2397,14 +2397,22 @@ public class IseGelmemeUyari implements Serializable {
 			if (pdksEntityController != null && !isCalisiyor()) {
 				setCalisiyor(Boolean.TRUE);
 				acildi = true;
+				HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+				String parametreler = req != null ? req.getParameter("params") : null;
+				izinDahil = true;
+				if (parametreler != null) {
+					parametreler = PdksUtil.getDecodeStringByBase64(parametreler);
+					String[] params = parametreler.split(" ");
+					for (int i = 0; i < params.length; i++) {
+						String str[] = params[i].split("=");
+						if (str.length == 2)
+							if (str[0].equals("izinDahil"))
+								izinDahil = str[1].equals("1");
+					}
+				}
+
 				if (PdksUtil.getCanliSunucuDurum()) {
-					izinDahil = true;
-					String izinDahilStr = null;
 					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-					HttpServletRequest req = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-					izinDahilStr = req != null ? req.getParameter("izinDahil") : null;
-					if (izinDahilStr != null)
-						izinDahil = izinDahilStr.equals("1");
 					iseGelmemeDurumuCalistir(null, null, session, null, false, true);
 				}
 			}
