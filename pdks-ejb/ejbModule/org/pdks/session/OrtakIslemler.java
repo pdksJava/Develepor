@@ -22049,10 +22049,11 @@ public class OrtakIslemler implements Serializable {
 						}
 						Date zaman = PdksUtil.tariheGunEkleCikar(vg.getVardiyaDate(), 1);
 						vg.setBayramAyir(true);
-						if (str.endsWith("0526"))
+						if (str.endsWith("1028"))
 							logger.debug("" + hareketler.size());
 						boolean tatilBasladi = false;
 						boolean tatilVar = false;
+						boolean ilkHareket = true;
 						for (Iterator iterator = hareketler.iterator(); iterator.hasNext();) {
 							HareketKGS hareketKGS = (HareketKGS) iterator.next();
 							if (hareketKGS.getId() == null) {
@@ -22063,6 +22064,8 @@ public class OrtakIslemler implements Serializable {
 							boolean tatilDurum = hareketZaman.getTime() >= orjTatil.getBasTarih().getTime() && hareketZaman.getTime() <= orjTatil.getBitTarih().getTime();
 							if (!tatilVar)
 								tatilVar = tatilDurum;
+							if (ilkHareket)
+								tatilBasladi = tatilDurum;
 							hareketKGS.setTatil(tatilDurum);
 							if (islemVardiya.isCalisma() && hareketKGS.getOncekiGun().booleanValue() == false && hareketKGS.getId() != null && hareketKGS.getId().startsWith(HareketKGS.SANAL_HAREKET) == false) {
 								if (hareketZaman.getTime() >= islemVardiya.getVardiyaTelorans1BitZaman().getTime())
@@ -22135,6 +22138,7 @@ public class OrtakIslemler implements Serializable {
 
 								yeniHareketler.add(hareketKGS);
 							}
+							ilkHareket = false;
 						}
 						if (vg.getTatil() != null && tatilVar == false)
 							vg.setTatil(null);
@@ -23595,7 +23599,8 @@ public class OrtakIslemler implements Serializable {
 						oncekiVardiyaGun = vardiyaGun.getOncekiVardiyaGun();
 
 					String vGun = vardiyaGun.getVardiyaDateStr();
-
+					if (vGun.endsWith("1028"))
+						logger.debug(vGun);
 					if (vardiyaGun.getVardiya() == null || (fiiliHesapla == false && vardiyaGun.isIzinli() == false && vardiyaGun.isFiiliHesapla() == false && vardiyaGun.isBayramAyir() == false)) {
 						// if (vardiyaGun.isAyinGunu() && vardiyaGun.getVardiya() != null)
 						// logger.info(vardiyaGun.getVardiyaKeyStr() + " " + vardiyaGun.getCalismaSuresi());
@@ -23691,8 +23696,7 @@ public class OrtakIslemler implements Serializable {
 						ArrayList<HareketKGS> tatilGirisHareketleri = new ArrayList<HareketKGS>(), tatilCikisHareketleri = new ArrayList<HareketKGS>();
 						if (tatilGunleriMap.containsKey(key))
 							vardiyaGun.setTatil(tatilGunleriMap.get(key));
-						if (vGun.endsWith("0526"))
-							logger.debug(vGun);
+
 						double resmiTatilSure = 0, toplamYemekSuresi = 0, vardiyaYemekSuresi = 0, calSure = 0d;
 						if (gun.equals("01")) {
 							if (vardiyaGun.getTatil() != null && vardiyaGun.getVardiya() != null && sonVardiyaGun != null) {
@@ -23822,8 +23826,6 @@ public class OrtakIslemler implements Serializable {
 						boolean tatilOncesiKontrol = gun.equals("01") && vardiyaGun.getTatil() != null && oncekiVardiya != null && oncekiVardiya.getBasDonem() > oncekiVardiya.getBitDonem();
 						if (vardiyaGun.isBayramAyir() && vardiya.isCalisma() == false)
 							tatilOncesiKontrol = true;
-						if (vGun.endsWith("0605"))
-							logger.debug("");
 						if (gunlukSaat > 0 || fmSaat > 0 || fazlaMesaiOnayla || tatilOncesiKontrol) {
 							ArrayList<HareketKGS> girisHareketleri = new ArrayList<HareketKGS>(), cikisHareketleri = new ArrayList<HareketKGS>();
 							vardiyaYemekSuresi = vardiyaGun.getIslemVardiya() != null && vardiyaGun.getIslemVardiya().getYemekSuresi() != null ? vardiyaGun.getIslemVardiya().getYemekSuresi() / 60 : 0d;
@@ -23909,6 +23911,8 @@ public class OrtakIslemler implements Serializable {
 
 										hareketList = PdksUtil.sortListByAlanAdi(hareketList, "zaman", Boolean.FALSE);
 									}
+									if (vGun.endsWith("1028"))
+										logger.debug("");
 
 									if (!hareketList.isEmpty() && tatil != null) {
 										if (vardiyaGun.isBayramAyir() == false) {
@@ -24045,6 +24049,8 @@ public class OrtakIslemler implements Serializable {
 							Date gunParca = null;
 							if (sonGunMu && tatil != null && tatilGunleriMap.containsKey(vGun) == false)
 								gunParca = PdksUtil.tariheGunEkleCikar(vardiyaGun.getVardiyaDate(), 1);
+							if (vGun.endsWith("1028"))
+								logger.debug(vGun);
 							for (int i = 0; i < tatilCikisHareketleri.size(); i++) {
 								HareketKGS cikisHareket = tatilCikisHareketleri.get(i);
 								HareketKGS girisHareket = null;
@@ -24066,6 +24072,8 @@ public class OrtakIslemler implements Serializable {
 								}
 								Date girisZaman = girisHareket != null ? getSaniyeSifirla(girisHareket.getZaman(), vardiyaGun) : null;
 								Date cikisZaman = cikisHareket != null ? getSaniyeSifirla(cikisHareket.getZaman(), vardiyaGun) : null;
+//								if (girisHareket.getId() != null && girisHareket.getId().startsWith(HareketKGS.SANAL_HAREKET) && girisZaman.before(islemVardiya.getVardiyaBasZaman()))
+//									continue;
 
 								if (vardiyaGun.isBayramAyir() && vardiyaGun.getVardiya().isCalisma() == false && girisHareket.getOncekiGun().booleanValue() == false)
 									continue;
@@ -26133,8 +26141,9 @@ public class OrtakIslemler implements Serializable {
 		personelView.setPersonelKGS(vardiyaGun.getPersonel().getPersonelKGS());
 		if (vardiyaGun.getGirisHareketleri() == null || vardiyaGun.isAyinGunu() == false) {
 			tarihGecti = Boolean.TRUE;
-			HareketKGS giris = new HareketKGS();
 			Date zaman = vardiya.getVardiyaBasZaman();
+
+			HareketKGS giris = new HareketKGS();
 			giris.setZaman(zaman);
 			giris.setGecerliDegil(Boolean.TRUE);
 			giris.setId(HareketKGS.SANAL_HAREKET + vardiyaGun.getId() + "" + vardiya.getVardiyaBasZaman().getTime());
