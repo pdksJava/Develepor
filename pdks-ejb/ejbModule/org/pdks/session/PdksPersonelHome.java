@@ -4016,7 +4016,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		yeniPersonelGuncelle = Boolean.FALSE;
 		String key = ortakIslemler.getParametrePersonelERPTableView();
 		List<String> list = null;
-		if (authenticatedUser.isAdmin() && ortakIslemler.getParameterKeyHasStringValue(key)) {
+		if (authenticatedUser.isAdmin() && ortakIslemler.getParameterKeyHasStringValue(key) && ortakIslemler.isExisView(key, session)) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(" select PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " from " + PersonelERPDB.VIEW_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + PersonelKGS.TABLE_NAME + " PS " + PdksEntityController.getJoinLOCK() + " on PS." + PersonelKGS.COLUMN_NAME_SICIL_NO + " = D." + PersonelERPDB.COLUMN_NAME_PERSONEL_NO);
