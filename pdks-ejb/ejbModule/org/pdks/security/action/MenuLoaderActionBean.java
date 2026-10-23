@@ -206,18 +206,26 @@ public class MenuLoaderActionBean implements Serializable {
 								for (UIComponent child : childrenList) {
 									if (child instanceof HtmlMenuItem) {
 										HtmlMenuItem item = (HtmlMenuItem) child;
-										Long key = Long.parseLong(item.getData() == null ? "0" : "" + item.getData());
+										String str = "0";
+										if (item.getData() != null)
+											str = "" + item.getData();
+										Long key = null;
+										try {
+											key = Long.parseLong(str);
+										} catch (Exception e) {
+											key = 0L;
+										}
 										map.put(key, item);
- 									}
+									}
 								}
- 								childrenList.clear();
+								childrenList.clear();
 								for (Long key : map.keySet()) {
 									raporGrup.getChildren().add(map.get(key));
 								}
- 							}
- 						}
+							}
+						}
 					}
- 				} else if (component instanceof HtmlMenuItem) {
+				} else if (component instanceof HtmlMenuItem) {
 					if (id.equals(menuAdi))
 						ekle = false;
 				}
