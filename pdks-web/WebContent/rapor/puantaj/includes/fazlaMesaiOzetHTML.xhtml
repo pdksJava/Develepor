@@ -668,7 +668,7 @@
 																</rich:toolTip>
 													</ui:fragment>
 												</ui:fragment>
- 											</DIV>
+											</DIV>
 										</ui:fragment></td>
 
 									<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.argeGoster}">
@@ -943,6 +943,17 @@
 						<td class="#{ap.trClass}" style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; font-weight: bold; text-align: center;">#{authenticatedUser.sayiFormatliGoster(ap.getIzinAdet(izinTipi.kisaAdi))}
 						</td>
 					</c:forEach>
+					<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.brutUcretGoster}">
+						<td class="#{ap.trClass}" style="width: 30px"><ui:fragment rendered="#{ap.personelDenklestirme.aylikBrutUcret gt 0}">
+								<span id="aylikBrutUcret#{ap.personelDenklestirme.id}"> <h:outputText
+										value="#{authenticatedUser.sayiFormatliGoster(ap.aylikBrutUcret)}" />
+								</span>
+								<rich:toolTip for="aylikBrutUcret#{ap.personelDenklestirme.id}">
+								Aylık Brüt Ücret : <h:outputText value="#{authenticatedUser.sayiFormatliGoster(ap.personelDenklestirme.aylikBrutUcret)}" />
+								</rich:toolTip>
+							</ui:fragment>
+						</th>
+					</ui:fragment>
 				</tr>
 			</a4j:repeat>
 
