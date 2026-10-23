@@ -20,7 +20,8 @@
 						<ui:fragment>
 
 							<h:panelGrid columns="1">
-								<h:panelGrid columns="2" width="600px" rendered="#{devamsizlikRaporuHome.as.sirketIdList.size() > 1 or (devamsizlikRaporuHome.as.sirket.tesisDurumu and devamsizlikRaporuHome.as.tesisList.size()>0)}">
+								<h:panelGrid columns="2" width="600px"
+									rendered="#{devamsizlikRaporuHome.as.sirketIdList.size() > 1 or (devamsizlikRaporuHome.as.sirket.tesisDurumu and devamsizlikRaporuHome.as.tesisList.size()>0)}">
 									<s:decorate template="/layout/edit.xhtml">
 										<ui:define name="label">#{ortakIslemler.sirketAciklama()}</ui:define>
 										<h:selectOneMenu id="sirketSec" value="#{devamsizlikRaporuHome.as.sirketId}" disabled="#{devamsizlikRaporuHome.as.sirketIdList.size() == 1}">
@@ -87,7 +88,9 @@
 								<ui:repeat value="#{devamsizlikRaporuHome.durumList}" var="durum">
 									<tr>
 										<td><b>#{durum.value}</b></td>
-										<td><h:selectBooleanCheckbox value="#{durum.secili}" /></td>
+										<td><h:selectBooleanCheckbox value="#{durum.secili}">
+												<a4j:support event="onclick" reRender="devamGiris" />
+											</h:selectBooleanCheckbox></td>
 									</tr>
 								</ui:repeat>
 							</TABLE>
