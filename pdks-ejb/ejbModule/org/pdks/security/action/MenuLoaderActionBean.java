@@ -206,15 +206,7 @@ public class MenuLoaderActionBean implements Serializable {
 								for (UIComponent child : childrenList) {
 									if (child instanceof HtmlMenuItem) {
 										HtmlMenuItem item = (HtmlMenuItem) child;
-										String str = "0";
-										if (item.getData() != null)
-											str = "" + item.getData();
-										Long key = null;
-										try {
-											key = Long.parseLong(str);
-										} catch (Exception e) {
-											key = 0L;
-										}
+										Long key = getItemKey(item);
 										map.put(key, item);
 									}
 								}
@@ -274,6 +266,23 @@ public class MenuLoaderActionBean implements Serializable {
 		}
 		menuAltKontrol(raporIslemleri);
 
+	}
+
+	/**
+	 * @param item
+	 * @return
+	 */
+	private Long getItemKey(HtmlMenuItem item) {
+		String str = "0";
+		if (item.getData() != null)
+			str = "" + item.getData();
+		Long key = null;
+		try {
+			key = Long.parseLong(str);
+		} catch (Exception e) {
+			key = 0L;
+		}
+		return key;
 	}
 
 	/**
