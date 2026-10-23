@@ -2236,7 +2236,7 @@ public class VardiyaPlaniTopluRaporHome extends EntityHome<DepartmanDenklestirme
 
 								}
 							} else {
-								aciklama = vardiyaGun.isCalismayiBirakti() ? "İSTİFA" : "ÇALIŞMIYOR";
+								aciklama = vardiyaGun.isCalismayiBirakti() ? "İSTİFA" : "";
 							}
 
 						}

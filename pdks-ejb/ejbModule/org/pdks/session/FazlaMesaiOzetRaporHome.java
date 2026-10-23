@@ -3116,7 +3116,7 @@ public class FazlaMesaiOzetRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 								}
 							} else {
-								aciklama = vardiyaGun.isCalismayiBirakti() ? "İSTİFA" : "ÇALIŞMIYOR";
+								aciklama = vardiyaGun.isCalismayiBirakti() ? "İSTİFA" : "";
 							}
 
 						}
