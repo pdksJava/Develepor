@@ -1113,11 +1113,9 @@ public class PdksVeriOrtakAktar implements Serializable {
 				mailService.getAttachmentFiles().add(mailFile);
 			}
 		}
-	 
 
 		sb = null;
 
-	 
 		mailObjectKontrol(mailService);
 		return mailService;
 	}
@@ -4330,8 +4328,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 							addHatalist(hataList, personelERP, null, mesaj);
 							bolum = getTanim(null, "ekSaha3", personelERP.getBolumKodu(), personelERP.getBolumAdi(), dataMap, null);
-							if (bolum == null && parentBolum != null)
+							if (bolum == null && parentBolum != null) {
 								addHatalist(hataList, personelERP, null, uygulamaBordro + " " + parentBolum.getAciklamatr() + " bilgisi boş olamaz!");
+
+							}
 
 						}
 					}
@@ -4407,10 +4407,10 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 				if (!sirketMap.containsKey(personelERP.getSirketKodu()))
 					addHatalist(hataList, personelERP, null, personelERP.getSirketKodu() + " " + personelERP.getSirketAdi() + " " + sirketAciklama() + " bilgisi bulunamadı!");
+				personel = personelPDKSMap.containsKey(personelNo) ? personelPDKSMap.get(personelNo) : null;
 
 				if (personelERP.getHataList().isEmpty() && personelKGSMap.containsKey(personelNo)) {
 					PersonelKGS personelKGS = personelKGSMap.get(personelNo);
-					personel = personelPDKSMap.containsKey(personelNo) ? personelPDKSMap.get(personelNo) : null;
 					if (personel != null) {
 						if (kgsPersonelSPAdi != null && personel.getId() != null) {
 							try {
@@ -4699,7 +4699,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 					} else if (bordroAltAlan == null)
 						bordroAltAlan = istenAyrilanEkSaha;
 					personel.setEkSaha1(departman);
-					personel.setEkSaha3(bolum);
+					if (bolum != null)
+						personel.setEkSaha3(bolum);
 					if (personel.getId() == null) {
 						boolean icap = false;
 						if (bolum != null) {
@@ -4919,9 +4920,14 @@ public class PdksVeriOrtakAktar implements Serializable {
 					}
 
 				}
-				if (personel != null && personel.isGenelMudur() && personel.getYoneticisi() == null && personel.getId() != null) {
-					personel.setYoneticisi(personel);
-					saveList.add(personel);
+				if (personel != null && personel.getId() != null) {
+					if (personel.isGenelMudur() && personel.getYoneticisi() == null) {
+						personel.setYoneticisi(personel);
+						saveList.add(personel);
+					} else if (bolum == null && personel.getEkSaha3() != null) {
+						personel.setEkSaha3(bolum);
+						saveList.add(personel);
+					}
 				}
 
 				if (!saveList.isEmpty()) {
