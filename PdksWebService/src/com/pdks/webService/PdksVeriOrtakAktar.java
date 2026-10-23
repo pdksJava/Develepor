@@ -4133,7 +4133,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 					if (guncellemeZamani != null)
 						guncellemeTarihi = guncellemeZamani;
 				}
-				Tanim bolum = null;
+				Tanim bolum = null, bordroAltAlan = null;
 				Sirket sirket = null;
 				personelSirket = PdksUtil.hasStringValue(personelERP.getSirketKodu()) && sirketMap.containsKey(personelERP.getSirketKodu()) ? sirketMap.get(personelERP.getSirketKodu()) : null;
 				LinkedHashMap<String, Liste> personelListeMap = new LinkedHashMap<String, Liste>();
@@ -4587,7 +4587,7 @@ public class PdksVeriOrtakAktar implements Serializable {
 						bolum = getTanim(null, "ekSaha3", personelERP.getBolumKodu(), personelERP.getBolumAdi(), dataMap, saveList);
 
 					boolean bolumYok = bolum != null && bolum.getKodu().equalsIgnoreCase("yok");
-					Tanim bordroAltAlan = getTanim(null, parentBordroTanimKoduStr, personelERP.getBordroAltAlanKodu(), personelERP.getBordroAltAlanAdi(), dataMap, saveList);
+					bordroAltAlan = getTanim(null, parentBordroTanimKoduStr, personelERP.getBordroAltAlanKodu(), personelERP.getBordroAltAlanAdi(), dataMap, saveList);
 					personel.setGorevTipi(getTanim(null, Tanim.TIPI_GOREV_TIPI, personelERP.getGorevKodu(), personelERP.getGorevi(), dataMap, saveList));
 					personel.setMasrafYeri(getTanim(null, Tanim.TIPI_ERP_MASRAF_YERI, personelERP.getMasrafYeriKodu(), personelERP.getMasrafYeriAdi(), dataMap, saveList));
 					Date dogumTarihi = getTarih(personelERP.getDogumTarihi(), FORMAT_DATE);
@@ -4921,13 +4921,21 @@ public class PdksVeriOrtakAktar implements Serializable {
 
 				}
 				if (personel != null && personel.getId() != null) {
+					boolean kayitEt = false;
 					if (personel.isGenelMudur() && personel.getYoneticisi() == null) {
 						personel.setYoneticisi(personel);
-						saveList.add(personel);
-					} else if (bolum == null && personel.getEkSaha3() != null) {
-						personel.setEkSaha3(bolum);
-						saveList.add(personel);
+						kayitEt = true;
 					}
+					if (bolum == null && personel.getEkSaha3() != null) {
+						personel.setEkSaha3(bolum);
+						kayitEt = true;
+					}
+					if (bordroAltAlan == null && personel.getEkSaha4() != null && (ekSahaAdi.startsWith("eksaha4"))) {
+						personel.setEkSaha4(bordroAltAlan);
+						kayitEt = true;
+					}
+					if (kayitEt)
+						saveList.add(personel);
 				}
 
 				if (!saveList.isEmpty()) {
