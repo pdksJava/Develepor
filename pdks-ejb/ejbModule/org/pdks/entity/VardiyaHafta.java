@@ -43,6 +43,9 @@ public class VardiyaHafta extends BaseObject {
 	private List<VardiyaGun> vardiyaGunler = new ArrayList<VardiyaGun>();
 	private List<Vardiya> vardiyalar = new ArrayList<Vardiya>();
 	private VardiyaPlan vardiyaPlan;
+	private Double kusuratliSGKHaftalikToplamCalismaSaati = 0.0d, kusuratliArgeGun = 0.0d;
+	private Integer argeGun = 0, resmiTatil = 0, haftaTatil = 0, haftalikArgeToplami = 0, dgs = 0;
+	private boolean resmiTatilVar = false;
 	private int hafta;
 	private String trClass;
 	private Integer version = 0;
@@ -297,6 +300,78 @@ public class VardiyaHafta extends BaseObject {
 			this.vardiyaSablonu = vh.getVardiyaSablonu();
 		}
 
+	}
+
+	@Transient
+	public Double getKusuratliSGKHaftalikToplamCalismaSaati() {
+		return kusuratliSGKHaftalikToplamCalismaSaati;
+	}
+
+	public void setKusuratliSGKHaftalikToplamCalismaSaati(Double kusuratliSGKHaftalikToplamCalismaSaati) {
+		this.kusuratliSGKHaftalikToplamCalismaSaati = kusuratliSGKHaftalikToplamCalismaSaati;
+	}
+
+	@Transient
+	public Double getKusuratliArgeGun() {
+		return kusuratliArgeGun;
+	}
+
+	public void setKusuratliArgeGun(Double kusuratliArgeGun) {
+		this.kusuratliArgeGun = kusuratliArgeGun;
+	}
+
+	@Transient
+	public Integer getArgeGun() {
+		return argeGun;
+	}
+
+	public void setArgeGun(Integer argeGun) {
+		this.argeGun = argeGun;
+	}
+
+	@Transient
+	public Integer getResmiTatil() {
+		return resmiTatil;
+	}
+
+	public void setResmiTatil(Integer resmiTatil) {
+		this.resmiTatil = resmiTatil;
+	}
+
+	@Transient
+	public Integer getHaftaTatil() {
+		return haftaTatil;
+	}
+
+	public void setHaftaTatil(Integer haftaTatil) {
+		this.haftaTatil = haftaTatil;
+	}
+
+	@Transient
+	public Integer getHaftalikArgeToplami() {
+		return haftalikArgeToplami;
+	}
+
+	public void setHaftalikArgeToplami(Integer haftalikArgeToplami) {
+		this.haftalikArgeToplami = haftalikArgeToplami;
+	}
+
+	@Transient
+	public Integer getDgs() {
+		return dgs;
+	}
+
+	public void setDgs(Integer dgs) {
+		this.dgs = dgs;
+	}
+
+	@Transient
+	public boolean isResmiTatilVar() {
+		return resmiTatilVar;
+	}
+
+	public void setResmiTatilVar(boolean resmiTatilVar) {
+		this.resmiTatilVar = resmiTatilVar;
 	}
 
 	@Transient

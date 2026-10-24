@@ -136,7 +136,8 @@ if (typeof window.event == 'undefined'){
 
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr style="background-color: #{startupAction.projeHeaderBackgroundColor};">
-			<td width="#{startupAction.projeHeaderImageWidth+4}" height="#{startupAction.projeHeaderImageHeight+2}"><ui:fragment rendered="#{startupAction.projeHeaderImage != null}">
+			<td width="#{startupAction.projeHeaderImageWidth+4}" height="#{startupAction.projeHeaderImageHeight+2}"><ui:fragment
+					rendered="#{startupAction.projeHeaderImage != null}">
 					<ui:fragment rendered="#{startupAction.projeURL != null}">
 						<a href="#" title="#{startupAction.projeURL}" id="imageURL" onclick="createPop('#{startupAction.projeURL}',this.id);return false;"> <s:graphicImage
 								value="#{startupAction.projeHeaderImage}" width="#{startupAction.projeHeaderImageWidth}" height="#{startupAction.projeHeaderImageHeight}" /></a>
@@ -163,8 +164,9 @@ if (typeof window.event == 'undefined'){
 			<tr style="#{startupAction.projeFooterBackgroundColor}">
 				<td width="120" height="83"><ui:fragment rendered="#{startupAction.projeFooterImage != null}">
 						<ui:fragment rendered="#{startupAction.projePowerURL != null}">
-							<a href="#" id="imageFooterURL" title="#{startupAction.projePowerURL}" style="font-weight: bold;" onclick="createPop('#{startupAction.projePowerURL}',this.id);return false;"> <s:graphicImage
-									value="#{startupAction.projeFooterImage}" width="#{startupAction.projeFooterImageWidth}" height="#{startupAction.projeFooterImageHeight}" /></a>
+							<a href="#" id="imageFooterURL" title="#{startupAction.projePowerURL}" style="font-weight: bold;"
+								onclick="createPop('#{startupAction.projePowerURL}',this.id);return false;"> <s:graphicImage value="#{startupAction.projeFooterImage}"
+									width="#{startupAction.projeFooterImageWidth}" height="#{startupAction.projeFooterImageHeight}" /></a>
 						</ui:fragment>
 						<ui:fragment rendered="#{startupAction.projePowerURL == null}">
 							<s:graphicImage value="#{startupAction.projeFooterImage}" width="#{startupAction.projeFooterImageWidth}"
@@ -173,10 +175,14 @@ if (typeof window.event == 'undefined'){
 
 
 					</ui:fragment></td>
-				<td style="#{startupAction.projeFooterPowerBy}" height="83" align="center">&nbsp;Powered by <a style="background-color:#EFEFED;font-weight: bold;">#{startupAction.projePowerBy}</a>
-
+				<td style="#{startupAction.projeFooterBackgroundColor}" height="83" align="center">&nbsp;Powered by <ui:fragment rendered="#{startupAction.projeFooterPowerByInstagram == null}">
+						<a style="background-color: #EFEFED; font-weight: bold;">#{startupAction.projePowerBy}</a>
+					</ui:fragment> <ui:fragment rendered="#{startupAction.projeFooterPowerByInstagram != null}">
+						 Sosyal Medya <a href="#" id="projeFooterPowerByInstagram" title="#{startupAction.projeFooterPowerByInstagram}"
+							onclick="createPop('#{startupAction.projeFooterPowerByInstagram}',this.id);return false;" style="background-color: #EFEFED; font-weight: bold;">#{startupAction.projePowerBy}</a>
+					</ui:fragment>
 				</td>
-				<td width="120" height="83" style="#{startupAction.projeFooterPowerBy}"></td>
+				<td width="120" height="83" style="#{startupAction.projeFooterBackgroundColor}"></td>
 			</tr>
 		</table>
 

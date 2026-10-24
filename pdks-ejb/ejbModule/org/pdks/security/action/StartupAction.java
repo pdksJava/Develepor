@@ -166,6 +166,9 @@ public class StartupAction implements Serializable {
 	public String projePowerBy = "Hasan Sayar";
 
 	@Out(scope = ScopeType.APPLICATION, required = false)
+	public String projeFooterPowerByInstagram;
+
+	@Out(scope = ScopeType.APPLICATION, required = false)
 	public String projeFooterBackgroundColor = "white";
 
 	@Out(scope = ScopeType.APPLICATION, required = false)
@@ -599,12 +602,17 @@ public class StartupAction implements Serializable {
 		projeFooterBackgroundColor = "white";
 		if (parameterMap.containsKey("projeFooterBackgroundColor"))
 			projeFooterBackgroundColor = parameterMap.get("projeFooterBackgroundColor");
+		projeFooterPowerByInstagram = null;
+		projePowerURL = null;
 		if (parameterMap.containsKey("projePowerBy")) {
 			if (parameterMap.containsKey("projeFooterPowerBy"))
 				projeFooterPowerBy = parameterMap.get("projeFooterPowerBy");
 			projePowerBy = parameterMap.get("projePowerBy");
 			if (parameterMap.containsKey("projePowerURL"))
 				projePowerURL = parameterMap.get("projePowerURL");
+			if (parameterMap.containsKey("projeFooterPowerByInstagram"))
+				projeFooterPowerByInstagram = parameterMap.get("projeFooterPowerByInstagram");
+
 		}
 		if (parameterMap.containsKey("projeHeaderRenk")) {
 			String deger = parameterMap.get("projeHeaderRenk");
@@ -1455,5 +1463,13 @@ public class StartupAction implements Serializable {
 
 	public void setProjeFooterPowerBy(String projeFooterPowerBy) {
 		this.projeFooterPowerBy = projeFooterPowerBy;
+	}
+
+	public String getProjeFooterPowerByInstagram() {
+		return projeFooterPowerByInstagram;
+	}
+
+	public void setProjeFooterPowerByInstagram(String projeFooterPowerByInstagram) {
+		this.projeFooterPowerByInstagram = projeFooterPowerByInstagram;
 	}
 }

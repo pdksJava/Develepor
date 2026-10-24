@@ -80,8 +80,12 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	private List<VardiyaHafta> vardiyaHaftaList;
 
 	private String trClass;
+	
+	private Double kusuratliSGKHaftalikToplamCalismaSaati = 0.0d, kusuratliArgeGun = 0.0d;
+	
+	private Integer argeGun = 0, resmiTatil = 0, haftaTatil = 0, haftalikArgeToplami = 0, dgs = 0;
 
-	private boolean kaydet, calisiyor = true, fazlaMesaiEkran = false, gorevYeriSec = false, yoneticiZorunlu = true, secili, onayDurum, vardiyaOlustu = Boolean.FALSE, vardiyaDegisti = Boolean.FALSE, fiiliHesapla = Boolean.FALSE;
+	private boolean kaydet, calisiyor = true, fazlaMesaiEkran = false, arge = false, gorevYeriSec = false, yoneticiZorunlu = true, secili, onayDurum, vardiyaOlustu = Boolean.FALSE, vardiyaDegisti = Boolean.FALSE, fiiliHesapla = Boolean.FALSE;
 
 	private boolean donemBitti = Boolean.TRUE, ayrikHareketVar = Boolean.FALSE, fazlaMesaiIzinKontrol = Boolean.TRUE, gebeDurum = Boolean.FALSE, sutIzniDurumu = Boolean.FALSE;
 
@@ -1579,5 +1583,69 @@ public class AylikPuantaj implements Serializable, Cloneable {
 
 	public void setDgSaatToplami(Double dgSaatToplami) {
 		this.dgSaatToplami = dgSaatToplami;
+	}
+
+	public boolean isArge() {
+		return arge;
+	}
+
+	public void setArge(boolean arge) {
+		this.arge = arge;
+	}
+
+	public Double getKusuratliSGKHaftalikToplamCalismaSaati() {
+		return kusuratliSGKHaftalikToplamCalismaSaati;
+	}
+
+	public void setKusuratliSGKHaftalikToplamCalismaSaati(Double kusuratliSGKHaftalikToplamCalismaSaati) {
+		this.kusuratliSGKHaftalikToplamCalismaSaati = kusuratliSGKHaftalikToplamCalismaSaati;
+	}
+
+	public Double getKusuratliArgeGun() {
+		return kusuratliArgeGun;
+	}
+
+	public void setKusuratliArgeGun(Double kusuratliArgeGun) {
+		this.kusuratliArgeGun = kusuratliArgeGun;
+	}
+
+	public Integer getArgeGun() {
+		return argeGun;
+	}
+
+	public void setArgeGun(Integer argeGun) {
+		this.argeGun = argeGun;
+	}
+
+	public Integer getResmiTatil() {
+		return resmiTatil;
+	}
+
+	public void setResmiTatil(Integer resmiTatil) {
+		this.resmiTatil = resmiTatil;
+	}
+
+	public Integer getHaftaTatil() {
+		return haftaTatil;
+	}
+
+	public void setHaftaTatil(Integer haftaTatil) {
+		this.haftaTatil = haftaTatil;
+	}
+
+	public Integer getHaftalikArgeToplami() {
+		return haftalikArgeToplami;
+	}
+
+	public void setHaftalikArgeToplami(Integer haftalikArgeToplami) {
+		this.haftalikArgeToplami = haftalikArgeToplami;
+	}
+
+	public Integer getDgs() {
+		return dgs;
+	}
+
+	public void setDgs(Integer dgs) {
+		this.dgs = dgs;
 	}
 }
