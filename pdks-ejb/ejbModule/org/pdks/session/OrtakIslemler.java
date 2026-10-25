@@ -6280,14 +6280,25 @@ public class OrtakIslemler implements Serializable {
 						map.put("format", "112");
 						map.put("order", order != null && (alanStr == null || alanStr.equals("*")) ? order : "");
 						Gson gson = new Gson();
+						String jsonParametre = null;
 						try {
 
-							String fnName = "FN_GET_FAZLA_MESAI_DATA_ALAN";
+							String fnName = "FN_GET_FAZLA_MESAI_DATA_JSON";
+							if (isExisFunction(fnName, session)) {
+								if (aylikPuantaj != null && aylikPuantaj.getArge() != null)
+									map.put("arge", aylikPuantaj.getArge() ? 1 : 0);
+								jsonParametre = gson.toJson(map);
+								map.clear();
+								map.put("jsonParametre", jsonParametre);
+							} else
+								fnName = "FN_GET_FAZLA_MESAI_DATA_ALAN";
 							if (isExisFunction(fnName, session)) {
 								String blobAsBytes = null;
 								try {
-									if (tipi.equalsIgnoreCase("B"))
-										logger.debug(spAdi + " " + tipi + "\n" + gson.toJson(map));
+									if (jsonParametre == null)
+										jsonParametre = gson.toJson(map);
+									if (tipi.equalsIgnoreCase("p"))
+										logger.debug(spAdi + " " + tipi + "\n" + jsonParametre);
 									List strlist = pdksEntityController.execFNList(session, map, fnName);
 									if (strlist != null && !strlist.isEmpty()) {
 										Clob blob = (Clob) strlist.get(0);
@@ -23470,6 +23481,7 @@ public class OrtakIslemler implements Serializable {
 		User sistemUser = dataDenkMap.containsKey("sistemUser") ? (User) dataDenkMap.get("sistemUser") : null;
 		TreeMap<String, Boolean> gunMap = dataDenkMap.containsKey("gunMap") ? (TreeMap<String, Boolean>) dataDenkMap.get("gunMap") : null;
 		HashMap<Long, List<PersonelFazlaMesai>> fmMap = dataDenkMap.containsKey("fazlaMesaiMap") ? (HashMap<Long, List<PersonelFazlaMesai>>) dataDenkMap.get("fazlaMesaiMap") : null;
+		TreeMap<String, String> izinGrupMap = dataDenkMap.containsKey("izinGrupMap") ? (TreeMap<String, String>) dataDenkMap.get("izinGrupMap") : null;
 
 		KapiView girisKapi = dataDenkMap.containsKey("girisView") ? (KapiView) dataDenkMap.get("girisView") : null;
 		KapiView cikisKapi = dataDenkMap.containsKey("cikisView") ? (KapiView) dataDenkMap.get("cikisView") : null;
@@ -23477,6 +23489,7 @@ public class OrtakIslemler implements Serializable {
 		TreeMap<String, Tatil> tatilGunleriMap = dataDenkMap.containsKey("tatilGunleriMap") ? (TreeMap<String, Tatil>) dataDenkMap.get("tatilGunleriMap") : null;
 		List<YemekIzin> yemekGenelList = dataDenkMap.containsKey("yemekList") ? (List<YemekIzin>) dataDenkMap.get("yemekList") : null;
 		PersonelDenklestirmeTasiyici denklestirmeTasiyici = dataDenkMap.containsKey("personelDenklestirme") ? (PersonelDenklestirmeTasiyici) dataDenkMap.get("personelDenklestirme") : null;
+
 		Boolean updateSatus = dataDenkMap.containsKey("updateSatus") ? (Boolean) dataDenkMap.get("updateSatus") : Boolean.FALSE;
 		Boolean fiiliHesapla = dataDenkMap.containsKey("fiiliHesapla") ? (Boolean) dataDenkMap.get("updateSatus") : Boolean.TRUE;
 		Date bayramAyirGun = dataDenkMap.containsKey("bayramAyirGun") ? (Date) dataDenkMap.get("bayramAyirGun") : null;
@@ -23532,6 +23545,7 @@ public class OrtakIslemler implements Serializable {
 				if (calismaModeli == null)
 					calismaModeli = new CalismaModeli();
 			}
+
 			if (tatilGunleriMap != null && tatilGunleriMap.isEmpty() == false) {
 				for (VardiyaGun vardiyaGun : vardiyalar)
 					setArifeYemekSure(vardiyaGun, veriMap);
@@ -23555,6 +23569,9 @@ public class OrtakIslemler implements Serializable {
 			denklestirmeTasiyici.setToplamCalisilanZaman(0);
 			denklestirmeTasiyici.setToplamRaporIzni(0);
 			denklestirmeTasiyici.setCheckBoxDurum(Boolean.TRUE);
+			if (calismaModeli.isArgemi()) {
+				denklestirmeTasiyici.setYarimYuvarla(-1);
+			}
 			double maxSure = 0;
 			int gunSayisi = 0;
 			double maxSuresi = 0;
@@ -23571,6 +23588,14 @@ public class OrtakIslemler implements Serializable {
 				if (vardiyaGun.getVardiya() == null || vardiyaGun.getVardiya().getId() == null) {
 					eksikCalisma = Boolean.TRUE;
 					continue;
+				}
+				if (calismaModeli != null) {
+					if (vardiyaGun.isAyinGunu())
+						vardiyaGun.setCalismaModeli(calismaModeli);
+					if (calismaModeli.isArgemi()) {
+						vardiyaGun.setYarimYuvarla(-1);
+						vardiyaGun.setFazlaMesaiYuvarla(-1);
+					}
 				}
 
 				if (maxSuresi == 0 && vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().isCalisma())
@@ -23599,7 +23624,7 @@ public class OrtakIslemler implements Serializable {
 						oncekiVardiyaGun = vardiyaGun.getOncekiVardiyaGun();
 
 					String vGun = vardiyaGun.getVardiyaDateStr();
-					if (vGun.endsWith("1028"))
+					if (vGun.endsWith("0901"))
 						logger.debug(vGun);
 					if (vardiyaGun.getVardiya() == null || (fiiliHesapla == false && vardiyaGun.isIzinli() == false && vardiyaGun.isFiiliHesapla() == false && vardiyaGun.isBayramAyir() == false)) {
 						// if (vardiyaGun.isAyinGunu() && vardiyaGun.getVardiya() != null)
@@ -24027,8 +24052,14 @@ public class OrtakIslemler implements Serializable {
 						boolean sureHesapla = tatilSonrakiGun != null || offTatilBayramAyirList != null;
 						TreeMap<String, Double> yemekFarkMap = new TreeMap<String, Double>();
 						LinkedHashMap<String, Double> arifeSureMap = new LinkedHashMap<String, Double>();
-
+						if (calismaModeli.isArgemi()) {
+							if (izinGrupMap == null)
+								izinGrupMap = getIzinGrupMap(session);
+							// argeGunHesapla(calismaModeli, izinGrupMap, tatilGunleriMap, vardiyaGun, tatilGirisHareketleri, tatilCikisHareketleri);
+							// continue;
+						}
 						if (tatilCikisHareketleri != null && tatilGirisHareketleri != null && !tatilCikisHareketleri.isEmpty() && tatilCikisHareketleri.size() == tatilGirisHareketleri.size()) {
+
 							Tatil tatil = null;
 							if (vardiyaGun.getTatil() != null) {
 								tatil = vardiyaGun.getTatil();
@@ -24072,8 +24103,8 @@ public class OrtakIslemler implements Serializable {
 								}
 								Date girisZaman = girisHareket != null ? getSaniyeSifirla(girisHareket.getZaman(), vardiyaGun) : null;
 								Date cikisZaman = cikisHareket != null ? getSaniyeSifirla(cikisHareket.getZaman(), vardiyaGun) : null;
-//								if (girisHareket.getId() != null && girisHareket.getId().startsWith(HareketKGS.SANAL_HAREKET) && girisZaman.before(islemVardiya.getVardiyaBasZaman()))
-//									continue;
+								// if (girisHareket.getId() != null && girisHareket.getId().startsWith(HareketKGS.SANAL_HAREKET) && girisZaman.before(islemVardiya.getVardiyaBasZaman()))
+								// continue;
 
 								if (vardiyaGun.isBayramAyir() && vardiyaGun.getVardiya().isCalisma() == false && girisHareket.getOncekiGun().booleanValue() == false)
 									continue;
@@ -24428,7 +24459,7 @@ public class OrtakIslemler implements Serializable {
 								}
 								oncekiCikisZaman = (Date) cikisZaman.clone();
 							}
-							if (vGun.endsWith("0526"))
+							if (vGun.endsWith("0901"))
 								logger.debug(vGun + " " + calSure + " " + toplamNormalParcalanmisSure + "  " + toplamParcalanmisSure);
 
 							// TODO Hareketler okuması bitti
@@ -24469,8 +24500,7 @@ public class OrtakIslemler implements Serializable {
 							double tamCalismaSaat = vardiyaToplamSure - (15.0 + Double.parseDouble("" + islemVardiya.getCikisErkenToleransDakika())) / 60.0;
 							if (vardiyaToplamSure == vardiyaToplamSure)
 								tamCalismaSaat = vardiyaToplamSure;
-							if (vGun.endsWith("1028"))
-								logger.debug(vGun + " " + calSure + " ");
+
 							if (sureHesapla && (gunlukSaat > 0 || vardiyaGun.getGecenAyResmiTatilSure() > 0.0d)) {
 								toplamYemekSuresi = getToplamYemekSuresi(vardiyaYemekSuresi, toplamYemekSuresi, toplamParcalanmisSure);
 								boolean tatilYemekHesabiSureEkle = vardiyaGun.isYemekHesabiSureEkle();
@@ -24995,6 +25025,59 @@ public class OrtakIslemler implements Serializable {
 	}
 
 	/**
+	 * @param cm
+	 * @param izinGrupMap
+	 * @param tatilGunleriMap
+	 * @param vg
+	 * @param tatilGirisHareketleri
+	 * @param tatilCikisHareketleri
+	 */
+	public void argeGunHesapla(CalismaModeli cm, TreeMap<String, String> izinGrupMap, TreeMap<String, Tatil> tatilGunleriMap, VardiyaGun vg, ArrayList<HareketKGS> tatilGirisHareketleri, ArrayList<HareketKGS> tatilCikisHareketleri) {
+		double dgsSuresi = 0.0, calismaSuresi = 0.0d;
+		Vardiya vardiya = vg.getIslemVardiya();
+		if (vg.getIzin() != null) {
+			IzinTipi izinTipi = vg.getIzin().getIzinTipi();
+			double sure = cm.getIzinSaat(PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK));
+			if (izinTipi.isSenelikIzin()) {
+				calismaSuresi += sure;
+			} else {
+				BordroDetayTipi izinBordroDetayTipi = izinGrupMap != null ? getBordroDetayTipi(izinTipi, izinGrupMap) : null;
+				if (izinBordroDetayTipi != null) {
+					if (izinBordroDetayTipi.equals(BordroDetayTipi.ARGE_IZIN) || izinBordroDetayTipi.equals(BordroDetayTipi.YILLIK_IZIN))
+						calismaSuresi += sure;
+				}
+			}
+		} else if (tatilGunleriMap.containsKey(vg.getVardiyaDateStr())) {
+			double sure = cm.getSaat(PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK));
+			calismaSuresi += sure;
+
+		} else if (tatilCikisHareketleri != null && tatilGirisHareketleri != null && !tatilCikisHareketleri.isEmpty() && tatilCikisHareketleri.size() == tatilGirisHareketleri.size()) {
+			for (int i = 0; i < tatilGirisHareketleri.size(); i++) {
+				HareketKGS cikisHareket = tatilCikisHareketleri.get(i), girisHareket = tatilGirisHareketleri.get(i);
+				Date girisZaman = girisHareket != null ? getSaniyeSifirla(girisHareket.getZaman(), vg) : null;
+				Date cikisZaman = cikisHareket != null ? getSaniyeSifirla(cikisHareket.getZaman(), vg) : null;
+				if (cikisZaman != null && girisZaman != null) {
+					if (cikisZaman.after(girisZaman)) {
+						double saatFarki = PdksUtil.getSaatFarki(cikisZaman, girisZaman);
+						calismaSuresi += saatFarki;
+					}
+
+				}
+
+			}
+		}
+		if (vardiya.isCalisma()) {
+			double netCalismaSure = vardiya.getNetCalismaSuresi();
+			if (calismaSuresi > netCalismaSure)
+				calismaSuresi = netCalismaSure;
+
+		}
+
+		vg.addCalismaSuresi(calismaSuresi);
+		vg.setDgsSuresi(dgsSuresi);
+	}
+
+	/**
 	 * @param arifeSureMap
 	 * @param yemeksizSure
 	 * @param sure
@@ -25106,9 +25189,20 @@ public class OrtakIslemler implements Serializable {
 		TreeMap<String, Date> gunMap = new TreeMap<String, Date>();
 		Date tarih = (Date) aylikPuantajDefault.getIlkGun().clone();
 		Calendar cal = Calendar.getInstance();
-		while (tarih.getTime() <= aylikPuantajDefault.getSonGun().getTime()) {
-			gunMap.put(PdksUtil.convertToDateString(tarih, "yyyyMMdd"), tarih);
-			tarih = tariheGunEkleCikar(cal, tarih, 1);
+		if (aylikPuantajDefault.getArge() == null || aylikPuantajDefault.getArge() == false) {
+			while (tarih.getTime() <= aylikPuantajDefault.getSonGun().getTime()) {
+				gunMap.put(PdksUtil.convertToDateString(tarih, "yyyyMMdd"), tarih);
+				tarih = tariheGunEkleCikar(cal, tarih, 1);
+			}
+		} else {
+			aylikPuantajDefault.setIlkGun(null);
+			for (VardiyaGun vg : aylikPuantajDefault.getVardiyalar()) {
+				tarih = vg.getVardiyaDate();
+				gunMap.put(PdksUtil.convertToDateString(tarih, "yyyyMMdd"), tarih);
+				if (aylikPuantajDefault.getIlkGun() == null)
+					aylikPuantajDefault.setIlkGun(tarih);
+				aylikPuantajDefault.setSonGun(tarih);
+			}
 		}
 		DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
 		denklestirmeDonemi.setBaslangicTarih(aylikPuantajDefault.getIlkGun());
@@ -26075,7 +26169,8 @@ public class OrtakIslemler implements Serializable {
 				dataMap.put("fiiliHesapla", Boolean.TRUE);
 				if (bayramAyirGun != null)
 					dataMap.put("bayramAyirGun", bayramAyirGun);
-
+				TreeMap<String, String> izinGrupMap = getIzinGrupMap(session);
+				dataMap.put("izinGrupMap", izinGrupMap);
 				sonVardiyaGun = personelVardiyaDenklestir(mapBosVeriSil(dataMap, "personelVardiyaDenklestir"), session);
 				oncekiVardiyaGun = denklestirme.getOncekiVardiyaGun();
 				normalFazlaMesai += denklestirme.getNormalFazlaMesai();

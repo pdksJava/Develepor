@@ -139,7 +139,7 @@
 							<TABLE width="45%">
 								<TR>
 									<TD width="35%" valign="top"><a4j:commandButton action="#{fazlaMesaiOzetRaporHome.fillFazlaMesaiOzetRaporList()}"
-											value="Fazla Mesai Getir" rendered="#{not empty fazlaMesaiOzetRaporHome.pdksSirketList}" reRender="denklestirmeDonemiTable"
+											value="Rapor Getir" rendered="#{not empty fazlaMesaiOzetRaporHome.pdksSirketList}" reRender="denklestirmeDonemiTable"
 											onclick="#{rich:component('wait')}.show()" oncomplete="#{rich:component('wait')}.hide()" /></TD>
 
 									<ui:fragment rendered="#{not empty fazlaMesaiOzetRaporHome.aylikPuantajList}">
@@ -193,14 +193,12 @@
 							<ui:fragment rendered="#{fazlaMesaiOzetRaporHome.seciliBolum != null and fazlaMesaiOzetRaporHome.ikRole}">
 								<DIV style="text-align: center; font-weight: bold; color: blue; font-size: 16px;">#{fazlaMesaiOzetRaporHome.seciliBolum.aciklama}</DIV>
 							</ui:fragment>
-							<c:choose>
-								<c:when test="#{fazlaMesaiOzetRaporHome.argeGoster == false}">
+							 
+								 
 									<ui:include src="/rapor/puantaj/includes/fazlaMesaiOzetJSF.xhtml" />
-								</c:when>
-								<c:otherwise>
-									<ui:include src="/rapor/puantaj/includes/fazlaMesaiOzetHTML.xhtml" />
-								</c:otherwise>
-							</c:choose>
+								 
+									
+							 
 
 
 						</a4j:outputPanel>

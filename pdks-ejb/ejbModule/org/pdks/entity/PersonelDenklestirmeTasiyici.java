@@ -69,8 +69,11 @@ public class PersonelDenklestirmeTasiyici extends BaseObject {
 		if (pd != null) {
 			this.setCalismaModeliAy(pd.getCalismaModeliAy());
 			this.setDenklestirmeAy(pd.getDenklestirmeAy());
+			if (pd.getCalismaModeliAy() != null)
+				this.setCalismaModeli(pd.getCalismaModeli());
 		}
-		this.setCalismaModeli(ap.getCalismaModeli());
+		if (this.calismaModeli == null)
+			this.setCalismaModeli(ap.getCalismaModeli());
 		this.setPersonel(ap.getPdksPersonel());
 	}
 
@@ -428,8 +431,10 @@ public class PersonelDenklestirmeTasiyici extends BaseObject {
 		return calismaModeli;
 	}
 
-	public void setCalismaModeli(CalismaModeli calismaModeli) {
-		this.calismaModeli = calismaModeli;
+	public void setCalismaModeli(CalismaModeli value) {
+		if (value != null && value.isArgemi())
+			this.yarimYuvarla = -1;
+		this.calismaModeli = value;
 	}
 
 	public int getYarimYuvarla() {

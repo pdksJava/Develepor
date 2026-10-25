@@ -80,12 +80,12 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	private List<VardiyaHafta> vardiyaHaftaList;
 
 	private String trClass;
-	
+
 	private Double kusuratliSGKHaftalikToplamCalismaSaati = 0.0d, kusuratliArgeGun = 0.0d;
-	
+
 	private Integer argeGun = 0, resmiTatil = 0, haftaTatil = 0, haftalikArgeToplami = 0, dgs = 0;
 
-	private boolean kaydet, calisiyor = true, fazlaMesaiEkran = false, arge = false, gorevYeriSec = false, yoneticiZorunlu = true, secili, onayDurum, vardiyaOlustu = Boolean.FALSE, vardiyaDegisti = Boolean.FALSE, fiiliHesapla = Boolean.FALSE;
+	private boolean kaydet, calisiyor = true, fazlaMesaiEkran = false, gorevYeriSec = false, yoneticiZorunlu = true, secili, onayDurum, vardiyaOlustu = Boolean.FALSE, vardiyaDegisti = Boolean.FALSE, fiiliHesapla = Boolean.FALSE;
 
 	private boolean donemBitti = Boolean.TRUE, ayrikHareketVar = Boolean.FALSE, fazlaMesaiIzinKontrol = Boolean.TRUE, gebeDurum = Boolean.FALSE, sutIzniDurumu = Boolean.FALSE;
 
@@ -98,7 +98,8 @@ public class AylikPuantaj implements Serializable, Cloneable {
 	private boolean fazlaMesaiHesapla = Boolean.FALSE, vardiyaSua = Boolean.FALSE, eksikGunVar = Boolean.FALSE, denklestirilmeyenDevredenVar = Boolean.FALSE;
 
 	private boolean suaDurum = Boolean.FALSE;
-	private Boolean isAramaDurum = Boolean.FALSE;
+
+	private Boolean isAramaDurum = Boolean.FALSE, arge = Boolean.FALSE;
 
 	private CalismaModeli calismaModeli;
 
@@ -131,17 +132,20 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		super();
 		this.haftaCalismaSuresi = 0d;
 		this.vardiyaSua = Boolean.FALSE;
+		this.arge = null;
 	}
 
 	public AylikPuantaj(DenklestirmeAy denklestirmeAy) {
 		super();
 		this.denklestirmeAy = denklestirmeAy;
+		this.arge = null;
 	}
 
 	public AylikPuantaj(Date ilkGun, Date sonGun) {
 		super();
 		this.ilkGun = ilkGun;
 		this.sonGun = sonGun;
+		this.arge = null;
 	}
 
 	public Boolean getSutIzniDurum() {
@@ -1585,11 +1589,11 @@ public class AylikPuantaj implements Serializable, Cloneable {
 		this.dgSaatToplami = dgSaatToplami;
 	}
 
-	public boolean isArge() {
+	public Boolean getArge() {
 		return arge;
 	}
 
-	public void setArge(boolean arge) {
+	public void setArge(Boolean arge) {
 		this.arge = arge;
 	}
 

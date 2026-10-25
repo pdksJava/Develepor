@@ -200,7 +200,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	private String sicilNo = "", sicilYeniNo = "", excelDosyaAdi, mailKonu, mailIcerik, msgwarnImg = "";
 	private List<YemekIzin> yemekAraliklari;
 	private CalismaModeli perCalismaModeli;
-	private Long seciliEkSaha3Id, sirketId = null, departmanId, gorevTipiId, tesisId, seciliEkSaha4Id, seciliYoneticiId, planTanimsizBolumId;
+	private Long yukseklik, seciliEkSaha3Id, sirketId = null, departmanId, gorevTipiId, tesisId, seciliEkSaha4Id, seciliYoneticiId, planTanimsizBolumId;
 	private Tanim gorevYeri, seciliBolum, seciliAltBolum, ekSaha4Tanim;
 	private Double toplamFazlamMesai = 0D;
 	private Double aksamCalismaSaati = null, aksamCalismaSaatiYuzde = null;
@@ -2296,7 +2296,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 										}
 									}
 
-									if (key.endsWith("0622"))
+									if (key.endsWith("0901"))
 										logger.debug("");
 									if (saatEkle) {
 										vardiyaGun.ucretiOdenenMesaiHesapla();
@@ -3801,8 +3801,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			} finally {
 				calisiyor = false;
 			}
-		}
 
+		}
+		yukseklik = (long) 200 + (aylikPuantajList.size() > 50 ? 50 : aylikPuantajList.size()) * 20;
 		return aylikPuantajList;
 	}
 
@@ -3834,8 +3835,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				}
 			}
 		}
-		if (vs != null)
+		if (vs != null) {
 			vs.setDgsSuresi(dgsSuresi);
+			vs.setCalismaSuresi(vg.getCalismaSuresi());
+		}
+
 		vg.setDgsSuresi(dgsSuresi);
 	}
 
@@ -9215,6 +9219,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 	public void setRowSpan(int rowSpan) {
 		this.rowSpan = rowSpan;
+	}
+
+	public Long getYukseklik() {
+		return yukseklik;
+	}
+
+	public void setYukseklik(Long yukseklik) {
+		this.yukseklik = yukseklik;
 	}
 
 }

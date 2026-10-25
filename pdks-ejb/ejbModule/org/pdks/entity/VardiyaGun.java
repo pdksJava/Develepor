@@ -469,7 +469,7 @@ public class VardiyaGun extends BaseObject {
 
 	public void setCalismaSuresi(double value) {
 
-		if (this.getVardiyaDateStr().endsWith("0914"))
+		if (this.getVardiyaDateStr().endsWith("0901"))
 			if (value != 0.0d) {
 				logger.debug("setCalismaSuresi " + value);
 			}
@@ -478,8 +478,8 @@ public class VardiyaGun extends BaseObject {
 
 	@Transient
 	public void addCalismaSuresi(double value) {
-		if (value != 0.0d) {
-			if (this.getVardiyaDateStr().endsWith("0810"))
+		if (this.getVardiyaDateStr().endsWith("0901")) {
+			if (value != 0.0d)
 				logger.debug("addCalismaSuresi " + value);
 		}
 
@@ -2186,8 +2186,12 @@ public class VardiyaGun extends BaseObject {
 		return calismaModeli;
 	}
 
-	public void setCalismaModeli(CalismaModeli calismaModeli) {
-		this.calismaModeli = calismaModeli;
+	public void setCalismaModeli(CalismaModeli value) {
+		if (value != null && value.isArgemi()) {
+			this.yarimYuvarla = -1;
+			this.fazlaMesaiYuvarla = -1;
+		}
+		this.calismaModeli = value;
 	}
 
 	@Transient
@@ -2280,8 +2284,13 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void setYarimYuvarla(int yarimYuvarla) {
-		this.yarimYuvarla = yarimYuvarla;
-		this.setFazlaMesaiYuvarla(yarimYuvarla);
+		if (calismaModeli == null || calismaModeli.isArgemi() == false) {
+			this.yarimYuvarla = yarimYuvarla;
+			this.setFazlaMesaiYuvarla(yarimYuvarla);
+		} else {
+			this.yarimYuvarla = -1;
+			this.fazlaMesaiYuvarla = -1;
+		}
 	}
 
 	@Transient
@@ -2692,7 +2701,9 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void setFazlaMesaiYuvarla(int fazlaMesaiYuvarla) {
-		this.fazlaMesaiYuvarla = fazlaMesaiYuvarla;
+		if (calismaModeli == null || calismaModeli.isArgemi() == false)
+			this.fazlaMesaiYuvarla = fazlaMesaiYuvarla;
+
 	}
 
 	public static Date getSaniyeYuvarlaZaman() {

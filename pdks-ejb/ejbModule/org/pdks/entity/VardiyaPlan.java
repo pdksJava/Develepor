@@ -28,7 +28,11 @@ public class VardiyaPlan extends BaseObject {
 
 	private List<PersonelDenklestirmeTasiyici> personelDenklestirmeList;
 
-	private double hesaplananSure = 0;
+	private double hesaplananSure = 0.0d;
+	
+	private Double toplamCalismaSaati = 0.0d, toplamKusuratliArgeGun = 0.0d;
+
+	private Integer toplamArgeGun = 0, toplamResmiTatil = 0, toplamHaftaTatil = 0, toplamArge = 0, toplamDgs = 0, argeGun = 0, calismaGun = 0, kalanDgs = 0;
 
 	public VardiyaPlan() {
 		super();
@@ -203,5 +207,85 @@ public class VardiyaPlan extends BaseObject {
 	@Transient
 	public String getTableName() {
 		return null;
+	}
+
+	public Double getToplamCalismaSaati() {
+		return toplamCalismaSaati;
+	}
+
+	public void setToplamCalismaSaati(Double toplamCalismaSaati) {
+		this.toplamCalismaSaati = toplamCalismaSaati;
+	}
+
+	public Double getToplamKusuratliArgeGun() {
+		return toplamKusuratliArgeGun;
+	}
+
+	public void setToplamKusuratliArgeGun(Double toplamKusuratliArgeGun) {
+		this.toplamKusuratliArgeGun = toplamKusuratliArgeGun;
+	}
+
+	public Integer getToplamArgeGun() {
+		return toplamArgeGun;
+	}
+
+	public void setToplamArgeGun(Integer toplamArgeGun) {
+		this.toplamArgeGun = toplamArgeGun;
+	}
+
+	public Integer getToplamResmiTatil() {
+		return toplamResmiTatil;
+	}
+
+	public void setToplamResmiTatil(Integer toplamResmiTatil) {
+		this.toplamResmiTatil = toplamResmiTatil;
+	}
+
+	public Integer getToplamHaftaTatil() {
+		return toplamHaftaTatil;
+	}
+
+	public void setToplamHaftaTatil(Integer toplamHaftaTatil) {
+		this.toplamHaftaTatil = toplamHaftaTatil;
+	}
+
+	public Integer getToplamArge() {
+		return toplamArge;
+	}
+
+	public void setToplamArge(Integer toplamArge) {
+		this.toplamArge = toplamArge;
+	}
+
+	public Integer getToplamDgs() {
+		return toplamDgs;
+	}
+
+	public void setToplamDgs(Integer toplamDgs) {
+		this.toplamDgs = toplamDgs;
+	}
+
+	public Integer getArgeGun() {
+		return argeGun;
+	}
+
+	public void setArgeGun(Integer argeGun) {
+		this.argeGun = argeGun;
+	}
+
+	public Integer getCalismaGun() {
+		return calismaGun;
+	}
+
+	public void setCalismaGun(Integer calismaGun) {
+		this.calismaGun = calismaGun;
+	}
+
+	public Integer getKalanDgs() {
+		return kalanDgs;
+	}
+
+	public void setKalanDgs(Integer kalanDgs) {
+		this.kalanDgs = kalanDgs;
 	}
 }

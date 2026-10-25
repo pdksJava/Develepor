@@ -3122,7 +3122,7 @@ public class PdksUtil implements Serializable {
 		Double yuvarlanmisDeger = null;
 		if (doubleValue != null) {
 			long longDeger = doubleValue.longValue();
-			if (doubleValue != 0.0d && doubleValue != longDeger) {
+			if (yarimYuvarla >= 0 && doubleValue != 0.0d && doubleValue != longDeger) {
 				double ondalikFark = 0.0d;
 				switch (yarimYuvarla) {
 				case 1:
@@ -3456,9 +3456,9 @@ public class PdksUtil implements Serializable {
 
 		}
 		boolean sessionVar = session1 != null && session1.isConnected();
-		if (sessionVar)  
+		if (sessionVar)
 			session1.clear();
-	 	else
+		else
 			session1 = getSession(em, durum);
 		if (user != null && sessionVar)
 			user.setSessionSQL(session1);

@@ -626,7 +626,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 					dt.setSonVardiyaGun(sonVardiyaGun);
 					dt.setVardiyalar(vh.getVardiyaGunler());
 					dataDenkMap.put("personelDenklestirme", dt);
-
+					TreeMap<String, String> izinGrupMap = ortakIslemler.getIzinGrupMap(session);
+					dataMap.put("izinGrupMap", izinGrupMap);
 					ortakIslemler.personelVardiyaDenklestir(dataDenkMap, session);
 					dt = null;
 
@@ -2678,6 +2679,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		paramsMap.put("denklestirme", denklestirme);
 		paramsMap.put("tipi", "S");
 		paramsMap.put("fieldName", Sirket.COLUMN_NAME_ID);
+
 		List<Sirket> list = ortakIslemler.getFazlaMesaiList(paramsMap, session);
 		if (loginUser != null && loginUser.isIKSirket()) {
 			if (loginUser.getYetkiliTesisler() == null || loginUser.getYetkiliTesisler().isEmpty()) {
@@ -3223,7 +3225,6 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		vardiyaPlanMaster.setDenklestirmeDonemi(donemi);
 		vardiyaPlanMaster.setCheckBoxDurum(Boolean.FALSE);
 		Date tarih1 = (Date) donemi.getBaslangicTarih().clone();
-		int i = 0;
 		String donem = String.valueOf(aylikPuantaj.getYil() * 100 + aylikPuantaj.getAy());
 		List<String> gunler = new ArrayList<String>();
 		if (sablonVardiyalar != null) {
@@ -3234,61 +3235,88 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		aylikPuantaj.setVardiyaHaftaList(vardiyaHaftaList);
 		boolean devam = Boolean.TRUE;
 		Calendar cal = Calendar.getInstance();
+		int haftaNo = 0;
+		List<VardiyaGun> gunList = new ArrayList<VardiyaGun>();
 		while (devam) {
-			++i;
+
 			VardiyaHafta vardiyaHafta = new VardiyaHafta();
 			vardiyaHafta.setVardiyaPlan(vardiyaPlanMaster);
-			vardiyaHafta.setHafta(i);
+
 			for (int j = 0; j < 7; j++)
 				gunHaftaMap.put(setVardiyaGunHafta(vardiyaHafta, tarih1, j), vardiyaHafta.getHafta());
 			vardiyaHafta.setBasTarih(vardiyaHafta.getVardiyaGun1().getVardiyaDate());
 			vardiyaHafta.setBitTarih(vardiyaHafta.getVardiyaGun7().getVardiyaDate());
-			vardiyaHaftaList.add(vardiyaHafta);
-			switch (i) {
-			case 1:
-				vardiyaPlanMaster.setVardiyaHafta1(vardiyaHafta);
-				break;
-			case 2:
-				vardiyaPlanMaster.setVardiyaHafta2(vardiyaHafta);
-				break;
-			case 3:
-				vardiyaPlanMaster.setVardiyaHafta3(vardiyaHafta);
-				break;
-			case 4:
-				vardiyaPlanMaster.setVardiyaHafta4(vardiyaHafta);
-				break;
-			case 5:
-				vardiyaPlanMaster.setVardiyaHafta5(vardiyaHafta);
-				break;
-			case 6:
-				vardiyaPlanMaster.setVardiyaHafta6(vardiyaHafta);
-				break;
-			default:
-				break;
-			}
+
 			for (Iterator iterator = vardiyaHafta.getVardiyaGunler().iterator(); iterator.hasNext();) {
 				VardiyaGun vardiyaGun = (VardiyaGun) iterator.next();
 				String vardiyaDateStr = vardiyaGun.getVardiyaDateStr();
+				if (vardiyaDateStr.endsWith("1028") || vardiyaDateStr.endsWith("1029"))
+					logger.debug("");
 				vardiyaGun.setAyinGunu(vardiyaDateStr.startsWith(donem));
+				if (aylikPuantaj.getArge() != null && aylikPuantaj.getArge()) {
+					if (vardiyaGun.isAyinGunu() == false) {
+						iterator.remove();
+						continue;
+					}
+					cal.setTime(vardiyaGun.getVardiyaDate());
+					int gunHafta = cal.get(Calendar.DAY_OF_WEEK);
+					if (gunHafta == Calendar.SATURDAY || gunHafta == Calendar.SUNDAY) {
+						iterator.remove();
+						continue;
+					}
+					gunList.add(vardiyaGun);
+
+				}
 				if (sablonVardiyalar != null && !gunler.contains(vardiyaDateStr)) {
 					gunler.add(vardiyaDateStr);
 					sablonVardiyalar.add(vardiyaGun);
 				}
-				if (tatillerMap != null && tatillerMap.containsKey(vardiyaDateStr))
+				if (tatillerMap != null && tatillerMap.containsKey(vardiyaDateStr)) {
 					vardiyaGun.setTatil(tatillerMap.get(vardiyaDateStr));
-				else if (vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().isCalisma()) {
+					vardiyaHafta.setResmiTatilVar(true);
+ 				} else if (vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().isCalisma()) {
 					vardiyaGun.setVardiyaZamani();
 					String key = PdksUtil.convertToDateString(vardiyaGun.getIslemVardiya().getVardiyaBitZaman(), "yyyyMMdd");
 					if (tatillerMap.containsKey(key))
 						vardiyaGun.setTatil(tatillerMap.get(key));
 				}
 			}
-
+			if (vardiyaHafta.getVardiyaGunler().isEmpty() == false) {
+				++haftaNo;
+				vardiyaHafta.setHafta(haftaNo);
+				vardiyaHaftaList.add(vardiyaHafta);
+				switch (haftaNo) {
+				case 1:
+					vardiyaPlanMaster.setVardiyaHafta1(vardiyaHafta);
+					break;
+				case 2:
+					vardiyaPlanMaster.setVardiyaHafta2(vardiyaHafta);
+					break;
+				case 3:
+					vardiyaPlanMaster.setVardiyaHafta3(vardiyaHafta);
+					break;
+				case 4:
+					vardiyaPlanMaster.setVardiyaHafta4(vardiyaHafta);
+					break;
+				case 5:
+					vardiyaPlanMaster.setVardiyaHafta5(vardiyaHafta);
+					break;
+				case 6:
+					vardiyaPlanMaster.setVardiyaHafta6(vardiyaHafta);
+					break;
+				default:
+					break;
+				}
+			}
 			tarih1 = ortakIslemler.tariheGunEkleCikar(cal, tarih1, 7);
 			if (PdksUtil.tarihKarsilastirNumeric(tarih1, donemi.getBitisTarih()) == 1)
 				devam = false;
 
 		}
+		if (gunList.isEmpty() == false)
+			aylikPuantaj.setVardiyalar(gunList);
+		else
+			gunList = null;
 		gunler = null;
 		vardiyaPlanMaster.getVardiyaHaftaList().addAll(vardiyaHaftaList);
 		return vardiyaPlanMaster;
