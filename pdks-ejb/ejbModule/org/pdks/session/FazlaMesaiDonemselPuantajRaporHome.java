@@ -67,7 +67,6 @@ import org.pdks.security.action.UserHome;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.User;
 
-
 @Name("fazlaMesaiDonemselPuantajRaporHome")
 public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenklestirmeDonemi> implements Serializable {
 
@@ -101,7 +100,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 	Renderer renderer;
 
 	private Integer basYil, bitYil, sonDonem, basAy, bitAy, maxYil;
-	private Long sirketId, tesisId, bolumId, seciliEkSaha4Id;
+	private Long sirketId, tesisId, bolumId, seciliEkSaha4Id, yukseklik;
 	private List<SelectItem> donemBas, donemBit, sirketler, tesisler, bolumler, altBolumList;
 	private List<PersonelDenklestirme> perDenkList;
 	private List<Personel> personelList;
@@ -1789,6 +1788,7 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				bordroVeriOlusturBasla(dataList, tatilMap);
 			}
 			setPuantajList(dataList);
+			yukseklik = (long) 200 + (dataList.size() > 50 ? 50 : dataList.size()) * 20;
 		}
 
 		return "";
@@ -2583,6 +2583,14 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 
 	public void setBrutUcretGoster(Boolean brutUcretGoster) {
 		this.brutUcretGoster = brutUcretGoster;
+	}
+
+	public Long getYukseklik() {
+		return yukseklik;
+	}
+
+	public void setYukseklik(Long yukseklik) {
+		this.yukseklik = yukseklik;
 	}
 
 }
