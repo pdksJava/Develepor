@@ -178,8 +178,9 @@ if (typeof window.event == 'undefined'){
 				<td style="#{startupAction.projeFooterBackgroundColor}" height="83" align="center">&nbsp;Powered by <ui:fragment rendered="#{startupAction.projeFooterPowerByInstagram == null}">
 						<a style="background-color: #EFEFED; font-weight: bold;">#{startupAction.projePowerBy}</a>
 					</ui:fragment> <ui:fragment rendered="#{startupAction.projeFooterPowerByInstagram != null}">
-						 Sosyal Medya <a href="#" id="projeFooterPowerByInstagram" title="#{startupAction.projeFooterPowerByInstagram}"
+						 <a href="#" id="projeFooterPowerByInstagram" title="#{startupAction.projeFooterPowerByInstagram}"
 							onclick="createPop('#{startupAction.projeFooterPowerByInstagram}',this.id);return false;" style="background-color: #EFEFED; font-weight: bold;">#{startupAction.projePowerBy}</a>
+							 Sosyal Medyada
 					</ui:fragment>
 				</td>
 				<td width="120" height="83" style="#{startupAction.projeFooterBackgroundColor}"></td>
