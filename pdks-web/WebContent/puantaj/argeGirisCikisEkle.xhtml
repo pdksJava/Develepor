@@ -1,0 +1,201 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j" template="/layout/template.xhtml">
+	<ui:define name="title">
+		<h:outputText value="#{ortakIslemler.getMenuAdi('argeGirisCikisEkle')}" />
+	</ui:define>
+	<ui:define name="body">
+
+		<h:form>
+			<rich:panel header="#{ortakIslemler.getMenuUserAdi(argeGirisCikisEkleHome.session,'argeGirisCikisEkle')}">
+				<a4j:outputPanel ajaxRendered="true">
+					<h:messages id="messages" styleClass="message" errorClass="errormsg" infoClass="infomsg" warnClass="warnmsg" />
+				</a4j:outputPanel>
+				<h:panelGrid columns="2">
+
+
+					<h:panelGrid columns="1" width="800" id="hareketForm">
+						
+						<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">İşlem</ui:define>
+							<h:selectOneMenu value="#{argeGirisCikisEkleHome.nedenId}" required="false" requiredMessage="Islem seciniz">
+								<f:selectItem itemLabel="Lütfen seçiniz" />
+								<f:selectItems value="#{argeGirisCikisEkleHome.nedenList}" />
+								<a4j:support event="onchange" ajaxSingle="true" status="ajaxStatus" reRender="dosyaPanel" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+							</h:selectOneMenu>
+						</s:decorate>
+
+						<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">Açıklama</ui:define>
+							<h:inputText value="#{argeGirisCikisEkleHome.instance.islem.aciklama}" />
+						</s:decorate>
+
+
+
+					</h:panelGrid>
+					<a4j:outputPanel id="dosyaPanel">
+						<rich:fileUpload id="fileUpload" fileUploadListener="#{argeGirisCikisEkleHome.listener}" listHeight="50px" listWidth="300px"
+							rendered="#{argeGirisCikisEkleHome.nedenId != null}" sizeErrorLabel="Dosya boyutu büyük"
+							maxFilesQuantity="1" immediateUpload="true" acceptedTypes="xls,xlsx" transferErrorLabel="Dosya  hatalı yüklenmiştir" doneLabel="Bitti"
+							addControlLabel="Dosya Seçin (Excel)" uploadControlLabel="Dosya Kaydet" cancelEntryControlLabel="Temizle" allowFlash="false">
+							<a4j:support event="onuploadcomplete" process="fileUpload" ajaxSingle="true" reRender="dosyaPanel" />
+						</rich:fileUpload>
+
+						<a4j:outputPanel id="personelDosya">
+							<ui:fragment rendered="#{argeGirisCikisEkleHome.dosya.dosyaIcerik != null}">
+								<h:panelGrid columns="3">
+									<a4j:commandButton image="/img/delete.gif" title="Dosya Yeniden Yükle" status="ajaxStatus" reRender="dosyaPanel" ajaxSingle="true"
+										action="#{argeGirisCikisEkleHome.dosyaSifirla}" />
+									<h:outputText value="#{argeGirisCikisEkleHome.dosya.dosyaAdi}" />
+								</h:panelGrid>
+
+								<a4j:commandButton id="dosyaOku" value="Dosya Oku" status="ajaxStatus" ajaxSingle="true" action="#{argeGirisCikisEkleHome.dosyaOku}"
+									rendered="#{argeGirisCikisEkleHome.dosya.dosyaIcerik != null and (argeGirisCikisEkleHome.tarih != null or argeGirisCikisEkleHome.nedenId != null) and argeGirisCikisEkleHome.dosyaTamam == false}"
+									reRender="excelPanel,personelDosya"></a4j:commandButton>
+								<a4j:commandButton value="Dosya Aktar" status="ajaxStatus" ajaxSingle="true" action="#{argeGirisCikisEkleHome.dosyaKaydet()}"
+									rendered="#{argeGirisCikisEkleHome.nedenId!=null and argeGirisCikisEkleHome.dosyaTamam}" reRender="dosyaPanel,excelPanel" />
+							</ui:fragment>
+
+							<ui:fragment rendered="#{empty argeGirisCikisEkleHome.vardiyaGunleri and (authenticatedUser.admin or authenticatedUser.sistemYoneticisi)}">
+								<rich:toolTip for="fileUpload">
+									<table class="rich-table">
+										<caption>Örnek Excel Dosya Formatı</caption>
+										<thead class="rich-table-thead">
+											<tr class="rich-table-subheader">
+												<th style="width: 20px">#{ortakIslemler.personelNoAciklama()}</th>
+												<th style="width: 60px"><h:outputText value="Adı Soyadı" /></th>
+												<th style="width: 60px"><h:outputText value="Tarih" /></th>
+												<th style="width: 60px"><h:outputText value="Giriş" /></th>
+ 												<th style="width: 60px"><h:outputText value="Kapı" /></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr class="acik">
+												<td align="center">1780</td>
+												<td nowrap="nowrap">Personel 1780</td>
+												<td nowrap="nowrap" align="center">13.10.2025</td>
+												<td nowrap="nowrap" align="center">07:00</td>
+												<td nowrap="nowrap" align="center">17:00</td>
+ 
+											</tr>
+											<tr class="koyu">
+												<td align="center">1780</td>
+												<td nowrap="nowrap">Personel 1780</td>
+												<td nowrap="nowrap" align="center">13.10.2025</td>
+												<td nowrap="nowrap" align="center">07:00</td>
+												<td nowrap="nowrap" align="center">17:00</td>
+ 
+											</tr>
+											<tr class="acik">
+												<td align="center">1858</td>
+												<td nowrap="nowrap">Personel 1858</td>
+												<td nowrap="nowrap" align="center">13.10.2025</td>
+												<td nowrap="nowrap" align="center">07:00</td>
+												<td nowrap="nowrap" align="center">17:00</td>
+
+											</tr>
+											<tr class="koyu">
+												<td align="center">1858</td>
+												<td nowrap="nowrap">Personel 1858</td>
+												<td nowrap="nowrap" align="center">13.10.2025</td>
+												<td nowrap="nowrap" align="center">07:00</td>
+												<td nowrap="nowrap" align="center">17:00</td>
+
+											</tr>
+											<tr class="acik">
+												<td align="center">1441</td>
+												<td nowrap="nowrap">Personel 1441</td>
+												<td nowrap="nowrap" align="center">13.10.2025</td>
+												<td nowrap="nowrap" align="center">07:00</td>
+												<td nowrap="nowrap" align="center">17:00</td>
+
+											</tr>
+											<tr class="koyu">
+												<td align="center">1441</td>
+												<td nowrap="nowrap">Personel 1441</td>
+												<td nowrap="nowrap" align="center">13.10.2025</td>
+												<td nowrap="nowrap" align="center">07:00</td>
+												<td nowrap="nowrap" align="center">17:00</td>
+
+											</tr>
+										</tbody>
+									</table>
+								</rich:toolTip>
+							</ui:fragment>
+						</a4j:outputPanel>
+					</a4j:outputPanel>
+
+				</h:panelGrid>
+
+			</rich:panel>
+			<a4j:outputPanel id="excelPanel">
+				<rich:panel>
+					<rich:dataTable rowClasses="acik,koyu" value="#{argeGirisCikisEkleHome.vardiyaGunleri}" var="vg" rows="25" rowKeyVar="row">
+						<f:facet name="header">
+							<h:outputText value="Personeller" />
+						</f:facet>
+
+						<rich:column width="100">
+							<f:facet name="header">
+								<h:outputText value="#{ortakIslemler.personelNoAciklama()}" />
+							</f:facet>
+							<h:outputText value="#{vg.personel.sicilNo}" />
+						</rich:column>
+
+						<rich:column width="100">
+							<f:facet name="header">
+								<h:outputText value="Personel" />
+							</f:facet>
+							<h:outputText value="#{vg.personel.adSoyad}" />
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{ortakIslemler.sirketAciklama()}" />
+							</f:facet>
+							<h:outputText value="#{vg.personel.sirket.ad}" id="sirket" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{ortakIslemler.yoneticiAciklama()}" />
+							</f:facet>
+							<h:outputText value="#{vg.personel.pdksYonetici.adSoyad}" title="#{vg.personel.asilYonetici1.adSoyad}" />
+						</rich:column>
+
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Kapı" />
+							</f:facet>
+							<h:outputText value="#{vg.ilkGiris.kapiView.kapiAciklama}" />
+						</rich:column>
+
+
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Zaman" />
+							</f:facet>
+							<h:outputText value="#{authenticatedUser.dateTimeFormatla(vg.ilkGiris.zaman)}" />
+						</rich:column>
+
+
+
+
+
+						<f:facet name="footer">
+							<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+						</f:facet>
+					</rich:dataTable>
+				</rich:panel>
+			</a4j:outputPanel>
+
+
+			<!--  <a4j:outputPanel id="islemBitti"></a4j:outputPanel> -->
+		</h:form>
+
+
+
+	</ui:define>
+
+</ui:composition>

@@ -180,7 +180,7 @@ public class KapiKGS extends BasePDKSObject implements Serializable {
 		kapiView.setTerminalNo(this.getTerminalNo());
 		kapiView.setKapiKGSAciklama(aciklamaKGS);
 		kapiView.setKapiAciklama(kapi != null ? kapi.getAciklama() : "");
-		kapiView.setKapi(kapi);
+		kapiView.setKapi(this.getKapi());
 		return kapiView;
 
 	}

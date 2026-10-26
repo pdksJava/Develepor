@@ -51,11 +51,13 @@ public class MenuItemConstant implements Serializable {
 	public static String personelIzinKopyala = "/izin/personelIzinKopyala.xhtml";
 	public static String sskIzinGirisi = "/izin/sskIzinGirisi.xhtml";
 
+	public static String argeGirisCikisEkle = "/puantaj/argeGirisCikisEkle.xhtml";
 	public static String denklestirmeBordroRaporu = "/puantaj/denklestirmeBordroRaporu.xhtml";
 	public static String fazlaMesaiERPAktarim = "/puantaj/fazlaMesaiERPAktarim.xhtml";
 	public static String fazlaMesaiHesapla = "/puantaj/fazlaMesaiHesapla.xhtml";
 	public static String fazlaMesaiTalep = "/puantaj/fazlaMesaiTalep.xhtml";
 	public static String hareketGiris = "/puantaj/hareketGiris.xhtml";
+
 	public static String kgsHareket = "/puantaj/kgsHareket.xhtml";
 	public static String mesaiTalepLinkOnay = "/puantaj/mesaiTalepLinkOnay.xhtml";
 	public static String mesaiTalepListesi = "/puantaj/mesaiTalepListesi.xhtml";
@@ -1098,6 +1100,14 @@ public class MenuItemConstant implements Serializable {
 
 	public static void setFazlaMesaiArgeRapor(String fazlaMesaiArgeRapor) {
 		MenuItemConstant.fazlaMesaiArgeRapor = fazlaMesaiArgeRapor;
+	}
+
+	public static String getArgeGirisCikisEkle() {
+		return argeGirisCikisEkle;
+	}
+
+	public static void setArgeGirisCikisEkle(String argeGirisCikisEkle) {
+		MenuItemConstant.argeGirisCikisEkle = argeGirisCikisEkle;
 	}
 
 }
