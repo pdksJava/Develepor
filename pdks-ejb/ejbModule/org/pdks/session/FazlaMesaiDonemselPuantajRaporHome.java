@@ -46,6 +46,7 @@ import org.jboss.seam.faces.Renderer;
 import org.jboss.seam.framework.EntityHome;
 import org.pdks.entity.AylikPuantaj;
 import org.pdks.entity.CalismaModeli;
+import org.pdks.entity.CalismaModeliAy;
 import org.pdks.entity.DenklestirmeAy;
 import org.pdks.entity.DepartmanDenklestirmeDonemi;
 import org.pdks.entity.IzinTipi;
@@ -328,6 +329,9 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 					sb.append("select distinct TE.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 					sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
 					sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1   ");
+					sb.append(" inner join " + CalismaModeliAy.TABLE_NAME + " CA " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY + " = CA." + CalismaModeliAy.COLUMN_NAME_ID);
+					sb.append(" inner join " + CalismaModeli.TABLE_NAME + " CM " + PdksEntityController.getJoinLOCK() + " on CA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI + " = CM." + CalismaModeli.COLUMN_NAME_ID);
+					sb.append(" and CM." + CalismaModeli.COLUMN_NAME_ARGE + " is null ");
 					personelSQLBagla(null, sb, fields);
 					sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = " + sirketId);
 					sb.append(" inner join " + Tanim.TABLE_NAME + " TE " + PdksEntityController.getJoinLOCK() + " on TE." + Tanim.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_TESIS);
@@ -387,6 +391,9 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 					sb.append(" inner join " + Sirket.TABLE_NAME + " S " + PdksEntityController.getJoinLOCK() + " on S." + Sirket.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_SIRKET);
 					sb.append(" and S." + Sirket.COLUMN_NAME_SIRKET_GRUP + " = " + sirket.getSirketGrup().getId());
 				}
+				sb.append(" inner join " + CalismaModeliAy.TABLE_NAME + " CA " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY + " = CA." + CalismaModeliAy.COLUMN_NAME_ID);
+				sb.append(" inner join " + CalismaModeli.TABLE_NAME + " CM " + PdksEntityController.getJoinLOCK() + " on CA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI + " = CM." + CalismaModeli.COLUMN_NAME_ID);
+				sb.append(" and CM." + CalismaModeli.COLUMN_NAME_ARGE + " is null ");
 				sb.append(" inner join " + Tanim.TABLE_NAME + " BO " + PdksEntityController.getJoinLOCK() + " on BO." + Tanim.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_EK_SAHA3);
 				donemSQLKontrol(sb);
 				sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " <= :s");
@@ -464,6 +471,9 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			}
 			if (bolumId == null)
 				sb.append(" inner join " + Tanim.TABLE_NAME + " BO " + PdksEntityController.getJoinLOCK() + " on BO." + Tanim.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_EK_SAHA3);
+			sb.append(" inner join " + CalismaModeliAy.TABLE_NAME + " CA " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY + " = CA." + CalismaModeliAy.COLUMN_NAME_ID);
+			sb.append(" inner join " + CalismaModeli.TABLE_NAME + " CM " + PdksEntityController.getJoinLOCK() + " on CA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI + " = CM." + CalismaModeli.COLUMN_NAME_ID);
+			sb.append(" and CM." + CalismaModeli.COLUMN_NAME_ARGE + " is null ");
 			sb.append(" inner join " + Tanim.TABLE_NAME + " AB " + PdksEntityController.getJoinLOCK() + " on AB." + Tanim.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_EK_SAHA4);
 			donemSQLKontrol(sb);
 			sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " <= :s");
@@ -516,6 +526,9 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				sb.append("select distinct P.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 				sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
 				sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1   ");
+				sb.append(" inner join " + CalismaModeliAy.TABLE_NAME + " CA " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY + " = CA." + CalismaModeliAy.COLUMN_NAME_ID);
+				sb.append(" inner join " + CalismaModeli.TABLE_NAME + " CM " + PdksEntityController.getJoinLOCK() + " on CA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI + " = CM." + CalismaModeli.COLUMN_NAME_ID);
+				sb.append(" and CM." + CalismaModeli.COLUMN_NAME_ARGE + " is null ");
 				personelSQLBagla(null, sb, fields);
 				if (tesisId != null)
 					sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = " + tesisId);
@@ -581,6 +594,9 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 			sb.append("select distinct S.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 			sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
 			sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1 and PD." + PersonelDenklestirme.COLUMN_NAME_ONAYLANDI + " = 1 and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
+			sb.append(" inner join " + CalismaModeliAy.TABLE_NAME + " CA " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY + " = CA." + CalismaModeliAy.COLUMN_NAME_ID);
+			sb.append(" inner join " + CalismaModeli.TABLE_NAME + " CM " + PdksEntityController.getJoinLOCK() + " on CA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI + " = CM." + CalismaModeli.COLUMN_NAME_ID);
+			sb.append(" and CM." + CalismaModeli.COLUMN_NAME_ARGE + " is null ");
 			personelSQLBagla(null, sb, fields);
 			ortakIslemler.addIKSirketTesisKriterleri(fields, sb);
 			donemSQLKontrol(sb);
@@ -621,6 +637,9 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		sb.append("select distinct D.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on D." + DenklestirmeAy.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_DONEM);
 		sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1");
+		sb.append(" inner join " + CalismaModeliAy.TABLE_NAME + " CA " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY + " = CA." + CalismaModeliAy.COLUMN_NAME_ID);
+		sb.append(" inner join " + CalismaModeli.TABLE_NAME + " CM " + PdksEntityController.getJoinLOCK() + " on CA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI + " = CM." + CalismaModeli.COLUMN_NAME_ID);
+		sb.append(" and CM." + CalismaModeli.COLUMN_NAME_ARGE + " is null ");
 		sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + " = :y and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " <= :s");
 		sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_AY + " > 0");
 		sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DURUM + " = 0");
@@ -673,6 +692,9 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				String fieldName = "d";
 				sb = new StringBuilder();
 				sb.append("select distinct S.* from " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK() + " ");
+				sb.append(" inner join " + CalismaModeliAy.TABLE_NAME + " CA " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY + " = CA." + CalismaModeliAy.COLUMN_NAME_ID);
+				sb.append(" inner join " + CalismaModeli.TABLE_NAME + " CM " + PdksEntityController.getJoinLOCK() + " on CA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI + " = CM." + CalismaModeli.COLUMN_NAME_ID);
+				sb.append(" and CM." + CalismaModeli.COLUMN_NAME_ARGE + " is null ");
 				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 				ortakIslemler.addIKSirketTesisKriterleri(fields, sb);
 				sb.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " :" + fieldName);
@@ -1458,6 +1480,9 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 		sb.append(" ) ");
 		sb.append("select PD.* from " + DenklestirmeAy.TABLE_NAME + " D " + PdksEntityController.getSelectLOCK() + " ");
 		sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
+		sb.append(" inner join " + CalismaModeliAy.TABLE_NAME + " CA " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY + " = CA." + CalismaModeliAy.COLUMN_NAME_ID);
+		sb.append(" inner join " + CalismaModeli.TABLE_NAME + " CM " + PdksEntityController.getJoinLOCK() + " on CA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI + " = CM." + CalismaModeli.COLUMN_NAME_ID);
+		sb.append(" and CM." + CalismaModeli.COLUMN_NAME_ARGE + " is null ");
 		sb.append(" inner join DATA DA " + PdksEntityController.getJoinLOCK() + " on DA." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 		// sb.append(" and  PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + "= " + personel.getId());
 		personelSQLBagla(kimlikNo, sb, fields);
@@ -1528,6 +1553,9 @@ public class FazlaMesaiDonemselPuantajRaporHome extends EntityHome<DepartmanDenk
 				sb.append(" and  PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :pg ");
 				fields.put("pg", perIdList);
 			}
+			sb.append(" inner join " + CalismaModeliAy.TABLE_NAME + " CA " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY + " = CA." + CalismaModeliAy.COLUMN_NAME_ID);
+			sb.append(" inner join " + CalismaModeli.TABLE_NAME + " CM " + PdksEntityController.getJoinLOCK() + " on CA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI + " = CM." + CalismaModeli.COLUMN_NAME_ID);
+			sb.append(" and CM." + CalismaModeli.COLUMN_NAME_ARGE + " is null ");
 			personelSQLBagla(kimlikNo, sb, fields);
 			sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " >= year( " + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " ) * 100 + month(" + Personel.COLUMN_NAME_ISE_BASLAMA_TARIHI + " ) ");
 			sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_DONEM_KODU + " <= year( " + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " ) * 100 + month(" + Personel.COLUMN_NAME_SSK_CIKIS_TARIHI + " ) ");

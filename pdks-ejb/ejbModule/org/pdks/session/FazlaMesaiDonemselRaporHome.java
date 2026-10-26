@@ -32,6 +32,8 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.web.RequestParameter;
 import org.jboss.seam.faces.Renderer;
 import org.jboss.seam.framework.EntityHome;
+import org.pdks.entity.CalismaModeli;
+import org.pdks.entity.CalismaModeliAy;
 import org.pdks.entity.DenklestirmeAy;
 import org.pdks.entity.DepartmanDenklestirmeDonemi;
 import org.pdks.entity.Liste;
@@ -144,8 +146,10 @@ public class FazlaMesaiDonemselRaporHome extends EntityHome<DepartmanDenklestirm
 				sb.append(" inner join " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = D." + DenklestirmeAy.COLUMN_NAME_ID);
 				sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1 and PD." + PersonelDenklestirme.COLUMN_NAME_ONAYLANDI + " = 1 and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
 				sb.append(" and ( PD." + PersonelDenklestirme.COLUMN_NAME_ODENEN_SURE + " <> 0 or PD." + PersonelDenklestirme.COLUMN_NAME_DEVREDEN_SURE + " <> 0 ) ");
-
-				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
+				sb.append(" inner join " + CalismaModeliAy.TABLE_NAME + " CA " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY + " = CA." + CalismaModeliAy.COLUMN_NAME_ID);
+				sb.append(" inner join " + CalismaModeli.TABLE_NAME + " CM " + PdksEntityController.getJoinLOCK() + " on CA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI + " = CM." + CalismaModeli.COLUMN_NAME_ID);
+				sb.append(" and CM." + CalismaModeli.COLUMN_NAME_ARGE+" is null ");
+ 				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 				sb.append(" and P." + Personel.COLUMN_NAME_SIRKET + " = " + sirketId);
 				sb.append(" inner join " + Tanim.TABLE_NAME + " TE " + PdksEntityController.getJoinLOCK() + " on TE." + Tanim.COLUMN_NAME_ID + " = P." + Personel.COLUMN_NAME_TESIS);
 
@@ -259,7 +263,10 @@ public class FazlaMesaiDonemselRaporHome extends EntityHome<DepartmanDenklestirm
 				String fieldName = "d";
 				sb = new StringBuilder();
 				sb.append("select distinct S.* from " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK() + " ");
-				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
+				sb.append(" inner join " + CalismaModeliAy.TABLE_NAME + " CA " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY + " = CA." + CalismaModeliAy.COLUMN_NAME_ID);
+				sb.append(" inner join " + CalismaModeli.TABLE_NAME + " CM " + PdksEntityController.getJoinLOCK() + " on CA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI + " = CM." + CalismaModeli.COLUMN_NAME_ID);
+				sb.append(" and CM." + CalismaModeli.COLUMN_NAME_ARGE+" is null ");
+ 				sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on P." + Personel.COLUMN_NAME_ID + " = PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL);
 				ortakIslemler.addIKSirketTesisKriterleri(fields, sb);
 				sb.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " :" + fieldName);
 				sb.append(" and PD." + PersonelDenklestirme.COLUMN_NAME_DURUM + " = 1 and PD." + PersonelDenklestirme.COLUMN_NAME_ONAYLANDI + " = 1 and PD." + PersonelDenklestirme.COLUMN_NAME_DENKLESTIRME_DURUM + " = 1 ");
@@ -526,6 +533,9 @@ public class FazlaMesaiDonemselRaporHome extends EntityHome<DepartmanDenklestirm
 			if (tesisId != null)
 				sb.append(" and P." + Personel.COLUMN_NAME_TESIS + " = " + tesisId);
 		}
+		sb.append(" inner join " + CalismaModeliAy.TABLE_NAME + " CA " + PdksEntityController.getJoinLOCK() + " on PD." + PersonelDenklestirme.COLUMN_NAME_CALISMA_MODELI_AY + " = CA." + CalismaModeliAy.COLUMN_NAME_ID);
+		sb.append(" inner join " + CalismaModeli.TABLE_NAME + " CM " + PdksEntityController.getJoinLOCK() + " on CA." + CalismaModeliAy.COLUMN_NAME_CALISMA_MODELI + " = CM." + CalismaModeli.COLUMN_NAME_ID);
+		sb.append(" and CM." + CalismaModeli.COLUMN_NAME_ARGE+" is null ");
 		sb.append(" where D." + DenklestirmeAy.COLUMN_NAME_YIL + " = " + yil);
 		if (basAy != null) {
 			sb.append(" and D." + DenklestirmeAy.COLUMN_NAME_AY + " >= " + basAy);
