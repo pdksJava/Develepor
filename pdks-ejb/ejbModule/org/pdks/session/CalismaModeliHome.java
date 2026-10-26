@@ -3,6 +3,7 @@ package org.pdks.session;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -20,7 +21,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Session;
-import java.sql.Connection;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
 import org.jboss.seam.annotations.In;
@@ -74,7 +74,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>(), kayitliVardiyaList = new ArrayList<Vardiya>();
 	private List<CalismaModeliGun> cmGunList;
 	private List<Departman> departmanList;
-	private List<SelectItem> haftaTatilGunleri, tesisIdList;
+	private List<SelectItem> haftaTatilGunleri, tesisIdList, argeTipiList;
 	private Long tesisId;
 
 	private HashMap<Integer, List<CalismaModeliGun>> cmGunMap;
@@ -273,6 +273,13 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 			cal.set(Calendar.DAY_OF_WEEK, i);
 			haftaTatilGunleri.add(new SelectItem(i, PdksUtil.convertToDateString(cal.getTime(), "EEEEE")));
 		}
+		argeTipiList.clear();
+		List<Tanim> list = ortakIslemler.getTanimList(Tanim.TIPI_ARGE_TIPI, session);
+		for (Tanim tanim : list) {
+			if (tanim.getDurum())
+				argeTipiList.add(new SelectItem(tanim.getId(), tanim.getAciklama()));
+		}
+
 		gunleriSifirla();
 		Long departmanId = cm.getDepartman() != null ? cm.getDepartman().getId() : null;
 
@@ -350,6 +357,8 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 		pasifGoster = false;
 		ortakIslemler.setUserMenuItemTime(entityManager, session, sayfaURL);
 		pdksSirketList = ortakIslemler.getDepartmanPDKSSirketList(null, session);
+		if (argeTipiList == null)
+			argeTipiList = new ArrayList<SelectItem>();
 		fillCalismaModeliList();
 	}
 
@@ -1010,6 +1019,14 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 	public void setYoneticiGuncelleGoster(Boolean yoneticiGuncelleGoster) {
 		this.yoneticiGuncelleGoster = yoneticiGuncelleGoster;
+	}
+
+	public List<SelectItem> getArgeTipiList() {
+		return argeTipiList;
+	}
+
+	public void setArgeTipiList(List<SelectItem> argeTipiList) {
+		this.argeTipiList = argeTipiList;
 	}
 
 }

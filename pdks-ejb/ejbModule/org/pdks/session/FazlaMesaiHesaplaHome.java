@@ -3812,8 +3812,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @param vardiyaSaat
 	 */
 	private void argeDGSSureGuncelle(VardiyaGun vg, VardiyaSaat vs) {
-		Double dgsSuresi = 0.0d;
-		if (seciliCalismaModeli.isArgemi() && (vg.getDurum() || vg.getHareketler() == null)) {
+		Double dgsSuresi = vg.getDgsSuresi();
+		if (seciliCalismaModeli.isArgeKartGirisi() && (vg.getDurum() || vg.getHareketler() == null)) {
 			Vardiya vardiya = vg.getVardiya();
 			if (vardiya != null && vardiya.isCalisma()) {
 				if (vs.getNormalSure() < 0.0d)

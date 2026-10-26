@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -158,7 +157,7 @@ public class FazlaMesaiArgeRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	private Boolean normalGunKod = Boolean.FALSE, haftaTatilGunKod = Boolean.FALSE, resmiTatilGunKod = Boolean.FALSE, artikGunKod = Boolean.FALSE, bordroToplamGunKod = Boolean.FALSE, devredenMesaiKod = Boolean.FALSE, ucretiOdenenKod = Boolean.FALSE;
 
 	private Boolean suaDurum = Boolean.FALSE, sutIzniDurum = Boolean.FALSE, gebeDurum = Boolean.FALSE, partTime = Boolean.FALSE, pdfBirlestirDurum = Boolean.FALSE, pdfTopluAktarDurum = Boolean.FALSE;
-	private Boolean brutUcretGoster = Boolean.FALSE, resmiTatilKanunenEklenenSureGoster = Boolean.FALSE, eksiBakiyeGoster = Boolean.FALSE, izinGoster = Boolean.FALSE;
+	private Boolean brutUcretGoster = Boolean.FALSE, resmiTatilKanunenEklenenSureGoster = Boolean.FALSE , izinGoster = Boolean.FALSE;
 	private Long vardiyaAdet, yukseklik;
 	private List<VardiyaGun> tumVardiyaList;
 	private Parameter aylikVardiyaTabloHareketExcelParameter, aylikVardiyaTabloHareketPDFParameter;
@@ -943,7 +942,7 @@ public class FazlaMesaiArgeRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		tumVardiyaList = null;
 		personelHareketMap = null;
 		resmiTatilKanunenEklenenSureGoster = false;
-		eksiBakiyeGoster = false;
+ 
 		HashMap<Long, Vardiya> vardiyaMap = new HashMap<Long, Vardiya>();
 		if (vardiyaZamanMap == null)
 			vardiyaZamanMap = new HashMap<String, String>();
@@ -1282,7 +1281,7 @@ public class FazlaMesaiArgeRaporHome extends EntityHome<DepartmanDenklestirmeDon
 					puantajList.add(puantaj);
 				}
 
-				modelGoster = cmIdList.size() > 1;
+				modelGoster = cmIdList.size() > 0;
 				cmIdList = null;
 			}
 			colSpan = 2;
@@ -1745,8 +1744,7 @@ public class FazlaMesaiArgeRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		sirket = null;
 		tesis = null;
 		boolean kismiOdemeGoster = false;
-		Tanim ekSaha1 = ekSahaTanimMap != null && ekSahaTanimMap.containsKey("ekSaha1") ? ekSahaTanimMap.get("ekSaha1") : null;
-		for (Iterator iter = list.iterator(); iter.hasNext();) {
+ 		for (Iterator iter = list.iterator(); iter.hasNext();) {
 			AylikPuantaj aylikPuantaj = (AylikPuantaj) iter.next();
 			PersonelDenklestirme pd = aylikPuantaj.getPersonelDenklestirme();
 			if (!kismiOdemeGoster)

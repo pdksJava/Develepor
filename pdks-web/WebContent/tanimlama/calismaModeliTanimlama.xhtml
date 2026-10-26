@@ -260,7 +260,7 @@
 									<f:facet name="header">
 										<h:outputText value="Arge" />
 									</f:facet>
-									<h:outputText value="#{authenticatedUser.getYesNo(calismaModeli.arge)}" />
+									<h:outputText value="#{calismaModeli.arge.aciklama}" />
 								</rich:column>
 								<rich:column rendered="#{calismaModeliHome.yoneticiGuncelleGoster}">
 									<f:facet name="header">
@@ -585,11 +585,17 @@
 
 							</h:selectBooleanCheckbox>
 						</s:decorate>
-						<s:decorate template="/layout/edit.xhtml" >
+						<s:decorate template="/layout/edit.xhtml" id="argeSecim" rendered="#{not empty calismaModeliHome.argeTipiList}">
 							<ui:define name="label">Arge</ui:define>
-							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.arge}" disabled="#{authenticatedUser.admin == false}">
 
-							</h:selectBooleanCheckbox>
+							<h:selectOneMenu value="#{calismaModeliHome.calismaModeli.argeId}">
+								<f:selectItem itemLabel="Lütfen seçiniz" />
+								<f:selectItems value="#{calismaModeliHome.argeTipiList}" />
+								<a4j:support event="onchange" reRender="argeSecim" action="#{ortakIslemler.emtpyAjaxFunction()}" status="ajaxStatus" ajaxSingle="true" />
+
+							</h:selectOneMenu>
+
+
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Yönetici Güncelleyebilir</ui:define>

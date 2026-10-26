@@ -80,6 +80,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	private Tanim tesis;
 	private String aciklama = "";
 	private Long tesisId;
+	private Long argeId;
 	private double haftaIci = 0.0d, arife = 0.0d, negatifBakiyeDenkSaat = 0.0d;
 	private Double haftaIciSutIzniSure = 7.5d, cumartesiSaat = 0.0d, izin = 0.0d, cumartesiIzinSaat = 0.0d, cumartesiSutIzniSure = 0.0d, sutIzniSabitSaat;
 	private Double pazarSaat = 0.0d, pazarIzinSaat = 0.0d, pazarSutIzniSure = 0.0d;
@@ -87,11 +88,11 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	private Boolean haftaTatilMesaiOde = Boolean.FALSE, geceHaftaTatilMesaiParcala = Boolean.FALSE, geceCalismaOdemeVar = Boolean.FALSE, otomatikFazlaCalismaOnaylansin = Boolean.FALSE;
 	private Boolean ortakVardiya = Boolean.FALSE, fazlaMesaiGoruntulensin = Boolean.TRUE, ilkPlanOnayliDurum = Boolean.FALSE, gunMaxCalismaOdemeDurum = Boolean.TRUE;
 	private Boolean genelModel = Boolean.TRUE, idariModel = Boolean.FALSE, suaDurum = Boolean.FALSE, haftaTatilHareketGuncelle = Boolean.FALSE, offHareketGuncelle = Boolean.FALSE;
-	private Boolean yoneticiGuncelle = Boolean.FALSE, arge = Boolean.FALSE;
+	private Boolean yoneticiGuncelle = Boolean.FALSE;
 	private Integer haftaTatilGun = Calendar.SUNDAY;
 	private VardiyaSablonu bagliVardiyaSablonu;
 	private Departman departman;
-	private Tanim personelTipi;
+	private Tanim personelTipi, arge;
 	private Boolean aylikMaas = Boolean.TRUE;
 
 	private User guncelleyenUser, olusturanUser;
@@ -348,13 +349,24 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 		this.fazlaMesaiSureHesapla = fazlaMesaiSureHesapla;
 	}
 
-	@Column(name = COLUMN_NAME_ARGE)
-	public Boolean getArge() {
+	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	@JoinColumn(name = COLUMN_NAME_ARGE, insertable = false, updatable = false)
+	@Fetch(FetchMode.JOIN)
+	public Tanim getArge() {
 		return arge;
 	}
 
-	public void setArge(Boolean arge) {
+	public void setArge(Tanim arge) {
 		this.arge = arge;
+	}
+
+	@Column(name = COLUMN_NAME_ARGE)
+	public Long getArgeId() {
+		return argeId;
+	}
+
+	public void setArgeId(Long argeId) {
+		this.argeId = argeId;
 	}
 
 	@Column(name = COLUMN_NAME_ORTAK_VARDIYA)
@@ -870,13 +882,49 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	public String getOzelAciklama() {
 		String ozelAciklama = aciklama;
 		if (isArgemi())
-			ozelAciklama += " [ Arge ]";
+			ozelAciklama += " [ Arge % " + this.getArgeYuzde() + " ]";
 		return ozelAciklama;
 	}
 
 	@Transient
 	public boolean isArgemi() {
-		return arge != null && arge.booleanValue();
+		return arge != null;
+	}
+
+	@Transient
+	public Integer getArgeYuzde() {
+		Integer yuzde = 0;
+		if (arge != null) {
+			try {
+				yuzde = Integer.parseInt(arge.getErpKodu().trim());
+			} catch (Exception e) {
+				yuzde = 75;
+			}
+
+		}
+		return yuzde;
+	}
+
+	@Transient
+	public boolean isArgeKartGirisi() {
+		boolean islemDurum = false;
+		if (arge != null) {
+			if (arge.getErpKodu().toUpperCase().startsWith("K"))
+				islemDurum = true;
+
+		}
+		return islemDurum;
+	}
+
+	@Transient
+	public boolean isArgeManuelGirisi() {
+		boolean islemDurum = false;
+		if (arge != null) {
+			if (arge.getErpKodu().toUpperCase().startsWith("M"))
+				islemDurum = true;
+
+		}
+		return islemDurum;
 	}
 
 	public void entityRefresh() {
