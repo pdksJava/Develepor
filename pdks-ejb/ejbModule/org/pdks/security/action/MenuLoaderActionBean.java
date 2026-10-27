@@ -111,18 +111,17 @@ public class MenuLoaderActionBean implements Serializable {
 			String menuAdi = "dinamikRapor";
 			if (raporIslemleri != null && authenticatedUser != null && userHome != null && userHome.hasPermission(menuAdi, "view")) {
 				if (pdksEntityController.isSessionKapali(null, session)) {
-					session = authenticatedUser.getSessionSQL();
-					if (pdksEntityController.isSessionKapali(null, session))
-						session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-				}
-
-				session.clear();
+					session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+					session.clear();
+ 				}
 				try {
-					dinamikRaporUpdate(menuAdi);
+ 					dinamikRaporUpdate(menuAdi);
 				} catch (Exception ex) {
 					logger.error(ex);
 					ex.printStackTrace();
 				}
+				pdksEntityController.sessionClose(session);
+
 			}
 		} catch (Exception e) {
 			logger.error(e);
