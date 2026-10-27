@@ -5755,29 +5755,29 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			LinkedHashMap<Long, Personel> yoneticiMap = new LinkedHashMap<Long, Personel>();
 			boolean mailGonderildi = false;
 			List<Long> sirketIdList = new ArrayList<Long>();
-
-			for (AylikPuantaj puantajAylik : puantajList) {
-				if (puantajAylik.isKaydet()) {
-					PersonelDenklestirme personelDenklestirmeAy = puantajAylik.getPersonelDenklestirme();
+			for (Iterator iterator = puantajList.iterator(); iterator.hasNext();) {
+				AylikPuantaj ap = (AylikPuantaj) iterator.next();
+ 				if (ap.isKaydet()) {
+					PersonelDenklestirme personelDenklestirmeAy = ap.getPersonelDenklestirme();
 					personelDenklestirmeAy.setGuncellendi(guncellendi);
 					if (personelDenklestirmeAy != null && denklestirmeAyDurum) {
 						Personel calisan = personelDenklestirmeAy.getPersonel();
-						personelDenklestimeOnayla(puantajAylik, personelDenklestirmeAy);
+						personelDenklestimeOnayla(ap, personelDenklestirmeAy);
 						if (personelDenklestirmeAy.isGuncellendi() && !userLogin.isAdmin()) {
 							personelDenklestirmeAy.setGuncellemeTarihi(new Date());
 							personelDenklestirmeAy.setGuncelleyenUser(userLogin);
 						}
 						if (guncellendi) {
 							saveOrUpdate(personelDenklestirmeAy);
-							puantajAylik.setKaydet(Boolean.FALSE);
+							ap.setKaydet(Boolean.FALSE);
 						}
 						if (mailGonder) {
 							if (calisan != null && !sirketIdList.contains(calisan.getSirket().getId()))
 								sirketIdList.add(calisan.getSirket().getId());
-							puantajAylik.setSecili(Boolean.TRUE);
+							ap.setSecili(Boolean.TRUE);
 							Personel personel = null;
 							if (ikRole)
-								personel = puantajAylik.getYonetici();
+								personel = ap.getYonetici();
 							else
 								personel = userLogin.getPdksPersonel();
 							if (personel != null && personel.getId() != null) {
@@ -5786,10 +5786,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									yoneticiMap.put(personel.getId(), personel);
 									puantajMap.put(personel.getId(), aylikPuantajlar);
 								}
-								aylikPuantajlar.add(puantajAylik);
+								aylikPuantajlar.add(ap);
 							}
 						}
-						puantajAylik.setKaydet(Boolean.FALSE);
+						ap.setKaydet(Boolean.FALSE);
 						onaylandi = Boolean.TRUE;
 					}
 				}
