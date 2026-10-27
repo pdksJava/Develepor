@@ -275,7 +275,7 @@ public class MenuLoaderActionBean implements Serializable {
 	private Long getItemKey(HtmlMenuItem item) {
 		String str = "0";
 		if (item.getData() != null)
-			str = "" + item.getData();
+			str = "" + new Long("" + item.getData());
 		Long key = null;
 		try {
 			key = Long.parseLong(str);
