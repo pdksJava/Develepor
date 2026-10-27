@@ -3813,25 +3813,64 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 */
 	private void argeDGSSureGuncelle(VardiyaGun vg, VardiyaSaat vs) {
 		Double dgsSuresi = vg.getDgsSuresi();
-		if (seciliCalismaModeli.isArgeKartGirisi() && (vg.getDurum() || vg.getHareketler() == null)) {
-			Vardiya vardiya = vg.getVardiya();
-			if (vardiya != null && vardiya.isCalisma()) {
-				if (vs.getNormalSure() < 0.0d)
-					vs.setNormalSure(vardiya.getNetCalismaSuresi());
-				dgsSuresi = vs.getNormalSure() > vg.getCalismaSuresi() ? vs.getNormalSure() - vg.getCalismaSuresi() : 0.0d;
-				if (vg.getVardiyaDateStr().endsWith("0908"))
-					logger.debug("");
-				if (vg.getIzin() != null) {
-					IzinTipi izinTipi = vg.getIzin().getIzinTipi();
-					if (izinTipi.isSenelikIzin())
-						dgsSuresi = 0.0d;
-					else {
-						BordroDetayTipi izinBordroDetayTipi = izinGrupMap != null ? ortakIslemler.getBordroDetayTipi(izinTipi, izinGrupMap) : null;
-						if (izinBordroDetayTipi != null) {
-							if (izinBordroDetayTipi.equals(BordroDetayTipi.RAPORLU_IZIN) || izinBordroDetayTipi.equals(BordroDetayTipi.YILLIK_IZIN))
-								dgsSuresi = 0.0d;
+		if ((vg.getDurum() || vg.getHareketler() == null)) {
+			if (seciliCalismaModeli.isArgeKartGirisi()) {
+				Vardiya vardiya = vg.getVardiya();
+				if (vardiya != null && vardiya.isCalisma()) {
+					if (vs.getNormalSure() < 0.0d)
+						vs.setNormalSure(vardiya.getNetCalismaSuresi());
+					dgsSuresi = vs.getNormalSure() > vg.getCalismaSuresi() ? vs.getNormalSure() - vg.getCalismaSuresi() : 0.0d;
+					if (vg.getVardiyaDateStr().endsWith("0908"))
+						logger.debug("");
+					if (vg.getIzin() != null) {
+						IzinTipi izinTipi = vg.getIzin().getIzinTipi();
+						if (izinTipi.isSenelikIzin())
+							dgsSuresi = 0.0d;
+						else {
+							BordroDetayTipi izinBordroDetayTipi = izinGrupMap != null ? ortakIslemler.getBordroDetayTipi(izinTipi, izinGrupMap) : null;
+							if (izinBordroDetayTipi != null) {
+								if (izinBordroDetayTipi.equals(BordroDetayTipi.RAPORLU_IZIN) || izinBordroDetayTipi.equals(BordroDetayTipi.YILLIK_IZIN))
+									dgsSuresi = 0.0d;
+							}
 						}
 					}
+				}
+			} else if (seciliCalismaModeli.isArgeManuelGirisi()) {
+				dgsSuresi = 0.0d;
+				if (vg.getCalismaSuresi() > 0.0d) {
+					ArrayList<HareketKGS> girisHareketleri = vg.getGirisHareketleri(), cikisHareketleri = vg.getCikisHareketleri();
+					if (girisHareketleri != null && cikisHareketleri != null && cikisHareketleri.size() == girisHareketleri.size()) {
+						if (cikisHareketleri.size() == 1) {
+							HareketKGS giris = girisHareketleri.get(0), cikis = cikisHareketleri.get(0);
+							if (giris.getKapiKGS().getKapi().isArgeMi() || cikis.getKapiKGS().getKapi().isArgeMi()) {
+								dgsSuresi = vg.getCalismaSuresi();
+								vg.setCalismaSuresi(0.0d);
+							}
+						} else {
+							double toplamArge = 0.0d;
+							for (int i = 0; i < girisHareketleri.size(); i++) {
+								HareketKGS girisHareket = girisHareketleri.get(i), cikisHareket = cikisHareketleri.get(i);
+								if (girisHareket.getKapiKGS().getKapi().isArgeMi() || cikisHareket.getKapiKGS().getKapi().isArgeMi()) {
+									Date girisZaman = girisHareket != null ? ortakIslemler.getSaniyeSifirla(girisHareket.getZaman(), vg) : null;
+									Date cikisZaman = cikisHareket != null ? ortakIslemler.getSaniyeSifirla(cikisHareket.getZaman(), vg) : null;
+									if (cikisZaman.after(girisZaman)) {
+										double saatFarki = PdksUtil.getSaatFarki(cikisZaman, girisZaman);
+										toplamArge += saatFarki;
+									}
+
+								}
+							}
+							if (toplamArge < vg.getCalismaSuresi()) {
+								dgsSuresi = toplamArge;
+								vg.setCalismaSuresi(vg.getCalismaSuresi() - toplamArge);
+							} else {
+								dgsSuresi = vg.getCalismaSuresi();
+								vg.setCalismaSuresi(0.0d);
+							}
+						}
+
+					}
+
 				}
 			}
 		}
@@ -3839,7 +3878,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			vs.setDgsSuresi(dgsSuresi);
 			vs.setCalismaSuresi(vg.getCalismaSuresi());
 		}
-
+		vs.setDgsSuresi(dgsSuresi);
 		vg.setDgsSuresi(dgsSuresi);
 	}
 

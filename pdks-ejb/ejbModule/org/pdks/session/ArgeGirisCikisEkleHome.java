@@ -92,19 +92,21 @@ public class ArgeGirisCikisEkleHome extends EntityHome<HareketKGS> implements Se
 		List<KapiView> kapiViewList = new ArrayList<KapiView>();
 		HashMap parametreMap = new HashMap();
 		parametreMap.put("kapi.durum", Boolean.TRUE);
-		parametreMap.put("kapi.pdks", Boolean.TRUE);
+		parametreMap.put("kapi.arge", Boolean.TRUE);
 		if (session != null)
 			parametreMap.put(PdksEntityController.MAP_KEY_SESSION, session);
 		List<KapiKGS> list = pdksEntityController.getObjectByInnerObjectList(parametreMap, KapiKGS.class);
 		KapiKGS manuelGiris = null, manuelCikis = null;
 		map1 = new HashMap<Long, KapiView>();
+		HashMap<String, KapiView> manuelKapiMap = new HashMap<String, KapiView>();
 		for (KapiKGS kapiKGS : list) {
 			KapiView view = kapiKGS.getKapiView();
 			map1.put(kapiKGS.getId(), view);
 			kapiViewList.add(view);
+			String key = kapiKGS.getKapi().isGirisKapi() ? Kapi.TIPI_KODU_GIRIS : Kapi.TIPI_KODU_CIKIS;
+			manuelKapiMap.put(key, view);
 		}
 
-		HashMap<String, KapiView> manuelKapiMap = ortakIslemler.getManuelKapiMap(kapiViewList, session);
 		manuelGiris = manuelKapiMap.containsKey(Kapi.TIPI_KODU_GIRIS) ? manuelKapiMap.get(Kapi.TIPI_KODU_GIRIS).getKapiKGS() : null;
 		manuelCikis = manuelKapiMap.containsKey(Kapi.TIPI_KODU_CIKIS) ? manuelKapiMap.get(Kapi.TIPI_KODU_CIKIS).getKapiKGS() : null;
 		manuelKapiMap = null;

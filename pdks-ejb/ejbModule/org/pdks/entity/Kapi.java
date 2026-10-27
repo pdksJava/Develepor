@@ -26,6 +26,7 @@ public class Kapi extends BaseObject {
 	public static final String COLUMN_NAME_ACIKLAMA = "ACIKLAMA";
 	public static final String COLUMN_NAME_KAPI_TIPI = "KAPI_TIPI_ID";
 	public static final String COLUMN_NAME_PDKS = "PDKS";
+	public static final String COLUMN_NAME_ARGE = "ARGE";
 
 	// seam-gen attributes (you should probably edit these)
 	public static final String TIPI_KODU_GIRIS = "G";
@@ -35,7 +36,7 @@ public class Kapi extends BaseObject {
 	private KapiKGS kapiKGS;
 	private Tanim tipi;
 
-	private Boolean pdks = Boolean.TRUE;
+	private Boolean pdks = Boolean.TRUE, arge = Boolean.FALSE;
 	private KapiView kapiView;
 	private Integer version = 0;
 
@@ -78,6 +79,20 @@ public class Kapi extends BaseObject {
 
 	public void setPdks(Boolean pdks) {
 		this.pdks = pdks;
+	}
+
+	@Column(name = COLUMN_NAME_ARGE)
+	public Boolean getArge() {
+		return arge;
+	}
+
+	public void setArge(Boolean arge) {
+		this.arge = arge;
+	}
+
+	@Transient
+	public boolean isArgeMi() {
+		return arge != null && arge.booleanValue();
 	}
 
 	@Transient

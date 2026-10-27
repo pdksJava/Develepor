@@ -55,7 +55,7 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 	private List<Kapi> kapiList = new ArrayList<Kapi>();
 	private List<Tanim> kapiTipiList = new ArrayList<Tanim>();
 	private KapiView kapiView;
-	private boolean kgsGuncelle;
+	private boolean kgsGuncelle, argeGoster;
 	private Boolean eskiKayitDurum;
 	private String birdenFazlaKGSSirketSQL;
 	private Session session;
@@ -105,6 +105,7 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 		session.clear();
 		List<Kapi> kapiList = new ArrayList<Kapi>();
 		HashMap parametreMap = new HashMap();
+		argeGoster = false;
 		try {
 			StringBuilder sb = new StringBuilder();
 			sb.append("select P.* from VIEW_KAPI_SIRKET_KGS_LIST  P ");
@@ -167,6 +168,8 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 				for (Iterator iterator = kapiKGSList.iterator(); iterator.hasNext();) {
 					KapiKGS kapiKGS = (KapiKGS) iterator.next();
 					KapiView kapiView = kapiKGS.getKapiView();
+					if (argeGoster == false && kapiKGS.getKapi() != null)
+						argeGoster = kapiKGS.getKapi().isArgeMi();
 					list.add(kapiView);
 					Kapi kapi = kapiKGS.getKapi();
 					if (kapi != null) {
@@ -392,5 +395,13 @@ public class KapiHome extends EntityHome<Kapi> implements Serializable {
 
 	public void setEskiKayitDurum(Boolean eskiKayitDurum) {
 		this.eskiKayitDurum = eskiKayitDurum;
+	}
+
+	public boolean isArgeGoster() {
+		return argeGoster;
+	}
+
+	public void setArgeGoster(boolean argeGoster) {
+		this.argeGoster = argeGoster;
 	}
 }

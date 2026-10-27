@@ -909,7 +909,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	public boolean isArgeKartGirisi() {
 		boolean islemDurum = false;
 		if (arge != null) {
-			if (arge.getErpKodu().toUpperCase().startsWith("K"))
+			if (arge.getKodu().toUpperCase().startsWith("K"))
 				islemDurum = true;
 
 		}
@@ -920,7 +920,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	public boolean isArgeManuelGirisi() {
 		boolean islemDurum = false;
 		if (arge != null) {
-			if (arge.getErpKodu().toUpperCase().startsWith("M"))
+			if (arge.getKodu().toUpperCase().startsWith("M"))
 				islemDurum = true;
 
 		}
