@@ -2463,7 +2463,7 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 
 						}
 					}
-					int adet = tesisList.size() + distinctTesisList.size();
+					int adet = (tesisList != null ? tesisList.size() : 0) + (distinctTesisList != null ? distinctTesisList.size() : 0);
 					if (PdksUtil.hasStringValue(tesisYetkiliRoller))
 						rolNameList = PdksUtil.getListStringTokenizer(tesisYetkiliRoller, null);
 					else
