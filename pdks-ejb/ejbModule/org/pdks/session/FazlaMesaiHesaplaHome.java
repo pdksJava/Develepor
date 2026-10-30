@@ -3812,8 +3812,18 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @param vardiyaSaat
 	 */
 	private void argeDGSSureGuncelle(VardiyaGun vg, VardiyaSaat vs) {
-		Double dgsSuresi = vg.getDgsSuresi();
+		Double dgsSuresi = vg.getDgsSuresi(), izinSuresi = 0.0d;
 		if ((vg.getDurum() || vg.getHareketler() == null)) {
+			if (vg.getIzinler() != null) {
+				for (PersonelIzin personelIzin : vg.getIzinler()) {
+					IzinTipi izinTipi = personelIzin.getIzinTipi();
+					if (personelIzin.isGunlukIzin() == false) {
+						BordroDetayTipi izinBordroDetayTipi = izinGrupMap != null ? ortakIslemler.getBordroDetayTipi(izinTipi, izinGrupMap) : null;
+						if (izinBordroDetayTipi != null && izinBordroDetayTipi.equals(BordroDetayTipi.ARGE_IZIN))
+							izinSuresi += personelIzin.getIzinSuresi();
+					}
+				}
+			}
 			if (seciliCalismaModeli.isArgeKartGirisi()) {
 				Vardiya vardiya = vg.getVardiya();
 				if (vardiya != null && vardiya.isCalisma()) {
@@ -3874,6 +3884,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				}
 			}
 		}
+		dgsSuresi += izinSuresi;
 		if (vs != null) {
 			vs.setDgsSuresi(dgsSuresi);
 			vs.setCalismaSuresi(vg.getCalismaSuresi());
@@ -5757,7 +5768,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			List<Long> sirketIdList = new ArrayList<Long>();
 			for (Iterator iterator = puantajList.iterator(); iterator.hasNext();) {
 				AylikPuantaj ap = (AylikPuantaj) iterator.next();
- 				if (ap.isKaydet()) {
+				if (ap.isKaydet()) {
 					PersonelDenklestirme personelDenklestirmeAy = ap.getPersonelDenklestirme();
 					personelDenklestirmeAy.setGuncellendi(guncellendi);
 					if (personelDenklestirmeAy != null && denklestirmeAyDurum) {
