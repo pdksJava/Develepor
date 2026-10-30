@@ -113,10 +113,12 @@ public class MenuLoaderActionBean implements Serializable {
 		try {
 			String menuAdi = "dinamikRapor";
 			if (raporIslemleri != null && authenticatedUser != null && userHome != null && userHome.hasPermission(menuAdi, "view")) {
-				if (pdksEntityController.isSessionKapali(null, session)) {
+				if (session == null)
+					session = authenticatedUser.getSessionSQL();
+				if (session == null)
 					session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-					session.clear();
-				}
+				session.clear();
+
 				try {
 					dinamikRaporUpdate(menuAdi);
 				} catch (Exception ex) {
@@ -334,48 +336,56 @@ public class MenuLoaderActionBean implements Serializable {
 		HtmlDropDownMenu menu = null;
 		if (topMenu != null) {
 			Application app = FacesContext.getCurrentInstance().getApplication();
-			menu = (HtmlDropDownMenu) app.createComponent(HtmlDropDownMenu.COMPONENT_TYPE);
-			menu.setRendered(Boolean.TRUE);
-			String aciklama = ortakIslemler.getMenuAciklamaERP(topMenu);
-			menu.setValue(aciklama);
-			menu.setId(topMenu.getName());
-			menu.getChildren().add(menu);
-			HtmlMenuItem hmiHomePage;
-			HtmlMenuGroup htmlMenuGroup = new HtmlMenuGroup();
-			for (MenuItem subMenu : topMenu.getChildMenuItemListSirali()) {
-				try {
-					if (subMenu.getChildMenuItemList().isEmpty() && subMenu.istUstMenu() == false) {
 
-						if (subMenu.getStatus() && userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW)) {// gormeye yetkisi yoksa menüyü yaratmasın
-							hmiHomePage = new HtmlMenuItem();
-							String subAciklama = ortakIslemler.getMenuAciklamaERP(subMenu);
-							hmiHomePage.setValue(subAciklama);
-							hmiHomePage.setData(subMenu.getOrderNo());
-							hmiHomePage.setId(subMenu.getName());
-							hmiHomePage.setActionExpression(this.startAction(subMenu));
-							// hmiHomePage.setRendered(userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW));
-							if (hmiHomePage.getActionExpression() != null)
-								menu.getChildren().add(hmiHomePage);
+			try {
+				menu = (HtmlDropDownMenu) app.createComponent(HtmlDropDownMenu.COMPONENT_TYPE);
+				menu.setRendered(Boolean.TRUE);
+				String aciklama = ortakIslemler.getMenuAciklamaERP(topMenu);
+				menu.setValue(aciklama);
+				menu.setId(topMenu.getName());
+				menu.getChildren().add(menu);
+				HtmlMenuItem hmiHomePage;
+				HtmlMenuGroup htmlMenuGroup = new HtmlMenuGroup();
+				List<MenuItem> childMenuItemList = topMenu.getChildMenuItemListSirali();
+				for (Iterator iterator = childMenuItemList.iterator(); iterator.hasNext();) {
+					try {
+						MenuItem subMenu = (MenuItem) iterator.next();
+						if (subMenu.getChildMenuItemList().isEmpty() && subMenu.istUstMenu() == false) {
+							if (subMenu.getStatus() && userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW)) {// gormeye yetkisi yoksa menüyü yaratmasın
+								hmiHomePage = new HtmlMenuItem();
+								String subAciklama = ortakIslemler.getMenuAciklamaERP(subMenu);
+								hmiHomePage.setValue(subAciklama);
+								hmiHomePage.setData(subMenu.getOrderNo());
+								hmiHomePage.setId(subMenu.getName());
+								hmiHomePage.setActionExpression(this.startAction(subMenu));
+								// hmiHomePage.setRendered(userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW));
+								if (hmiHomePage.getActionExpression() != null)
+									menu.getChildren().add(hmiHomePage);
+							}
+
+							// demekki sub menuleri yok
+
+						} else {// sub menuleri de var
+							if (userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW)) {// gormeye yetkisi yoksa menüyü yaratmasın
+								htmlMenuGroup = new HtmlMenuGroup();
+								String subAciklama = ortakIslemler.getMenuAciklamaERP(subMenu);
+								htmlMenuGroup.setValue(subAciklama);
+								htmlMenuGroup.setId(subMenu.getName());
+								// htmlMenuGroup.setRendered(userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW));
+								menu.getChildren().add(htmlMenuGroup);
+								addChildNodes(subMenu, htmlMenuGroup);// sub menüleri doldur
+							}
 						}
-
-						// demekki sub menuleri yok
-
-					} else {// sub menuleri de var
-						if (userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW)) {// gormeye yetkisi yoksa menüyü yaratmasın
-							htmlMenuGroup = new HtmlMenuGroup();
-							String subAciklama = ortakIslemler.getMenuAciklamaERP(subMenu);
-							htmlMenuGroup.setValue(subAciklama);
-							htmlMenuGroup.setId(subMenu.getName());
-							// htmlMenuGroup.setRendered(userHome.hasPermission(subMenu.getName(), AccountPermission.ACTION_VIEW));
-							menu.getChildren().add(htmlMenuGroup);
-							addChildNodes(subMenu, htmlMenuGroup);// sub menüleri doldur
-						}
+					} catch (Exception e) {
 					}
-				} catch (Exception e) {
 				}
+				if (raporMenu == false)
+					menuAltKontrol(menu);
+			} catch (Exception ex) {
+				menu = null;
+				ex.printStackTrace();
 			}
-			if (raporMenu == false)
-				menuAltKontrol(menu);
+
 		}
 		return menu;
 

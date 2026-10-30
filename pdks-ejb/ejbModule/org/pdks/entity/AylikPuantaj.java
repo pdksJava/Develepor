@@ -554,7 +554,7 @@ public class AylikPuantaj implements Serializable, Cloneable {
 												if (vg.getCalismaSuresi() > 0.0d) {
 													yarimGun = 0.0d;
 													if (arifeBaslangicTarihi.getTime() == vardiya.getVardiyaBitZaman().getTime())
-														arifeSure=0.0d;
+														arifeSure = 0.0d;
 												} else if (vardiyaTatil.isArifeCalismaSaatYokCGSDussun())
 													arifeSure = 0.0d;
 
@@ -569,7 +569,14 @@ public class AylikPuantaj implements Serializable, Cloneable {
 													saatToplami += fark;
 													// arifeSure = 0.0d;
 													// yarimGun = 0.0d;
+												} else {
+													 arifeSure = 0.0d;
+													 yarimGun = 0.0d;
+//													double fark = (calSure - vg.getResmiTatilSure());
+//													vg.addResmiTatilSure(-fark);
+//													saatToplami += fark;
 												}
+
 											}
 										}
 									}
