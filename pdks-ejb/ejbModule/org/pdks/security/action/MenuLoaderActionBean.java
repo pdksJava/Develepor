@@ -114,8 +114,7 @@ public class MenuLoaderActionBean implements Serializable {
 			String menuAdi = "dinamikRapor";
 			if (raporIslemleri != null && authenticatedUser != null && userHome != null && userHome.hasPermission(menuAdi, "view")) {
 				boolean kapat = session == null && authenticatedUser.getCalistigiSayfa().equalsIgnoreCase("anasayfa");
-				if (kapat == false)
-					session = authenticatedUser.getSessionSQL();
+				session = authenticatedUser.getSessionSQL();
 				if (session == null)
 					session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 				session.clear();
