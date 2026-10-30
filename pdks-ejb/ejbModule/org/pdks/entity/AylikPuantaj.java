@@ -553,6 +553,8 @@ public class AylikPuantaj implements Serializable, Cloneable {
 												// arifeSure = 0.0d;
 												if (vg.getCalismaSuresi() > 0.0d) {
 													yarimGun = 0.0d;
+													if (arifeBaslangicTarihi.getTime() == vardiya.getVardiyaBitZaman().getTime())
+														arifeSure=0.0d;
 												} else if (vardiyaTatil.isArifeCalismaSaatYokCGSDussun())
 													arifeSure = 0.0d;
 
