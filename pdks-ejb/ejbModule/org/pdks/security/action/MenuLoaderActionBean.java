@@ -17,8 +17,10 @@ import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.international.StatusMessages;
 import org.jboss.seam.security.Identity;
 import org.pdks.dinamikRapor.entity.PdksDinamikRapor;
@@ -33,6 +35,7 @@ import org.richfaces.component.html.HtmlDropDownMenu;
 import org.richfaces.component.html.HtmlMenuGroup;
 import org.richfaces.component.html.HtmlMenuItem;
 
+@Scope(ScopeType.SESSION)
 @Name("menuLoaderAction")
 public class MenuLoaderActionBean implements Serializable {
 
@@ -113,9 +116,9 @@ public class MenuLoaderActionBean implements Serializable {
 				if (pdksEntityController.isSessionKapali(null, session)) {
 					session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
 					session.clear();
- 				}
+				}
 				try {
- 					dinamikRaporUpdate(menuAdi);
+					dinamikRaporUpdate(menuAdi);
 				} catch (Exception ex) {
 					logger.error(ex);
 					ex.printStackTrace();
