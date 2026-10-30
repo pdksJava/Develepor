@@ -21166,8 +21166,6 @@ public class OrtakIslemler implements Serializable {
 							if (pdksIzinTarihKontrolTarihi != null && pdksIzinTarihKontrolTarihi.getTime() <= pdksVardiyaGun.getVardiyaDate().getTime())
 								izinTarihKontrolTarihi = pdksVardiyaGun.getVardiyaDate();
 							String key = pdksVardiyaGun.getVardiyaDateStr();
-							if (key.endsWith("0420"))
-								logger.debug("");
 
 							boolean ayinGunu = key.startsWith(donemKodu);
 							pdksVardiyaGun.setAyinGunu(ayinGunu);
@@ -21213,10 +21211,13 @@ public class OrtakIslemler implements Serializable {
 								if (pdksVardiyaGun.getIzin() != null && pdksVardiyaGun.getIzin().getIzinTipi().isIslemYokCGS()) {
 									izinSaat = 0.0d;
 								}
+								if (key.endsWith("1028"))
+									logger.debug("");
+
 								Tatil tatil = pdksVardiyaGun.getTatil();
-								if (tatil != null && tatil.isYarimGunMu() && vardiyaIzin != null) {
+								if (tatil != null && tatil.isYarimGunMu() && (pdksVardiyaGun.getVardiya() == null || vardiyaIzin != null)) {
 									izinSaat = calismaModeliAy.getArife();
-									if (vardiyaIzin.isIzin() == false && tatil.getArifeVardiyaYarimHesapla() != null && !tatil.getArifeVardiyaYarimHesapla())
+									if (pdksVardiyaGun.getVardiya() != null && vardiyaIzin.isIzin() == false && tatil.getArifeVardiyaYarimHesapla() != null && !tatil.getArifeVardiyaYarimHesapla())
 										izinSaat = 0.0d;
 									arifeGunu = true;
 								}
