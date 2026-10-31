@@ -11462,8 +11462,6 @@ public class OrtakIslemler implements Serializable {
 
 														}
 													}
-													if (vardiyaKeyStr.endsWith("1031"))
-														logger.debug("");
 													if (sure > 3.5d) {
 														vardiyaGunNew.setVardiyaOnayli(Boolean.TRUE);
 														String str = (vardiya.getSua() || (girisTamam && cikisTamam) ? "1" : "0") + PdksUtil.textBaslangicinaKarakterEkle("" + new Double(sure * 100).longValue(), '0', 10);
@@ -11477,8 +11475,6 @@ public class OrtakIslemler implements Serializable {
 												if (girisTamam) {
 													HareketKGS girisHareketKGS = girisler.get(0);
 													double sure = PdksUtil.setSureDoubleTypeRounded(PdksUtil.getSaatFarki(islemVardiya.getVardiyaBitZaman(), girisHareketKGS.getZaman()).doubleValue(), vardiyaGunNew.getYarimYuvarla());
-													if (vardiyaKeyStr.endsWith("1031"))
-														logger.debug("");
 													if (sure > 3.5d) {
 														vardiyaGunNew.setVardiyaOnayli(Boolean.FALSE);
 														String str = "0" + PdksUtil.textBaslangicinaKarakterEkle("" + new Double(sure * 100).longValue(), '0', 16);
