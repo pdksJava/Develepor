@@ -9694,12 +9694,12 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (sutIzniGoster) {
 				sb.append(" union ");
 				sb.append(" select 0 as OZEL_MODEL, V.ID " + CalismaModeliVardiya.COLUMN_NAME_VARDIYA + " from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
-				sb.append(" where " + Vardiya.COLUMN_NAME_SUT_IZNI + " = 1 " + ozelMap.get(Vardiya.SUT_IZNI_KEY));
+				sb.append(" where " + Vardiya.COLUMN_NAME_SUT_IZNI + " = 1 " );
 			}
 			if (sua) {
 				sb.append(" union ");
 				sb.append(" select 0 as OZEL_MODEL, V.ID " + CalismaModeliVardiya.COLUMN_NAME_VARDIYA + " from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
-				sb.append(" where " + Vardiya.COLUMN_NAME_SUA + " = 1 " + ozelMap.get(Vardiya.SUA_KEY));
+				sb.append(" where " + Vardiya.COLUMN_NAME_SUA + " = 1 ");
 			}
 			Vardiya izinVardiya = vardiyaSablonu.getVardiya1();
 			if (vardiyaSablonu != null && izinVardiya != null && izinVardiya.isIzinVardiya()) {
@@ -9710,7 +9710,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (icap) {
 				sb.append(" union ");
 				sb.append(" select 0 as OZEL_MODEL, V.ID " + CalismaModeliVardiya.COLUMN_NAME_VARDIYA + " from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
-				sb.append(" where " + Vardiya.COLUMN_NAME_ICAP + " = 1 " + ozelMap.get(Vardiya.ICAP_KEY));
+				sb.append(" where " + Vardiya.COLUMN_NAME_ICAP + " = 1 ");
 
 			}
 			if (calismaOlmayanVardiyalar) {
