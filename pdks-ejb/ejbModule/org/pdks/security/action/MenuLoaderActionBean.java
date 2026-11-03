@@ -76,67 +76,6 @@ public class MenuLoaderActionBean implements Serializable {
 	private HtmlDropDownMenu puantajIslemleri;
 	private HtmlDropDownMenu raporIslemleri;
 
-	public HtmlDropDownMenu getMenuIslemleri() {
-		menuIslemleri = createMenu(MenuItemConstant.menuIslemleri, false);
-		return menuIslemleri;
-	}
-
-	public void setMenuIslemleri(HtmlDropDownMenu menuIslemleri) {
-		this.menuIslemleri = menuIslemleri;
-	}
-
-	public HtmlDropDownMenu getKullaniciIslemleri() {
-		kullaniciIslemleri = createMenu(MenuItemConstant.kullaniciIslemleri, false);
-		return kullaniciIslemleri;
-	}
-
-	public void setKullaniciIslemleri(HtmlDropDownMenu kullaniciIslemleri) {
-		this.kullaniciIslemleri = kullaniciIslemleri;
-	}
-
-	public HtmlDropDownMenu getIzinIslemleri() {
-		izinIslemleri = createMenu(MenuItemConstant.izinIslemleri, false);
-		return izinIslemleri;
-	}
-
-	public void setIzinIslemleri(HtmlDropDownMenu izinIslemleri) {
-		this.izinIslemleri = izinIslemleri;
-	}
-
-	public HtmlDropDownMenu getPuantajIslemleri() {
-		puantajIslemleri = createMenu(MenuItemConstant.puantajIslemleri, false);
-		return puantajIslemleri;
-	}
-
-	public HtmlDropDownMenu getRaporIslemleri() {
-		raporIslemleri = createMenu(MenuItemConstant.raporIslemleri, true);
-		try {
-			String menuAdi = "dinamikRapor";
-			if (raporIslemleri != null && authenticatedUser != null && userHome != null && userHome.hasPermission(menuAdi, "view")) {
-				boolean kapat = session == null && authenticatedUser.getCalistigiSayfa().equalsIgnoreCase("anasayfa");
-				session = authenticatedUser.getSessionSQL();
-				if (session == null)
-					session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
-				session.clear();
-				try {
-					dinamikRaporUpdate(menuAdi);
-				} catch (Exception ex) {
-					logger.error(ex);
-					ex.printStackTrace();
-				}
-				if (kapat) {
-					pdksEntityController.sessionClose(session);
-					session = null;
-				}
-			}
-		} catch (Exception e) {
-			logger.error(e);
-			e.printStackTrace();
-		}
-
-		return raporIslemleri;
-	}
-
 	/**
 	 * @param menuAdi
 	 */
@@ -337,7 +276,6 @@ public class MenuLoaderActionBean implements Serializable {
 		HtmlDropDownMenu menu = null;
 		if (topMenu != null) {
 			Application app = FacesContext.getCurrentInstance().getApplication();
-
 			try {
 				menu = (HtmlDropDownMenu) app.createComponent(HtmlDropDownMenu.COMPONENT_TYPE);
 				menu.setRendered(Boolean.TRUE);
@@ -458,16 +396,9 @@ public class MenuLoaderActionBean implements Serializable {
 		return actionExpression;
 	}
 
-	public void setPuantajIslemleri(HtmlDropDownMenu puantajIslemleri) {
-		this.puantajIslemleri = puantajIslemleri;
-	}
-
-	public void setRaporIslemleri(HtmlDropDownMenu raporIslemleri) {
-		this.raporIslemleri = raporIslemleri;
-	}
-
 	public HtmlDropDownMenu getAdminMenu() {
-		adminMenu = createMenu(MenuItemConstant.admin, false);
+		if (isMenuDoldur(adminMenu))
+			adminMenu = createMenu(MenuItemConstant.admin, false);
 		return adminMenu;
 	}
 
@@ -476,7 +407,8 @@ public class MenuLoaderActionBean implements Serializable {
 	}
 
 	public HtmlDropDownMenu getGuestMenu() {
-		guestMenu = createMenu(MenuItemConstant.guest, false);
+//		if (isMenuDoldur(guestMenu))
+//			guestMenu = createMenu(MenuItemConstant.guest, false);
 		return guestMenu;
 	}
 
@@ -484,4 +416,88 @@ public class MenuLoaderActionBean implements Serializable {
 		this.guestMenu = guestMenu;
 	}
 
+	public HtmlDropDownMenu getMenuIslemleri() {
+		if (isMenuDoldur(menuIslemleri))
+			menuIslemleri = createMenu(MenuItemConstant.menuIslemleri, false);
+		return menuIslemleri;
+	}
+
+	public void setMenuIslemleri(HtmlDropDownMenu menuIslemleri) {
+		this.menuIslemleri = menuIslemleri;
+	}
+
+	public HtmlDropDownMenu getKullaniciIslemleri() {
+		if (isMenuDoldur(kullaniciIslemleri))
+			kullaniciIslemleri = createMenu(MenuItemConstant.kullaniciIslemleri, false);
+		return kullaniciIslemleri;
+	}
+
+	public void setKullaniciIslemleri(HtmlDropDownMenu kullaniciIslemleri) {
+		this.kullaniciIslemleri = kullaniciIslemleri;
+	}
+
+	public HtmlDropDownMenu getIzinIslemleri() {
+		if (isMenuDoldur(izinIslemleri))
+			izinIslemleri = createMenu(MenuItemConstant.izinIslemleri, false);
+		return izinIslemleri;
+	}
+
+	public void setIzinIslemleri(HtmlDropDownMenu izinIslemleri) {
+		this.izinIslemleri = izinIslemleri;
+	}
+
+	public HtmlDropDownMenu getPuantajIslemleri() {
+		if (isMenuDoldur(puantajIslemleri))
+			puantajIslemleri = createMenu(MenuItemConstant.puantajIslemleri, false);
+		return puantajIslemleri;
+	}
+
+	public void setPuantajIslemleri(HtmlDropDownMenu puantajIslemleri) {
+		this.puantajIslemleri = puantajIslemleri;
+	}
+
+	public HtmlDropDownMenu getRaporIslemleri() {
+		if (isMenuDoldur(null))
+			raporIslemleri = createMenu(MenuItemConstant.raporIslemleri, true);
+		try {
+			String menuAdi = "dinamikRapor";
+			if (raporIslemleri != null && authenticatedUser != null && userHome != null && userHome.hasPermission(menuAdi, "view")) {
+				boolean kapat = session == null && authenticatedUser.getCalistigiSayfa().equalsIgnoreCase("anasayfa");
+				session = authenticatedUser.getSessionSQL();
+				if (session == null)
+					session = PdksUtil.getSessionUser(entityManager, authenticatedUser);
+				session.clear();
+				try {
+					dinamikRaporUpdate(menuAdi);
+				} catch (Exception ex) {
+					logger.error(ex);
+					ex.printStackTrace();
+				}
+				if (kapat) {
+					pdksEntityController.sessionClose(session);
+					session = null;
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+
+		return raporIslemleri;
+	}
+
+	public void setRaporIslemleri(HtmlDropDownMenu raporIslemleri) {
+		this.raporIslemleri = raporIslemleri;
+	}
+
+	/**
+	 * @param menu
+	 * @return
+	 */
+	private boolean isMenuDoldur(HtmlDropDownMenu menu) {
+		boolean doldur = false;
+		if (authenticatedUser != null)
+			doldur = menu == null || menu.getChildCount() == 0;
+		return doldur;
+	}
 }
