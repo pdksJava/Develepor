@@ -407,8 +407,8 @@ public class MenuLoaderActionBean implements Serializable {
 	}
 
 	public HtmlDropDownMenu getGuestMenu() {
-//		if (isMenuDoldur(guestMenu))
-//			guestMenu = createMenu(MenuItemConstant.guest, false);
+		// if (isMenuDoldur(guestMenu))
+		// guestMenu = createMenu(MenuItemConstant.guest, false);
 		return guestMenu;
 	}
 
@@ -496,8 +496,15 @@ public class MenuLoaderActionBean implements Serializable {
 	 */
 	private boolean isMenuDoldur(HtmlDropDownMenu menu) {
 		boolean doldur = false;
-		if (authenticatedUser != null)
+		if (authenticatedUser != null) {
 			doldur = menu == null || menu.getChildCount() == 0;
+			if (doldur) {
+				if (menu != null)
+					logger.debug(menu.getChildCount());
+			}
+
+		}
+
 		return doldur;
 	}
 }
