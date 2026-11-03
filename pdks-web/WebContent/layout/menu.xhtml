@@ -6,9 +6,7 @@
 	<h:form id="admin" rendered="#{userHome.hasPermission('admin','view')}">
 		<rich:dropDownMenu binding="#{menuLoaderAction.adminMenu}" />
 	</h:form>
-	<h:form id="guestMenu">
-		<rich:dropDownMenu binding="#{menuLoaderAction.guestMenu}" />
-	</h:form>
+ 
 	<h:form id="kullaniciIslemleri" rendered="#{userHome.hasPermission('kullaniciIslemleri','view')}">
 		<rich:dropDownMenu binding="#{menuLoaderAction.kullaniciIslemleri}" />
 	</h:form>
