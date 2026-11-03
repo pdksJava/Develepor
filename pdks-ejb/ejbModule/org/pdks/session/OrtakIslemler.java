@@ -11289,8 +11289,7 @@ public class OrtakIslemler implements Serializable {
 						boolean hareketEnAzBirindeVar = false;
 						Vardiya vardiyaVg = vardiyaGun.getVardiya();
 						String vardiyaDateStr = vardiyaGun.getVardiyaDateStr(), vardiyaKeyStr = vardiyaGun.getVardiyaKeyStr();
-						if (vardiyaKeyStr.endsWith("0609"))
-							logger.debug("");
+
 						if (vardiyaGun.getId().equals(2198767L) && authenticatedUser == null) {
 							logger.debug("");
 						}
@@ -11473,7 +11472,7 @@ public class OrtakIslemler implements Serializable {
 											} else if (islemVardiya != null && girisAdet == 1 && cikisAdet == 0) {
 												Date girisIlkZaman = girisler.get(0).getOrjinalZaman();
 												boolean girisTamam = vardiyaDateStr.equals(bugunStr) && girisIlkZaman.getTime() >= islemVardiya.getVardiyaTelorans1BasZaman().getTime() && girisIlkZaman.getTime() <= islemVardiya.getVardiyaTelorans2BasZaman().getTime();
-												if (girisTamam && islemVardiya.getId().equals(vardiyaVg.getId()) == false) {
+												if (girisTamam) {
 													HareketKGS girisHareketKGS = girisler.get(0);
 													double sure = PdksUtil.setSureDoubleTypeRounded(PdksUtil.getSaatFarki(islemVardiya.getVardiyaBitZaman(), girisHareketKGS.getZaman()).doubleValue(), vardiyaGunNew.getYarimYuvarla());
 													if (sure > 3.5d) {
@@ -11491,6 +11490,8 @@ public class OrtakIslemler implements Serializable {
 									break;
 							}
 							if (!listeler.isEmpty()) {
+								if (vardiyaKeyStr.endsWith("1031"))
+									logger.debug("");
 								VardiyaGun vg = null;
 								if (listeler.size() > 1)
 									listeler = PdksUtil.sortListByAlanAdi(listeler, "value", true);
@@ -21166,8 +21167,6 @@ public class OrtakIslemler implements Serializable {
 							if (pdksIzinTarihKontrolTarihi != null && pdksIzinTarihKontrolTarihi.getTime() <= pdksVardiyaGun.getVardiyaDate().getTime())
 								izinTarihKontrolTarihi = pdksVardiyaGun.getVardiyaDate();
 							String key = pdksVardiyaGun.getVardiyaDateStr();
-							if (key.endsWith("0420"))
-								logger.debug("");
 
 							boolean ayinGunu = key.startsWith(donemKodu);
 							pdksVardiyaGun.setAyinGunu(ayinGunu);
@@ -21213,10 +21212,13 @@ public class OrtakIslemler implements Serializable {
 								if (pdksVardiyaGun.getIzin() != null && pdksVardiyaGun.getIzin().getIzinTipi().isIslemYokCGS()) {
 									izinSaat = 0.0d;
 								}
+								if (key.endsWith("1028"))
+									logger.debug("");
+
 								Tatil tatil = pdksVardiyaGun.getTatil();
-								if (tatil != null && tatil.isYarimGunMu() && vardiyaIzin != null) {
+								if (tatil != null && tatil.isYarimGunMu() && (pdksVardiyaGun.getVardiya() == null || vardiyaIzin != null)) {
 									izinSaat = calismaModeliAy.getArife();
-									if (vardiyaIzin.isIzin() == false && tatil.getArifeVardiyaYarimHesapla() != null && !tatil.getArifeVardiyaYarimHesapla())
+									if (pdksVardiyaGun.getVardiya() != null && vardiyaIzin.isIzin() == false && tatil.getArifeVardiyaYarimHesapla() != null && !tatil.getArifeVardiyaYarimHesapla())
 										izinSaat = 0.0d;
 									arifeGunu = true;
 								}
