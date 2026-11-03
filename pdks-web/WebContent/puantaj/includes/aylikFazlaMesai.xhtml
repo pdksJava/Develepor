@@ -45,7 +45,7 @@
 						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.ekSaha4Tanim != null and fazlaMesaiHesaplaHome.seciliEkSaha4Id lt 0}">
 							<th rowspan="#{fazlaMesaiHesaplaHome.rowSpan}" style="width: 30px"><h:outputText value="#{fazlaMesaiHesaplaHome.ekSaha4Tanim.aciklama}" /></th>
 						</ui:fragment>
-						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.argeTableGoster==false}">
+						<c:if test="#{fazlaMesaiHesaplaHome.argeTableGoster==false}">
 
 							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.modelGoster}">
 								<th rowspan="#{fazlaMesaiHesaplaHome.rowSpan}" style="width: 30px"><h:outputText value="#{ortakIslemler.calismaModeliAciklama()}" /></th>
@@ -71,7 +71,7 @@
 							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.partTimeGoster}">
 								<th rowspan="#{fazlaMesaiHesaplaHome.rowSpan}" style="width: 60px"><h:outputText value="Part Time" /></th>
 							</ui:fragment>
-						</ui:fragment>
+						</c:if>
 
 						<a4j:repeat value="#{fazlaMesaiHesaplaHome.aylikPuantajDefault.vardiyalar}" var="vardiya">
 
@@ -88,7 +88,7 @@
 									</rich:toolTip>
 								</ui:fragment></td>
 						</a4j:repeat>
-						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.argeGoster}">
+						<c:if test="#{fazlaMesaiHesaplaHome.argeGoster}">
 							<th rowspan="#{fazlaMesaiHesaplaHome.rowSpan}"
 								style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;" id="baslikATCS"><h:outputText
 									value="NST" /> <rich:toolTip for="baslikATCS">
@@ -108,8 +108,8 @@
 									<SPAN style="font-size: 12px; font-weight: normal;"> <B>Saat Toplamı: </B>Çalışanın bu listede aat
 									</SPAN>
 								</rich:toolTip></th>
-						</ui:fragment>
-						<ui:fragment rendered="#{fazlaMesaiHesaplaHome.argeTableGoster==false}">
+						</c:if>
+						<c:if test="#{fazlaMesaiHesaplaHome.argeTableGoster==false}">
 							<th rowspan="#{fazlaMesaiHesaplaHome.rowSpan}"
 								style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;" id="baslikTCS"><h:outputText
 									value="TÇS" /> <rich:toolTip for="baslikTCS">
@@ -372,7 +372,7 @@
 
 								</ui:fragment>
 							</ui:fragment>
-						</ui:fragment>
+						</c:if>
 						<a4j:repeat value="#{fazlaMesaiHesaplaHome.izinTipiVardiyaList}" var="izin">
 							<td rowspan="#{fazlaMesaiHesaplaHome.rowSpan}" class="tatilAylik"
 								style="width: 20px; font-family: Arial, Verdana, sans-serif; font-size: 11px; text-align: center;" id="izin#{izin.id}"><h:outputText
@@ -389,7 +389,7 @@
 							<th rowspan="#{fazlaMesaiHesaplaHome.rowSpan}" style="width: 60px"><h:outputText value="Brüt Ücret" /></th>
 						</ui:fragment>
 					</tr>
-					<ui:fragment rendered="#{fazlaMesaiHesaplaHome.argeGoster}">
+					<c:if test="#{fazlaMesaiHesaplaHome.argeGoster}">
 						<tr>
 							<a4j:repeat value="#{fazlaMesaiHesaplaHome.aylikPuantajDefault.vardiyalar}" var="vardiya">
 
@@ -404,7 +404,7 @@
 
 							</a4j:repeat>
 						</tr>
-					</ui:fragment>
+					</c:if>
 				</thead>
 				<tbody>
 					<a4j:repeat value="#{fazlaMesaiHesaplaHome.aylikPuantajList}" var="aylikPuantaj">
@@ -526,7 +526,7 @@
 
 								</td>
 							</ui:fragment>
-							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.argeTableGoster==false}">
+							<c:if test="#{fazlaMesaiHesaplaHome.argeTableGoster==false}">
 								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.modelGoster}">
 									<td class="#{aylikPuantaj.trClass}" style="width: 20px"><ui:fragment
 											rendered="#{aylikPuantaj.personelDenklestirme != null and aylikPuantaj.personelDenklestirme.calismaModeliAy != null}">
@@ -616,7 +616,7 @@
 									<td class="#{aylikPuantaj.trClass}" style="width: 60px" align="center"><h:outputText
 											value="#{authenticatedUser.getYesNo(aylikPuantaj.personelDenklestirme.partTime)}" /></td>
 								</ui:fragment>
-							</ui:fragment>
+							</c:if>
 							<a4j:repeat value="#{aylikPuantaj.vardiyalar}" var="vardiyaGun">
 								<ui:include src="/puantaj/includes/gunlukVardiyaIslem.xhtml" />
 								<ui:fragment rendered="#{fazlaMesaiHesaplaHome.seciliCalismaModeli.argemi}">
@@ -629,7 +629,7 @@
 										</ui:fragment></td>
 								</ui:fragment>
 							</a4j:repeat>
-							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.argeGoster}">
+							<c:if test="#{fazlaMesaiHesaplaHome.argeGoster}">
 								<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
 										rendered="#{fazlaMesaiHesaplaHome.seciliCalismaModeli.argemi and aylikPuantaj.saatToplami != 0}">
 										<ui:fragment
@@ -653,10 +653,10 @@
 											<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.saatToplami + aylikPuantaj.dgSaatToplami)}" />
 										</DIV>
 									</ui:fragment></td>
-							</ui:fragment>
+							</c:if>
 
 
-							<ui:fragment rendered="#{fazlaMesaiHesaplaHome.argeTableGoster==false}">
+							<c:if test="#{fazlaMesaiHesaplaHome.argeTableGoster==false}">
 								<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
 										rendered="#{fazlaMesaiHesaplaHome.seciliCalismaModeli.argemi == false and aylikPuantaj.saatToplami != 0}">
 										<ui:fragment
@@ -1045,7 +1045,7 @@
 
 									</ui:fragment>
 								</ui:fragment>
-							</ui:fragment>
+							</c:if>
 							<a4j:repeat value="#{aylikPuantaj.izinAdetList}" var="adet">
 								<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment rendered="#{adet != null}">
 																#{authenticatedUser.sayiFormatliGoster(adet)}</ui:fragment></td>

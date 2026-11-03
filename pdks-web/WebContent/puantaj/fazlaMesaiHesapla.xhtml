@@ -231,7 +231,7 @@
 										</s:decorate>
 									</h:panelGrid>
 								</ui:fragment>
-								<h:panelGrid columns="2" rendered="#{fazlaMesaiHesaplaHome.planTanimsizBolumList != null}">
+								<h:panelGrid id="plansizBolumler" columns="2" rendered="#{fazlaMesaiHesaplaHome.planTanimsizBolumList != null}">
 
 									<s:decorate template="/layout/edit.xhtml">
 										<ui:define name="label">
@@ -244,7 +244,7 @@
 										<h:selectOneMenu value="#{fazlaMesaiHesaplaHome.planTanimsizBolumId}">
 											<f:selectItem itemLabel="Lütfen seçiniz" />
 											<f:selectItems value="#{fazlaMesaiHesaplaHome.planTanimsizBolumList}" />
-											<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" reRender="denklestirmeDonemiTable,girisler" />
+											<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" reRender="plansizBolumler" />
 										</h:selectOneMenu>
 									</s:decorate>
 									<ui:fragment rendered="#{fazlaMesaiHesaplaHome.ekSaha4Tanim == null}">
