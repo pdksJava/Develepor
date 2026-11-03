@@ -1201,7 +1201,7 @@ public class FazlaMesaiArgeRaporHome extends EntityHome<DepartmanDenklestirmeDon
 
 					puantaj.setVardiyaHaftaList(haftaList);
 					double toplamCalismaSaati = 0.0d, toplamKusuratliArgeGun = 0.0d;
-					int toplamArgeGun = 0, toplamResmiTatil = 0, toplamHaftaTatil = 0, toplamArge = 0, toplamDgs = 0, argeGun = 0, calismaGun = 0, kalanDgs = 0;
+					int toplamArgeGun = 0, toplamResmiTatil = 0, toplamHaftaTatil = 0, toplamArge = 0, toplamDgs = 0;
 
 					for (int i = 0; i < vardiyaHaftaSablonList.size(); i++) {
 						VardiyaHafta vh = vardiyaHaftaSablonList.get(i);
