@@ -457,10 +457,12 @@ public class MenuLoaderActionBean implements Serializable {
 	}
 
 	public HtmlDropDownMenu getRaporIslemleri() {
-		if (isMenuDoldur(null))
+		String menuAdi = "dinamikRapor";
+		HtmlDropDownMenu menu = userHome != null && userHome.hasPermission(menuAdi, "view") ? null : raporIslemleri;
+		if (isMenuDoldur(menu))
 			raporIslemleri = createMenu(MenuItemConstant.raporIslemleri, true);
 		try {
-			String menuAdi = "dinamikRapor";
+
 			if (raporIslemleri != null && authenticatedUser != null && userHome != null && userHome.hasPermission(menuAdi, "view")) {
 				boolean kapat = session == null && authenticatedUser.getCalistigiSayfa().equalsIgnoreCase("anasayfa");
 				session = authenticatedUser.getSessionSQL();
