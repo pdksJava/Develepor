@@ -157,7 +157,7 @@ public class FazlaMesaiArgeRaporHome extends EntityHome<DepartmanDenklestirmeDon
 	private Boolean normalGunKod = Boolean.FALSE, haftaTatilGunKod = Boolean.FALSE, resmiTatilGunKod = Boolean.FALSE, artikGunKod = Boolean.FALSE, bordroToplamGunKod = Boolean.FALSE, devredenMesaiKod = Boolean.FALSE, ucretiOdenenKod = Boolean.FALSE;
 
 	private Boolean suaDurum = Boolean.FALSE, sutIzniDurum = Boolean.FALSE, gebeDurum = Boolean.FALSE, partTime = Boolean.FALSE, pdfBirlestirDurum = Boolean.FALSE, pdfTopluAktarDurum = Boolean.FALSE;
-	private Boolean brutUcretGoster = Boolean.FALSE, resmiTatilKanunenEklenenSureGoster = Boolean.FALSE , izinGoster = Boolean.FALSE;
+	private Boolean brutUcretGoster = Boolean.FALSE, resmiTatilKanunenEklenenSureGoster = Boolean.FALSE, izinGoster = Boolean.FALSE;
 	private Long vardiyaAdet, yukseklik;
 	private List<VardiyaGun> tumVardiyaList;
 	private Parameter aylikVardiyaTabloHareketExcelParameter, aylikVardiyaTabloHareketPDFParameter;
@@ -942,7 +942,7 @@ public class FazlaMesaiArgeRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		tumVardiyaList = null;
 		personelHareketMap = null;
 		resmiTatilKanunenEklenenSureGoster = false;
- 
+
 		HashMap<Long, Vardiya> vardiyaMap = new HashMap<Long, Vardiya>();
 		if (vardiyaZamanMap == null)
 			vardiyaZamanMap = new HashMap<String, String>();
@@ -1170,11 +1170,14 @@ public class FazlaMesaiArgeRaporHome extends EntityHome<DepartmanDenklestirmeDon
 				personelSablon.setSoyad("Toplamı");
 				puantajToplam.setPdksPersonel(personelSablon);
 				puantajToplam.setVardiyaPlan(vardiyaPlanToplam);
+				List<VardiyaHafta> vardiyaHaftaSablonList = apSablon.getVardiyaHaftaList();
 				for (PersonelDenklestirmeTasiyici pdt : list) {
 					Personel personel = pdt.getPersonel();
 					if (!kimlikGoster)
 						kimlikGoster = PdksUtil.hasStringValue(personel.getPersonelKGS().getKimlikNo());
-
+					Date sonGun = apSablon.getSonGun();
+					if (personel.getSskCikisTarihi().before(sonGun))
+						sonGun = personel.getSskCikisTarihi();
 					AylikPuantaj puantaj = new AylikPuantaj();
 					puantaj.setPdksPersonel(personel);
 					VardiyaPlan vardiyaPlan = new VardiyaPlan();
@@ -1197,31 +1200,50 @@ public class FazlaMesaiArgeRaporHome extends EntityHome<DepartmanDenklestirmeDon
 						vmMap.put(vg.getVardiyaDateStr(), vg);
 
 					puantaj.setVardiyaHaftaList(haftaList);
-					double toplamCalismaSaati = 0.0d;
+					double toplamCalismaSaati = 0.0d, toplamKusuratliArgeGun = 0.0d;
 					int toplamArgeGun = 0, toplamResmiTatil = 0, toplamHaftaTatil = 0, toplamArge = 0, toplamDgs = 0, argeGun = 0, calismaGun = 0, kalanDgs = 0;
-					for (VardiyaHafta vh : apSablon.getVardiyaHaftaList()) {
+
+					for (int i = 0; i < vardiyaHaftaSablonList.size(); i++) {
+						VardiyaHafta vh = vardiyaHaftaSablonList.get(i);
 						if (resmiTatilVar == false)
 							resmiTatilVar = vh.isResmiTatilVar();
 						VardiyaHafta vardiyaHafta = new VardiyaHafta();
 						haftaList.add(vardiyaHafta);
 						vardiyaHafta.setHafta(vh.getHafta());
 						Double kusuratliSGKHaftalikToplamCalismaSaati = 0.0d, dgSaatToplam = 0.0d;
+						Date cumartesi = PdksUtil.tariheGunEkleCikar(vh.getBitTarih(), -1);
+						Boolean haftaSonuCalisiyor = personel.isCalisiyorGun(vh.getBitTarih()), cumartesiCalisiyor = personel.isCalisiyorGun(cumartesi);
+
+						if (cumartesiCalisiyor) {
+							if (cumartesi.after(sonGun)) {
+								cumartesiCalisiyor = false;
+								haftaSonuCalisiyor = false;
+							}
+
+						}
+						if (haftaSonuCalisiyor) {
+							if (vh.getBitTarih().after(sonGun))
+								haftaSonuCalisiyor = false;
+						}
+						int cgsGun = cumartesiCalisiyor ? 1 : 0;
+
 						int resmiTatil = 0;
 						for (VardiyaGun vardiyaGun : vh.getVardiyaGunler()) {
 							String key = vardiyaGun.getVardiyaDateStr();
 							VardiyaGun vg = vmMap.get(vardiyaGun.getVardiyaDateStr());
 							Double normalSaat = 0.0d, dgsSuresi = 0.0d;
 							if (vg != null) {
+								++cgsGun;
 								int dayOfWeek = PdksUtil.getDateField(vg.getVardiyaDate(), Calendar.DAY_OF_WEEK);
-
+								double gunSure = cm.getSaat(dayOfWeek);
 								puantaj.getVgMap().put(key, vg);
 								if (vg.getId() != null) {
 									VardiyaSaat vs = vg.getVardiyaSaat();
 									if (tatilGunleriMap.containsKey(key) && vg.getIzin() == null) {
 										++resmiTatil;
-										normalSaat += cm.getSaat(dayOfWeek);
+										normalSaat += gunSure;
 									} else if (vg.getIzin() != null) {
-										double sure = cm.getIzinSaat(dayOfWeek);
+										double sure = gunSure;
 										PersonelIzin personelIzin = vg.getIzin();
 										IzinTipi izinTipi = personelIzin.getIzinTipi();
 										if (izinTipi.isSenelikIzin()) {
@@ -1248,29 +1270,63 @@ public class FazlaMesaiArgeRaporHome extends EntityHome<DepartmanDenklestirmeDon
 							dgSaatToplam += dgsSuresi;
 							vardiyaHafta.getVardiyaGunler().add(vg);
 						}
+						if (dgSaatToplam > 0.0d) {
+							Double dgs = dgSaatToplam * 6.0d / toplamSaat;
+							int argeHaftaGun = dgs.intValue();
+							double kusurat = (dgs - argeHaftaGun) * 100.0d;
+							if (kusurat >= 50.0d)
+								++argeHaftaGun;
+
+							if (haftaSonuCalisiyor) {
+								double cgsSure = cgsGun * 0.5d * (toplamSaat / 6.0d);
+								if (dgSaatToplam > cgsSure)
+									argeHaftaGun += 2;
+							}
+							if (argeHaftaGun > 7)
+								argeHaftaGun = 7;
+
+							vardiyaHafta.setDgs(argeHaftaGun);
+						}
 						vardiyaHafta.setResmiTatilVar(vh.isResmiTatilVar());
 						vardiyaHafta.setKusuratliSGKHaftalikToplamCalismaSaati(kusuratliSGKHaftalikToplamCalismaSaati);
 						toplamCalismaSaati += kusuratliSGKHaftalikToplamCalismaSaati;
 						Double kusuratliArgeGun = (kusuratliSGKHaftalikToplamCalismaSaati * 6.0d) / toplamSaat;
+						toplamKusuratliArgeGun += kusuratliArgeGun;
 						vardiyaHafta.setKusuratliArgeGun(kusuratliArgeGun);
 						int argeHaftaGun = kusuratliArgeGun.intValue();
 						double kusurat = (kusuratliArgeGun - argeHaftaGun) * 100.0d;
-						if (kusurat >= 75.0d)
+						if (kusurat >= 50.0d)
 							++argeHaftaGun;
+						if (cumartesiCalisiyor == false) {
+							if (argeHaftaGun > cgsGun)
+								argeHaftaGun = cgsGun;
+						}
 						vardiyaHafta.setResmiTatil(resmiTatil);
+						int haftaTatil = 0;
+						if (haftaSonuCalisiyor) {
+							if (cgsGun >= argeHaftaGun)
+								haftaTatil = 1;
+						}
+
+						vardiyaHafta.setHaftaTatil(haftaTatil);
 						vardiyaHafta.setArgeGun(argeHaftaGun + resmiTatil);
+						vardiyaHafta.setHaftalikArgeToplami(argeHaftaGun + resmiTatil + haftaTatil);
 						toplamArgeGun += vardiyaHafta.getArgeGun();
+						toplamArge += vardiyaHafta.getHaftalikArgeToplami();
 						toplamResmiTatil += resmiTatil;
 						toplamHaftaTatil += vardiyaHafta.getHaftaTatil();
 						toplamDgs += vardiyaHafta.getDgs();
 					}
 					vardiyaPlan.setToplamCalismaSaati(toplamCalismaSaati);
-					vardiyaPlan.setToplamKusuratliArgeGun(toplamCalismaSaati / 6.0d);
+					vardiyaPlan.setToplamKusuratliArgeGun(toplamKusuratliArgeGun);
 					vardiyaPlan.setToplamArgeGun(toplamArgeGun);
-					vardiyaPlan.setArgeGun(toplamArgeGun);
+					vardiyaPlan.setToplamArge(toplamArge);
+					vardiyaPlan.setArgeGun(toplamArge);
 					vardiyaPlan.setToplamResmiTatil(toplamResmiTatil);
 					vardiyaPlan.setToplamHaftaTatil(toplamHaftaTatil);
 					vardiyaPlan.setToplamDgs(toplamDgs);
+					vardiyaPlan.setCalismaGun(toplamArge - toplamDgs);
+					vardiyaPlan.setKalanDgs(toplamDgs);
 					puantaj.setPersonelDenklestirmeTasiyici(pdt);
 					puantaj.setPdksPersonel(personel);
 					puantaj.setVardiyalar(new ArrayList<VardiyaGun>(vmMap.values()));
@@ -1744,7 +1800,7 @@ public class FazlaMesaiArgeRaporHome extends EntityHome<DepartmanDenklestirmeDon
 		sirket = null;
 		tesis = null;
 		boolean kismiOdemeGoster = false;
- 		for (Iterator iter = list.iterator(); iter.hasNext();) {
+		for (Iterator iter = list.iterator(); iter.hasNext();) {
 			AylikPuantaj aylikPuantaj = (AylikPuantaj) iter.next();
 			PersonelDenklestirme pd = aylikPuantaj.getPersonelDenklestirme();
 			if (!kismiOdemeGoster)
