@@ -629,12 +629,12 @@ public class FazlaMesaiERPAktarimHome extends EntityHome<DenklestirmeAy> impleme
 				List idList = pdksEntityController.getObjectBySQLList(sb, fields, null);
 				if (idList.isEmpty()) {
 					denklestirmeAy = null;
-					if (authenticatedUser.getLogin())
+					if (authenticatedUser.isLogin())
 						PdksUtil.addMessageWarn((ay > 0 ? yil + " " + (aylar.get(ay - 1).getLabel()) : "") + " döneme ait denkleştirme verisi tanımlanmamıştır!");
 				}
 
 				idList = null;
-			} else if (authenticatedUser.getLogin())
+			} else if (authenticatedUser.isLogin())
 				PdksUtil.addMessageAvailableError((ay > 0 ? yil + " " + (aylar.get(ay - 1).getLabel()) : "") + " döneme ait çalışma planı tanımlanmamıştır!");
 		}
 

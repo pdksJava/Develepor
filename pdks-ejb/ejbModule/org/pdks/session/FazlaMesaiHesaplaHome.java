@@ -752,12 +752,12 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				List idList = pdksEntityController.getObjectBySQLList(sb, fields, null);
 				if (idList.isEmpty()) {
 					denklestirmeAy = null;
-					if (userLogin.getLogin())
+					if (userLogin.isLogin())
 						PdksUtil.addMessageWarn((ay > 0 ? yil + " " + (aylar.get(ay - 1).getLabel()) : "") + " döneme ait denkleştirme verisi tanımlanmamıştır!");
 				}
 
 				idList = null;
-			} else if (userLogin.getLogin())
+			} else if (userLogin.isLogin())
 				PdksUtil.addMessageAvailableError((ay > 0 ? yil + " " + (aylar.get(ay - 1).getLabel()) : "") + " döneme ait çalışma planı tanımlanmamıştır!");
 		}
 		if (denklestirmeAy != null) {
@@ -1294,14 +1294,14 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			if (tekrarCalistir) {
 				FacesMessages facesMessages = (FacesMessages) Component.getInstance("facesMessages");
 				try {
-					if (facesMessages != null && pdksUser.getLogin())
+					if (facesMessages != null && pdksUser.isLogin())
 						facesMessages.clear();
 				} catch (Exception e) {
 				}
 				fillPersonelDenklestirmeDevam(inputPersonelNo, aylikPuantaj, denklestirmeDonemi);
 			}
 
-		} else if (userLogin.getLogin())
+		} else if (userLogin.isLogin())
 			PdksUtil.addMessageWarn("İlgili döneme ait fazla mesai bulunamadı!");
 
 		if (!(ikRole))
@@ -1359,7 +1359,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				msgwarnImg = "";
 				bordroAlanKapat();
 				eksikMaasGoster = false;
-				if (authenticatedUser != null && loginUser.getLogin() && loginUser.getId().equals(getPdksUser().getId()))
+				if (authenticatedUser != null && loginUser.isLogin() && loginUser.getId().equals(getPdksUser().getId()))
 					saveLastParameter(inputPersonelNo);
 				boolean testDurum = PdksUtil.getTestDurum() && PdksUtil.getCanliSunucuDurum() == false;
 				testDurum = false;
@@ -1521,7 +1521,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					TreeMap<Long, PersonelDenklestirme> personelDenklestirmeDonemMap = new TreeMap<Long, PersonelDenklestirme>();
 					if (personelDenklestirmeler.isEmpty()) {
 						perList.clear();
-						if (userLogin.getLogin())
+						if (userLogin.isLogin())
 							PdksUtil.addMessageWarn("Çalışma planı kaydı bulunmadı!");
 
 					}
@@ -2474,7 +2474,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									} else
 										izinStr += " gününde ";
 									izinStr = PdksUtil.replaceAllManuel(izinStr + " hafta içinde OFF planlanmıştır.", "  ", " ");
-									if (userLogin.getLogin())
+									if (userLogin.isLogin())
 										PdksUtil.addMessageAvailableWarn(izinStr);
 								}
 
@@ -3078,11 +3078,11 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									DenklestirmeAy denklestirmeAyGecen = personelDenklestirmeGecenAy.getDenklestirmeAy();
 									if (!personelDenklestirmeGecenAy.isOnaylandi()) {
 										puantaj.setFazlaMesaiHesapla(Boolean.FALSE);
-										if (userLogin.getLogin())
+										if (userLogin.isLogin())
 											PdksUtil.addMessageAvailableError(denklestirmeAyGecen.getAyAdi() + " " + denklestirmeAyGecen.getYil() + " " + personel.getPdksSicilNo() + " - " + personel.getAdSoyad() + " " + " çalışma planı onaylanmadı!");
 									} else if (!personelDenklestirmeGecenAy.getDurum() && calismaModeliGecenAy != null && calismaModeliGecenAy.isSaatlikOdeme()) {
 										puantaj.setFazlaMesaiHesapla(Boolean.FALSE);
-										if (userLogin.getLogin())
+										if (userLogin.isLogin())
 											PdksUtil.addMessageAvailableError(denklestirmeAyGecen.getAyAdi() + " " + denklestirmeAyGecen.getYil() + " " + personel.getPdksSicilNo() + " - " + personel.getAdSoyad() + " fazla mesaisi onaylanmadı!");
 									}
 								}
@@ -3147,7 +3147,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 											if (pdGecenAy != null) {
 												puantaj.setFazlaMesaiHesapla(pdGecenAy.getDurum());
 												sonDurum = pdGecenAy.getDurum();
-												if (userLogin != null && userLogin.getLogin() && (adminRole || ikRole)) {
+												if (userLogin != null && userLogin.isLogin() && (adminRole || ikRole)) {
 													DenklestirmeAy da1 = pdGecenAy.getDenklestirmeAy();
 													PdksUtil.addMessageAvailableWarn(personel.getPdksSicilNo() + " " + personel.getAdSoyad() + " " + da1.getAyAdi() + " " + da1.getYil() + " hata mevcut kontrol ediniz!");
 												}
@@ -3253,7 +3253,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									// flushPuantaj = Boolean.TRUE;
 								}
 								if (ikRole) {
-									if (userLogin.getLogin())
+									if (userLogin.isLogin())
 										PdksUtil.addMessageAvailableWarn(personel.getPdksSicilNo() + " " + personel.getAdSoyad() + " gebelik ÇGS girişi yapınız! ");
 								}
 							}
@@ -3279,7 +3279,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 													sb.append(" ve ");
 											}
 										}
-										if (userLogin.getLogin())
+										if (userLogin.isLogin())
 											PdksUtil.addMessageAvailableWarn(sb.toString() + (ayrikList.size() == 2 ? " arası" : "") + " giriş ve çıkış kayıtı vardır! ");
 									}
 								}
@@ -3294,7 +3294,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 								if (puantaj.isDonemBitti() && personelDenklestirme.isFazlaMesaiIzinKullanacak() && personelDenklestirme.getKismiOdemeSure() != null && personelDenklestirme.getKismiOdemeSure().doubleValue() > 0) {
 									kismiOdemeGoster = ikRole;
 									if (denklestirmeAyDurum && puantaj.getFazlaMesaiSure() == 0.0d) {
-										if (userLogin.getLogin())
+										if (userLogin.isLogin())
 											PdksUtil.addMessageAvailableWarn(personel.getPdksSicilNo() + " " + personel.getAdSoyad() + " Kısmi Ödenecek :" + loginUser.sayiFormatliGoster(personelDenklestirme.getKismiOdemeSure()) + " Devreden Süre : "
 													+ loginUser.sayiFormatliGoster(personelDenklestirme.getDevredenSure()));
 									}
@@ -3468,13 +3468,13 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						if (testDurum)
 							logger.info("fillPersonelDenklestirmeDevam 7000 " + PdksUtil.getCurrentTimeStampStr());
 						if (uyariHaftaTatilMesai) {
-							if (userLogin.getLogin()) {
+							if (userLogin.isLogin()) {
 								tekrarCalistir = true;
 								PdksUtil.addMessageWarn("Hafta tatil günleri güncellendi, 'Fazla Mesai Getir' tekrar çalıştırın.");
 							}
 						}
 
-						if (denklestirilmeyenDevredenVar && userLogin.getLogin()) {
+						if (denklestirilmeyenDevredenVar && userLogin.isLogin()) {
 							if (denklesmeyenBakiyeDurum.equalsIgnoreCase("B"))
 								PdksUtil.addMessageAvailableError("Geçen aydan devreden negatif bakiye denkleştirilemedi!");
 							else
@@ -3487,7 +3487,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							List<String> vGunList = ciftBolumCalisanKontrol(aylikPuantajList);
 							if (!izinMap.isEmpty())
 								try {
-									if (loginUser.getLogin())
+									if (loginUser.isLogin())
 										izinCalismaUyariMesajiOlustur(vGunList, izinMap);
 								} catch (Exception e) {
 								}
@@ -3526,7 +3526,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									flush = Boolean.TRUE;
 							}
 						}
-						if (aylikPuantajList.isEmpty() && userLogin.getLogin()) {
+						if (aylikPuantajList.isEmpty() && userLogin.isLogin()) {
 							if (kayitVar == false)
 								PdksUtil.addMessageAvailableWarn("Fazla mesai kaydı bulunmadı! " + (seciliBolum != null ? " [ " + seciliBolum.getAciklama() + " ]" : ""));
 							else if (hataliPuantajGoster)
@@ -3582,7 +3582,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					if (invalidValues != null) {
 						for (InvalidValue invalidValue : invalidValues) {
 							Object object = invalidValue.getBean();
-							if (userLogin.getLogin().equals(Boolean.FALSE))
+							if (userLogin.isLogin() == false)
 								continue;
 							if (object != null && object instanceof VardiyaGun) {
 								VardiyaGun vardiyaGun = (VardiyaGun) object;
@@ -3626,7 +3626,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 						Date bitTarih = new Date();
 						Date fark = new Date(bitTarih.getTime() - basTarih.getTime());
 						String str = yil + " " + denklestirmeAy.getAyAdi() + " " + aylikPuantajList.size() + " adet " + (seciliBolum != null ? seciliBolum.getAciklama() + " personeli " : " personel ") + loginUser.getAdSoyad();
-						if (userLogin.getLogin())
+						if (userLogin.isLogin())
 							logger.info(str + " --> " + PdksUtil.convertToDateString(basTarih, "HH:mm:ss") + " - " + PdksUtil.convertToDateString(bitTarih, "HH:mm:ss") + " : " + PdksUtil.convertToDateString(fark, "mm:ss") + " " + PdksUtil.getCurrentTimeStampStr());
 					}
 				}
@@ -3636,7 +3636,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 				if (gecenAyDurum) {
 					hataYok = false;
-					if (userLogin.getLogin())
+					if (userLogin.isLogin())
 						PdksUtil.addMessageAvailableError(gecenAy.getAyAdi() + " " + gecenAy.getYil() + " dönemi açıktır!");
 				} else if ((topluGuncelle || (kullaniciPersonel.equals(Boolean.FALSE) && ikRole)) && denklestirmeAyDurum && denklestirmeAy.getOtomatikOnayIKTarih() != null) {
 					Calendar cal = Calendar.getInstance();
@@ -3694,7 +3694,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					if (onayla) {
 						mailGonder = Boolean.FALSE;
 						try {
-							if (!loginUser.isAdmin() || loginUser.getLogin().booleanValue() == false || denklestirmeAyDurum) {
+							if (!loginUser.isAdmin() || loginUser.isLogin() == false || denklestirmeAyDurum) {
 								fazlaMesaiOnaylaDevam(aylikPuantajList, Boolean.TRUE, Boolean.TRUE);
 							}
 						} catch (Exception eo) {
@@ -3710,7 +3710,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 					List<String> list = fazlaMesaiOrtakIslemler.getFazlaMesaiUyari(yil, ay, seciliEkSaha3Id, aylikPuantajList, session);
 					for (String string : list)
-						if (userLogin.getLogin())
+						if (userLogin.isLogin())
 							PdksUtil.addMessageAvailableWarn(string);
 
 				}
@@ -4026,7 +4026,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			}
 			sessionFlush();
 			if (uyariMesai)
-				if (userLogin.getLogin()) {
+				if (userLogin.isLogin()) {
 					tekrarCalistir = true;
 					PdksUtil.addMessageWarn(offVardiya.getAciklama() + " günler güncellendi, 'Fazla Mesai Getir' tekrar çalıştırın.");
 				}
@@ -4100,7 +4100,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 				}
 			}
 			if (flush) {
-				if (authenticatedUser != null && userLogin.getLogin()) {
+				if (authenticatedUser != null && userLogin.isLogin()) {
 					PdksUtil.addMessageWarn("Hafta tatilleri güncellendi, 'Fazla Mesai Getir' tekrar çalıştırın.");
 					tekrarCalistir = true;
 				}
@@ -4463,10 +4463,10 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					izinStr = PdksUtil.replaceAllManuel(izinStr + " " + izin.getIzinTipiAciklama() + " olmasına rağmen  hatalı giriş mevcuttur.", "  ", " ");
 				}
 				if (devam) {
-					if (userLogin.getLogin())
+					if (userLogin.isLogin())
 						PdksUtil.addMessageAvailableWarn(izinStr);
 					String str = izinStr + " ( Izin Id : " + izinId + " )";
-					if (userLogin.getLogin())
+					if (userLogin.isLogin())
 						logger.info(userLogin.getAdSoyad() + " --> " + str + " " + izinSahibi.getAdSoyad());
 					if (izinCalismayanMailGonder && !izinliCalisilanGunler.contains(str)) {
 						strList.add(str);
@@ -5494,7 +5494,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 					Long id = pdksEntityController.hareketSil(kgsId, pdksId, guncelleyen, mukerrerHareketIptalNeden.getId(), aciklama, hareketKGS.getKgsSirketId(), session);
 					if (id != null && hareketKGS.getHareketTableId().equals(id)) {
 						flush = true;
-						tekrarCalistir = userLogin.getLogin();
+						tekrarCalistir = userLogin.isLogin();
 						if (tekrarCalistir == false)
 							logger.info(vg.getVardiyaKeyStr() + " " + hareketKGS.getId());
 					}
@@ -5732,7 +5732,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 		seciliBolum = null;
 		seciliAltBolum = null;
 		if (!onayla) {
-			if (userLogin.getLogin())
+			if (userLogin.isLogin())
 				PdksUtil.addMessageAvailableWarn(PdksUtil.convertToDateString(aylikPuantajDefault.getIlkGun(), "MMMMM yyyy") + " fazla mesai onayı yapacak personel seçiniz!");
 		} else {
 			if (seciliEkSaha3Id != null)

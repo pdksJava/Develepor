@@ -6081,7 +6081,7 @@ public class OrtakIslemler implements Serializable {
 		try {
 			if (paramsMap != null) {
 				loginUser = paramsMap.containsKey("loginUser") ? (User) paramsMap.get("loginUser") : null;
-				if (loginUser.getLogin() == false || loginUser.getYetkiliRollerim() == null)
+				if (loginUser.isLogin() == false || loginUser.getYetkiliRollerim() == null)
 					loginUser.setAdmin(true);
 				departmanId = paramsMap.containsKey("departmanId") ? (Long) paramsMap.get("departmanId") : null;
 				sirket = paramsMap.containsKey("sirket") ? (Sirket) paramsMap.get("sirket") : null;

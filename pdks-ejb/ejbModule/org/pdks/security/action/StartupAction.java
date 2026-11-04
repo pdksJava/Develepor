@@ -388,7 +388,7 @@ public class StartupAction implements Serializable {
 		if (pdksEntityController.isSessionKapali(connection, session)) {
 			session = user != null ? user.getSessionSQL() : null;
 			if (pdksEntityController.isSessionKapali(connection, session))
-				session = PdksUtil.getSession(entityManager, user == null || user.getLogin().booleanValue() == false);
+				session = PdksUtil.getSession(entityManager, user == null || user.isLogin() == false);
 		}
 		logger.info("Sistem verileri yukleniyor in " + PdksUtil.getCurrentTimeStampStr());
 		fillParameter(session, lockVar);
@@ -1230,7 +1230,7 @@ public class StartupAction implements Serializable {
 			if (user != null)
 				session = user.getSessionSQL();
 			if (pdksEntityController.isSessionKapali(connection, session))
-				session = PdksUtil.getSession(entityManager, user == null || user.getLogin().booleanValue() == false);
+				session = PdksUtil.getSession(entityManager, user == null || user.isLogin() == false);
 		}
 
 		List<AccountPermission> permissionList = (ArrayList<AccountPermission>) pdksEntityController.getSQLParamByFieldList(AccountPermission.TABLE_NAME, AccountPermission.COLUMN_NAME_DURUM, Boolean.TRUE, AccountPermission.class, session);

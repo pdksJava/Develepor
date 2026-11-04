@@ -6215,7 +6215,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	private Boolean saveOnay(Session session, AylikPuantaj aylikPuantaj) {
 		Personel personel = aylikPuantaj.getPdksPersonel();
 		PersonelDenklestirme pd = aylikPuantaj.getPersonelDenklestirme();
-		if (getPdksUser().getLogin() == false) {
+		if (getPdksUser().isLogin() == false) {
 			pd = (PersonelDenklestirme) pdksEntityController.getSQLParamByFieldObject(PersonelDenklestirme.TABLE_NAME, PersonelDenklestirme.COLUMN_NAME_ID, pd.getId(), PersonelDenklestirme.class, session);
 			aylikPuantaj.setPersonelDenklestirme(pd);
 		}
@@ -6937,7 +6937,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		aylikHareketKaydiVardiyaBul = Boolean.FALSE;
 		if (getPdksUser() != null)
 			savePlanLastParameter();
-		fazlaMesaiIzinRaporuDurum = userHome != null && loginUser.getLogin() && userHome.hasPermission("fazlaMesaiIzinRaporu", "view");
+		fazlaMesaiIzinRaporuDurum = userHome != null && loginUser.isLogin() && userHome.hasPermission("fazlaMesaiIzinRaporu", "view");
 		offIzinGuncelle = ortakIslemler.getParameterKey("offIzinGuncelle").equals("1");
 		try {
 			User user = ortakIslemler.getSistemAdminUser(session);
@@ -8127,7 +8127,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			}
 			topluFazlaCalismaTalep = false;
 			if (fazlaMesaiTalepVar && denklestirmeAyDurum && aylikPuantajList.size() > 0 && aramaSecenekleri.getSirket().isFazlaMesaiTalepGirer())
-				setTopluFazlaCalismaTalep(ortakIslemler.getParameterKey("topluFazlaCalismaTalep").equals("1") || (userHome != null && loginUser.isAdmin() == false && loginUser.getLogin() && userHome.hasPermission("vardiyaPlani", "topluFazlaCalismaTalep")));
+				setTopluFazlaCalismaTalep(ortakIslemler.getParameterKey("topluFazlaCalismaTalep").equals("1") || (userHome != null && loginUser.isAdmin() == false && loginUser.isLogin() && userHome.hasPermission("vardiyaPlani", "topluFazlaCalismaTalep")));
 
 			if (defaultAylikPuantajSablon == null)
 				defaultAylikPuantajSablon = fazlaMesaiOrtakIslemler.getAylikPuantaj(ay, yil, departmanDenklestirmeDonemi, session);

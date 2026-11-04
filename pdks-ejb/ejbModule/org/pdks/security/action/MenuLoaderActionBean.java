@@ -497,7 +497,7 @@ public class MenuLoaderActionBean implements Serializable {
 	 */
 	private boolean isMenuDoldur(HtmlDropDownMenu menu) {
 		boolean doldur = false;
-		if (authenticatedUser != null) {
+		if (authenticatedUser != null && authenticatedUser.isLogin()) {
 			doldur = menu == null || menu.getChildCount() == 0;
 			if (doldur) {
 				if (menu != null)

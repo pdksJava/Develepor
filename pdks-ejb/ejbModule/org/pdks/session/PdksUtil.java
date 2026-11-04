@@ -3502,29 +3502,80 @@ public class PdksUtil implements Serializable {
 	 * @param notLogin
 	 * @return
 	 */
+	public static Session getSession(EntityManager em) {
+		Session session = null;
+		if (em != null) {
+			try {
+				// 1. Yol: JPA 1.0 standardına göre Hibernate'in Session nesnesini getDelegate() ile alıyoruz
+				Object delegate = em.getDelegate();
+				if (delegate instanceof Session)
+					session = (Session) delegate;
+
+			} catch (Exception e1) {
+				logger.error("JPA 1.0 standardına göre Hibernate'in Session nesnesini getDelegate() ile alıyoruz\n" + e1);
+			}
+			if (session == null) {
+				try {
+					// 2. Yol: Eğer Seam veya Glassfish bir proxy sarmaladıysa, Hibernate'in
+					// kendi EntityManager implementasyonuna (AbstractEntityManagerImpl) cast ederek getSession() çağırıyoruz.
+					if (em instanceof org.hibernate.ejb.AbstractEntityManagerImpl) {
+						org.hibernate.ejb.AbstractEntityManagerImpl emImpl = (org.hibernate.ejb.AbstractEntityManagerImpl) em;
+						session = emImpl.getSession(); // Hibernate 3'ün yerel metodu
+
+					}
+
+				} catch (Exception e2) {
+					logger.error("Eğer Seam veya Glassfish bir proxy sarmaladıysa, Hibernate'in kendi EntityManager implementasyonuna (AbstractEntityManagerImpl) cast ederek getSession() çağırıyoruz.\n" + e2);
+				}
+				try {
+					// 3. Yol: Yukarıdakiler başarısız olursa eski usul yansıma (reflection) ile metodu zorluyoruz
+					if (session == null)
+						session = (Session) PdksUtil.getMethodObject(em, "getSession", null);
+
+				} catch (Exception e3) {
+					logger.error("Yukarıdakiler başarısız olursa eski usul yansıma (reflection) ile metodu zorluyoruz\n" + e3);
+				}
+			}
+
+		}
+
+		return session;
+	}
+
+	/**
+	 * @param em
+	 * @param notLogin
+	 * @return
+	 */
 	public static Session getSession(EntityManager em, Boolean notLogin) {
 		Session session1 = null;
 		Object delegate = null;
 		SessionFactory sessionFactory = null;
 		if (notLogin == null)
 			notLogin = Boolean.TRUE;
-		try {
-			delegate = em.getDelegate();
-			if (notLogin.booleanValue() == false)
-				session1 = (Session) delegate;
-		} catch (Exception e) {
-			session1 = null;
+		if (notLogin)
+			session1 = getSession(em);
 
-		}
-		if (session1 == null && delegate != null) {
+		if (session1 == null) {
+
 			try {
-				HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
-				sessionFactory = hsp.getSessionFactory();
-				if (notLogin)
-					session1 = sessionFactory.openSession();
-				else
-					session1 = sessionFactory.getCurrentSession();
+				delegate = em.getDelegate();
+				if (notLogin.booleanValue() == false)
+					session1 = (Session) delegate;
 			} catch (Exception e) {
+				session1 = null;
+
+			}
+			if (session1 == null && delegate != null) {
+				try {
+					HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
+					sessionFactory = hsp.getSessionFactory();
+					if (notLogin)
+						session1 = sessionFactory.openSession();
+					else
+						session1 = sessionFactory.getCurrentSession();
+				} catch (Exception e) {
+				}
 			}
 		}
 		return session1;

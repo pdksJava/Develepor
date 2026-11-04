@@ -89,7 +89,7 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 	private boolean projeMuduru = Boolean.FALSE, mudur = Boolean.FALSE, superVisor = Boolean.FALSE, IKDirektor = Boolean.FALSE, personel = Boolean.FALSE;
 	private boolean operatorSSK = Boolean.FALSE, yetkiSet = Boolean.FALSE, tesisSuperVisor = Boolean.FALSE, direktorSuperVisor = Boolean.FALSE, taseronAdmin = Boolean.FALSE;
 	private boolean browserIE, izinGirebilir = Boolean.FALSE, izinSSKGirebilir = Boolean.FALSE, izinOnaylayabilir = Boolean.FALSE, testLogin = Boolean.FALSE;
-	private boolean sirketSuperVisor = Boolean.FALSE, raporKullanici = Boolean.FALSE;
+	private boolean sirketSuperVisor = Boolean.FALSE, raporKullanici = Boolean.FALSE, login = Boolean.FALSE;
 	private Boolean adminIK;
 	private ArrayList<User> userVekaletList;
 
@@ -99,7 +99,7 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 
 	private User seciliSuperVisor;
 
-	private Boolean vardiyaDuzeltYetki = Boolean.FALSE, secili = Boolean.FALSE, login = Boolean.FALSE;
+	private Boolean vardiyaDuzeltYetki = Boolean.FALSE, secili = Boolean.FALSE;
 
 	private HashMap<String, Boolean> menuYetkiMap;
 
@@ -794,11 +794,11 @@ public class User extends BasePDKSObject implements Serializable, Cloneable {
 	}
 
 	@Transient
-	public Boolean getLogin() {
+	public boolean isLogin() {
 		return login;
 	}
 
-	public void setLogin(Boolean login) {
+	public void setLogin(boolean login) {
 		this.login = login;
 	}
 
