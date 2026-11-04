@@ -784,10 +784,9 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 
 					List<HareketKGS> kgsList = new ArrayList<HareketKGS>();
 
-					Date tarih1 = ortakIslemler.tariheGunEkleCikar(cal, date, -1);
+					Date tarih1 = null;
 					Date tarih2 = null;
-					Date tarih3 = null;
-					Date tarih4 = null;
+
 					TreeMap<String, VardiyaGun> vardiyaMap = null;
 					Date basTarih = ortakIslemler.tariheGunEkleCikar(cal, date, -2), bitTarih = ortakIslemler.tariheGunEkleCikar(cal, date, 3);
 					try {
@@ -922,17 +921,13 @@ public class PersonelFazlaMesaiHome extends EntityHome<PersonelFazlaMesai> imple
 						pdksVardiyaGun.setCikisHareketleri(null);
 						pdksVardiyaGun.setGecersizHareketler(null);
 						Vardiya islemVardiya = pdksVardiyaGun.getIslemVardiya();
-						if ((tarih1 == null && tarih3 == null) || tarih3 == null || islemVardiya.getVardiyaBasZaman().getTime() < tarih3.getTime()) {
-							tarih3 = islemVardiya.getVardiyaBasZaman();
-							if (tarih1 == null || tarih1.after(islemVardiya.getVardiyaFazlaMesaiBasZaman()))
-								tarih1 = islemVardiya.getVardiyaFazlaMesaiBasZaman();
+						if (tarih1 == null || islemVardiya.getVardiyaFazlaMesaiBasZaman().getTime() < tarih1.getTime()) {
+							tarih1 = islemVardiya.getVardiyaFazlaMesaiBasZaman();
 
 						}
-						if (tarih2 == null || islemVardiya.getVardiyaBitZaman().getTime() > tarih4.getTime()) {
-							tarih4 = islemVardiya.getVardiyaBitZaman();
+						if (tarih2 == null || islemVardiya.getVardiyaFazlaMesaiBitZaman().getTime() > tarih2.getTime()) {
+
 							tarih2 = islemVardiya.getVardiyaFazlaMesaiBitZaman();
-							if (pdksVardiyaGun.getSonrakiVardiyaGun() == null)
-								tarih2 = ortakIslemler.tariheGunEkleCikar(cal, tarih1, 1);
 
 						}
 
