@@ -3510,7 +3510,6 @@ public class PdksUtil implements Serializable {
 				Object delegate = em.getDelegate();
 				if (delegate instanceof Session)
 					session = (Session) delegate;
-
 			} catch (Exception e1) {
 				logger.error("JPA 1.0 standardına göre Hibernate'in Session nesnesini getDelegate() ile alıyoruz\n" + e1);
 			}
@@ -3521,22 +3520,19 @@ public class PdksUtil implements Serializable {
 					if (em instanceof org.hibernate.ejb.AbstractEntityManagerImpl) {
 						org.hibernate.ejb.AbstractEntityManagerImpl emImpl = (org.hibernate.ejb.AbstractEntityManagerImpl) em;
 						session = emImpl.getSession(); // Hibernate 3'ün yerel metodu
-
 					}
-
 				} catch (Exception e2) {
 					logger.error("Eğer Seam veya Glassfish bir proxy sarmaladıysa, Hibernate'in kendi EntityManager implementasyonuna (AbstractEntityManagerImpl) cast ederek getSession() çağırıyoruz.\n" + e2);
 				}
-				try {
-					// 3. Yol: Yukarıdakiler başarısız olursa eski usul yansıma (reflection) ile metodu zorluyoruz
-					if (session == null)
-						session = (Session) PdksUtil.getMethodObject(em, "getSession", null);
-
-				} catch (Exception e3) {
-					logger.error("Yukarıdakiler başarısız olursa eski usul yansıma (reflection) ile metodu zorluyoruz\n" + e3);
+				if (session == null) {
+					try {
+						// 3. Yol: Yukarıdakiler başarısız olursa eski usul yansıma (reflection) ile metodu zorluyoruz
+ 						session = (Session) PdksUtil.getMethodObject(em, "getSession", null);
+					} catch (Exception e3) {
+						logger.error("Yukarıdakiler başarısız olursa eski usul yansıma (reflection) ile metodu zorluyoruz\n" + e3);
+					}
 				}
 			}
-
 		}
 
 		return session;
@@ -3558,17 +3554,17 @@ public class PdksUtil implements Serializable {
 		if (session1 == null) {
 			try {
 				delegate = em.getDelegate();
- 			} catch (Exception e) {
+			} catch (Exception e) {
 				session1 = null;
- 			}
+			}
 			if (delegate != null) {
 				try {
 					HibernateSessionProxy hsp = (HibernateSessionProxy) delegate;
 					sessionFactory = hsp.getSessionFactory();
 					if (notLogin == false)
 						session1 = sessionFactory.getCurrentSession();
-//					else
-//						session1 = sessionFactory.openSession();
+					// else
+					// session1 = sessionFactory.openSession();
 				} catch (Exception e) {
 				}
 			}
