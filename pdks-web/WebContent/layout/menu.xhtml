@@ -1,12 +1,13 @@
 <rich:toolBar xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:s="http://jboss.com/products/seam/taglib" xmlns:rich="http://richfaces.org/rich">
+	xmlns:c="http://java.sun.com/jstl/core" xmlns:f="http://java.sun.com/jsf/core" xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:rich="http://richfaces.org/rich">
 	<h:form id="menuIslemleri" rendered="#{userHome.hasPermission('menuIslemleri','view')}">
 		<rich:dropDownMenu binding="#{menuLoaderAction.menuIslemleri}" />
 	</h:form>
 	<h:form id="admin" rendered="#{userHome.hasPermission('admin','view')}">
 		<rich:dropDownMenu binding="#{menuLoaderAction.adminMenu}" />
 	</h:form>
- 
+
 	<h:form id="kullaniciIslemleri" rendered="#{userHome.hasPermission('kullaniciIslemleri','view')}">
 		<rich:dropDownMenu binding="#{menuLoaderAction.kullaniciIslemleri}" />
 	</h:form>
@@ -20,14 +21,20 @@
 	<h:form id="raporIslemleri" rendered="#{userHome.hasPermission('raporIslemleri','view')}">
 		<rich:dropDownMenu binding="#{menuLoaderAction.raporIslemleri}" />
 	</h:form>
+	<c:if test="#{identity.loggedIn==false}">
+		<rich:toolBarGroup location="center">
+			<SPAN class="rich-label-text-decor"> <h:outputText value="#{ortakIslemler.getParameterKey('fromName')}" /></SPAN>
+		</rich:toolBarGroup>
+	</c:if>
+	<c:if test="#{identity.loggedIn}">
+		<rich:toolBarGroup location="right">
 
-	<rich:toolBarGroup location="right">
 
-		<h:outputText value="Seçili #{ortakIslemler.yoneticiAciklama()} : #{authenticatedUser.seciliSuperVisor.adSoyad}"
-			rendered="#{identity.loggedIn and authenticatedUser.mudur and authenticatedUser.seciliSuperVisor != null}" />
-		<h:outputText value="Seçili Super Visör : #{authenticatedUser.seciliSuperVisor.adSoyad}"
-			rendered="#{identity.loggedIn and authenticatedUser.superVisor and authenticatedUser.seciliSuperVisor != null}" />
-		<ui:fragment rendered="#{identity.loggedIn}">
+
+			<h:outputText value="Seçili #{ortakIslemler.yoneticiAciklama()} : #{authenticatedUser.seciliSuperVisor.adSoyad}"
+				rendered="#{authenticatedUser.mudur and authenticatedUser.seciliSuperVisor != null}" />
+			<h:outputText value="Seçili Super Visör : #{authenticatedUser.seciliSuperVisor.adSoyad}"
+				rendered="#{authenticatedUser.superVisor and authenticatedUser.seciliSuperVisor != null}" />
 			<DIV id="userInfo">
 				<ui:fragment rendered="#{authenticatedUser.shortUsername != null and authenticatedUser.shortUsername != ''}">
 					<h:outputText title="Kısa Kullanıcı : #{authenticatedUser.shortUsername}" value="#{authenticatedUser.adSoyad}" />
@@ -41,15 +48,16 @@
 				<rich:toolTip for="userInfo">
 					<SPAN style="background-color: #{startupAction.projeHeaderBackgroundColor};color: #{startupAction.projeHeaderColor};font-size: 9px; "> #{authenticatedUser.menuItemTime.menu.description.aciklama} :
 						<ui:fragment rendered="#{authenticatedUser.menuItemTime.useCount > 0}"> #{authenticatedUser.sayiFormatliGoster(authenticatedUser.menuItemTime.useCount)} --></ui:fragment>
- 						#{authenticatedUser.dateTimeFormatla(authenticatedUser.menuItemTime.lastTime)}
+						#{authenticatedUser.dateTimeFormatla(authenticatedUser.menuItemTime.lastTime)}
 					</SPAN>
 				</rich:toolTip>
 			</ui:fragment>
-		</ui:fragment>
-		<s:link view="#{menuItemConstant.home}" value="Ana Sayfa" propagation="none" rendered="#{identity.loggedIn}" />
+			<s:link view="#{menuItemConstant.home}" value="Ana Sayfa" propagation="none" />
 
-		<s:link view="#{menuItemConstant.login}" action="#{identity.logout}" value="Çıkış" rendered="#{identity.loggedIn}" propagation="none" />
+			<s:link view="#{menuItemConstant.login}" action="#{identity.logout}" value="Çıkış" propagation="none" />
 
-	</rich:toolBarGroup>
+
+		</rich:toolBarGroup>
+	</c:if>
 </rich:toolBar>
 
