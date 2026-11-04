@@ -77,6 +77,7 @@ import org.jboss.seam.annotations.Transactional;
 import org.jboss.seam.faces.FacesMessages;
 import org.jboss.seam.faces.Renderer;
 import org.jboss.seam.international.StatusMessage.Severity;
+import org.jboss.seam.international.StatusMessages;
 import org.json.XML;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -248,7 +249,8 @@ public class OrtakIslemler implements Serializable {
 	PdksSap3Controller pdksSap3Controller;
 	@In(required = false, create = true)
 	HashMap<String, String> parameterMap;
-
+	@In(required = false, create = true)
+	StatusMessages statusMessages;
 	@In(required = false, create = true)
 	HashMap<String, Long> raporRoleMap = new HashMap<String, Long>();
 
