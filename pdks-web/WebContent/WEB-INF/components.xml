@@ -25,7 +25,7 @@
 	<transaction:ejb-transaction />
 	<!-- jbossta <persistence:managed-persistence-context name="entityManager" auto-create="true" persistence-unit-jndi-name="java:/pdksEntityManagerFactory" 
 		/> -->
-	<core:manager concurrent-request-timeout="50000" conversation-timeout="300000" conversation-id-parameter="cid"
+	<core:manager concurrent-request-timeout="5000" conversation-timeout="300000" conversation-id-parameter="cid"
 		parent-conversation-id-parameter="pid" />
 	<web:hot-deploy-filter url-pattern="*.seam" />
 	<!-- glassfish te <persistence:entity-manager-factory name="pdksSQLDatasource" /> <persistence:managed-persistence-context name="entityManager3" auto-create="true" 

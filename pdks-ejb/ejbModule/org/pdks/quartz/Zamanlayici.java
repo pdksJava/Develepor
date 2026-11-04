@@ -12,9 +12,11 @@ import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.faces.Renderer;
 import org.pdks.entity.Dosya;
 import org.pdks.entity.Parameter;
@@ -29,6 +31,9 @@ import com.pdks.webservice.MailFile;
 import com.pdks.webservice.MailObject;
 import com.pdks.webservice.MailStatu;
 
+
+
+@Scope(ScopeType.STATELESS)
 @Name("zamanlayici")
 @AutoCreate
 public class Zamanlayici implements Serializable {
