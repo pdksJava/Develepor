@@ -31,8 +31,6 @@ import com.pdks.webservice.MailFile;
 import com.pdks.webservice.MailObject;
 import com.pdks.webservice.MailStatu;
 
-
-
 @Scope(ScopeType.STATELESS)
 @Name("zamanlayici")
 @AutoCreate
@@ -139,10 +137,8 @@ public class Zamanlayici implements Serializable {
 		InetAddress thisIp = adresEkle == null || adresEkle ? InetAddress.getLocalHost() : null;
 
 		String sayfaAdi = "quartzMail.xhtml";
-		if (session != null)
-			yeni = false;
-		else if (yeni)
-			session = PdksUtil.getSession(entityManager, yeni);
+		if (pdksEntityController.isSessionKapali(null, session))
+			session = PdksUtil.getSession(entityManager, authenticatedUser == null);
 		if (userList == null || userList.isEmpty()) {
 			userList = ortakIslemler.bccAdminAdres(session, null);
 			xaciklama += " ( " + PdksUtil.getCurrentTimeStampStr() + " ) ";

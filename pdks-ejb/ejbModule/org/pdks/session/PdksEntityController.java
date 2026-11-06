@@ -768,7 +768,7 @@ public class PdksEntityController implements Serializable {
 		boolean kapali = true;
 		if (sessionx != null) {
 			if (connection != null) {
-				if (sessionx.isOpen() && sessionx.isConnected() == false) {
+				if ((sessionx.isOpen() && sessionx.isConnected()) == false) {
 					try {
 						sessionx.reconnect(connection);
 						kapali = sessionx.isConnected() == false;
@@ -777,7 +777,7 @@ public class PdksEntityController implements Serializable {
 
 				}
 			} else
-				kapali = sessionx.isConnected() == false;
+				kapali = (sessionx.isOpen() && sessionx.isConnected()) == false;
 
 		}
 		return kapali;
