@@ -1890,10 +1890,10 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						}
 						if (vardiyaGun.isIzinli() == false) {
 							if (resmiTatil) {
-								if (!tatil.isYarimGunMu())
-									resmiTatilSaat += vardiyaGun.getSaatCalisanResmiTatilKatsayisi();
-								else {
-									resmiTatilSaat += vardiyaGun.getSaatCalisanArifeTatilKatsayisi();
+								if (!tatil.isYarimGunMu()) {
+ 									resmiTatilSaat += vardiyaGun.getSaatCalisanResmiTatilKatsayisi();
+								} else if (vardiya.isHaftaTatil() == false) {
+ 									resmiTatilSaat += vardiyaGun.getSaatCalisanArifeTatilKatsayisi();
 									normalSaat += vardiyaGun.getSaatCalisanArifeNormalKatsayisi();
 								}
 							} else if (vardiyaGun.isHaftaIci()) {
