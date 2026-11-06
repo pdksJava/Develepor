@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
+import org.apache.log4j.Logger;
 import org.pdks.security.entity.User;
 
 @MappedSuperclass
@@ -17,6 +18,9 @@ public abstract class BasePDKSObject implements Serializable, Cloneable, PdksInt
 	 * 
 	 */
 	private static final long serialVersionUID = 3045809958792260856L;
+	
+	
+	static Logger logger = Logger.getLogger(BasePDKSObject.class);
 
 	public static final String COLUMN_NAME_ID = "ID";
 
@@ -25,6 +29,7 @@ public abstract class BasePDKSObject implements Serializable, Cloneable, PdksInt
 	protected User loginUser;
 
 	protected Boolean guncellendi;
+	
 	protected boolean degisti = Boolean.FALSE, checkBoxDurum = Boolean.FALSE;
 
 	@Id
@@ -59,7 +64,9 @@ public abstract class BasePDKSObject implements Serializable, Cloneable, PdksInt
 	}
 
 	public void setGuncellendi(Boolean value) {
-
+		if (value) {
+			 
+		}
 		this.guncellendi = value;
 	}
 

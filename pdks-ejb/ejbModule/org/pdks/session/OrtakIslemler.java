@@ -265,6 +265,35 @@ public class OrtakIslemler implements Serializable {
 	FacesMessages facesMessages;
 
 	/**
+	 * @param perIdList
+	 * @param da
+	 * @param session
+	 * @return
+	 */
+	public List<PersonelDenklestirme> getPdksPersonelDenklestirmeler(List<Long> perIdList, DenklestirmeAy da, Session session) {
+		if (perIdList == null || da == null)
+			perIdList = new ArrayList<Long>();
+		List<PersonelDenklestirme> list = null;
+		if (perIdList.isEmpty() == false && da != null) {
+			String fieldName = "p";
+			StringBuilder sb = new StringBuilder();
+			HashMap fields = new HashMap();
+			sb.append("select PD.* from " + PersonelDenklestirme.TABLE_NAME + " PD " + PdksEntityController.getSelectLOCK() + " ");
+			sb.append(" where PD." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + da.getId() + " and PD." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
+			fields.put(fieldName, perIdList);
+			if (session != null)
+				fields.put(PdksEntityController.MAP_KEY_SESSION, session);
+			list = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, fields, PersonelDenklestirme.class, session);
+			if (list != null && list.isEmpty() == false)
+				setPersonelDenklestirmeDevir(null, list, session);
+			fields = null;
+			sb = null;
+		} else
+			list = new ArrayList<PersonelDenklestirme>();
+		return list;
+	}
+
+	/**
 	 * @param id
 	 * @param tableName
 	 * @param columnName
@@ -2516,18 +2545,8 @@ public class OrtakIslemler implements Serializable {
 						map.put(PdksEntityController.MAP_KEY_SESSION, session);
 						DenklestirmeAy denklestirmeAy = getSQLDenklestirmeAy(yil, ay, session);
 						if (denklestirmeAy != null) {
-							String fieldName = "p";
-							map.clear();
-							StringBuilder sb = new StringBuilder();
-							sb.append(" select R.* from " + PersonelDenklestirme.TABLE_NAME + " R " + PdksEntityController.getSelectLOCK());
-							sb.append(" where R." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId() + " and R." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
 							List<Long> list = donemPerMap.get(key);
-							map.put(fieldName, list);
-							if (session != null)
-								map.put(PdksEntityController.MAP_KEY_SESSION, session);
-							// List<PersonelDenklestirme> veriList = pdksEntityController.getObjectBySQLList(sb, map, PersonelDenklestirme.class);
-							List<PersonelDenklestirme> veriList = pdksEntityController.getSQLParamList(list, sb, fieldName, map, PersonelDenklestirme.class, session);
-							setPersonelDenklestirmeDevir(null, veriList, session);
+							List<PersonelDenklestirme> veriList = getPdksPersonelDenklestirmeler(list, denklestirmeAy, session);
 							for (PersonelDenklestirme personelDenklestirme : veriList)
 								donemPerDenkMap.put(key + "_" + personelDenklestirme.getPersonelId(), personelDenklestirme);
 							veriList = null;
@@ -16605,6 +16624,7 @@ public class OrtakIslemler implements Serializable {
 				Long perId = vardiyaGun.getPersonel() != null ? vardiyaGun.getPersonel().getId() : null;
 				if (perId == null)
 					continue;
+				vardiyaGun.setCalismaModeli(null);
 				String key = vardiyaGun.getVardiyaDateStr();
 				vardiyaGun.setTatil(tatilMap.containsKey(key) ? tatilMap.get(key) : null);
 				List<VardiyaGun> list = vMap.containsKey(perId) ? vMap.get(perId) : new ArrayList<VardiyaGun>();

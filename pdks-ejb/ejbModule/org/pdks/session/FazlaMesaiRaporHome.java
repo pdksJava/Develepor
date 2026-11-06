@@ -886,7 +886,7 @@ public class FazlaMesaiRaporHome extends EntityHome<DepartmanDenklestirmeDonemi>
 					if (aksamCalismaSaati == null)
 						aksamCalismaSaati = 4.0d;
 					TreeMap<Long, PersonelDenklestirme> treeMap = new TreeMap<Long, PersonelDenklestirme>();
-					List<PersonelDenklestirme> personelDenklestirmeList = denklestirmeAy != null ? fazlaMesaiOrtakIslemler.getPdksPersonelDenklestirmeler(perIdList, denklestirmeAy, session) : new ArrayList<PersonelDenklestirme>();
+					List<PersonelDenklestirme> personelDenklestirmeList = denklestirmeAy != null ? ortakIslemler.getPdksPersonelDenklestirmeler(perIdList, denklestirmeAy, session) : new ArrayList<PersonelDenklestirme>();
 					for (PersonelDenklestirme pd : personelDenklestirmeList) {
 						PersonelDenklestirme personelDenklestirme = (PersonelDenklestirme) pd.clone();
 						personelDenklestirme.setOnaylandi(true);

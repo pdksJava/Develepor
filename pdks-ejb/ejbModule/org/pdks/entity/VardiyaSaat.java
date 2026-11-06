@@ -41,9 +41,11 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 
 	private VardiyaEkSaat ekSaat;
 
+	private VardiyaGun vg;
+
 	public VardiyaSaat() {
 		super();
-		this.guncellendi = false;
+		this.setGuncellendi(false);
 	}
 
 	@Column(name = COLUMN_NAME_NORMAL_SURE)
@@ -53,7 +55,7 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 
 	public void setNormalSure(double value) {
 		if (!guncellendi)
-			guncellendi = PdksUtil.isDoubleDegisti(value, normalSure);
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, normalSure));
 		this.normalSure = value;
 	}
 
@@ -64,7 +66,7 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 
 	public void setCalismaSuresi(double value) {
 		if (!guncellendi)
-			guncellendi = PdksUtil.isDoubleDegisti(value, calismaSuresi);
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, calismaSuresi));
 		this.calismaSuresi = value;
 	}
 
@@ -75,7 +77,7 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 
 	public void setDgsSuresi(Double value) {
 		if (!guncellendi)
-			guncellendi = PdksUtil.isDoubleDegisti(value, dgsSuresi);
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, dgsSuresi));
 		this.dgsSuresi = value;
 	}
 
@@ -119,7 +121,7 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 
 	public void setResmiTatilSure(double value) {
 		if (!guncellendi)
-			guncellendi = PdksUtil.isDoubleDegisti(value, resmiTatilSure);
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, resmiTatilSure));
 		this.resmiTatilSure = value;
 	}
 
@@ -131,7 +133,7 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 
 	public void setResmiTatilKanunenEklenenSure(Double value) {
 		if (!guncellendi)
-			guncellendi = PdksUtil.isDoubleDegisti(value, resmiTatilKanunenEklenenSure);
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, resmiTatilKanunenEklenenSure));
 		this.resmiTatilKanunenEklenenSure = value;
 	}
 
@@ -143,7 +145,7 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 
 	public void setAksamVardiyaSaatSayisi(double value) {
 		if (!guncellendi)
-			guncellendi = PdksUtil.isDoubleDegisti(value, aksamVardiyaSaatSayisi);
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, aksamVardiyaSaatSayisi));
 		this.aksamVardiyaSaatSayisi = value;
 	}
 
@@ -154,7 +156,7 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 
 	public void setUcretiOdenenFazlaMesaiSaat(Double value) {
 		if (!guncellendi)
-			guncellendi = PdksUtil.isDoubleDegisti(value, ucretiOdenenFazlaMesaiSaat);
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, ucretiOdenenFazlaMesaiSaat));
 		this.ucretiOdenenFazlaMesaiSaat = value;
 	}
 
@@ -165,7 +167,7 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 
 	public void setIcapciMesaiSaat(Double value) {
 		if (!guncellendi)
-			guncellendi = PdksUtil.isDoubleDegisti(value, icapciMesaiSaat);
+			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, icapciMesaiSaat));
 		this.icapciMesaiSaat = value;
 	}
 
@@ -199,6 +201,15 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 		return ekSaatEkle;
 	}
 
+	@Transient
+	public VardiyaGun getVg() {
+		return vg;
+	}
+
+	public void setVg(VardiyaGun vg) {
+		this.vg = vg;
+	}
+
 	public void entityRefresh() {
 
 	}
@@ -207,5 +218,4 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 	public String getTableName() {
 		return TABLE_NAME;
 	}
-
 }
