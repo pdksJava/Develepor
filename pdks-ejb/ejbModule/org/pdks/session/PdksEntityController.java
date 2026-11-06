@@ -492,12 +492,12 @@ public class PdksEntityController implements Serializable {
 		try {
 			ses.saveOrUpdate(saveObject);
 		} catch (Exception e) {
-			if (em != null)
-				ses.saveOrUpdate(getEntityManagerObject(em, saveObject));
-			else if (ses.contains(saveObject) == false) {
+			if (ses.contains(saveObject) == false) {
 				Object object = ses.merge(saveObject);
 				ses.saveOrUpdate(object);
-			}
+			} else if (em != null)
+				ses.saveOrUpdate(getEntityManagerObject(em, saveObject));
+
 		}
 	}
 
@@ -1605,7 +1605,7 @@ public class PdksEntityController implements Serializable {
 	 * @return
 	 */
 	public List getSQLParamByFieldList(String tableName, String fieldName, Object value, Class class1, Session session) {
- 		StringBuffer sb = new StringBuffer();
+		StringBuffer sb = new StringBuffer();
 		List list = null;
 		boolean degerVar = PdksUtil.hasStringValue(fieldName);
 		if (degerVar == false && value == null) {
