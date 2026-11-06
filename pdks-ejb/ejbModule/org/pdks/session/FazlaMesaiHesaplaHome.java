@@ -5699,7 +5699,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @return
 	 */
 	private List<PersonelDenklestirme> getPdksPersonelDenklestirmeler(List<Long> perIdList) {
-		List<PersonelDenklestirme> list = fazlaMesaiOrtakIslemler.getPdksPersonelDenklestirmeler(perIdList, denklestirmeAy, session);
+		List<PersonelDenklestirme> list = ortakIslemler.getPdksPersonelDenklestirmeler(perIdList, denklestirmeAy, session);
 		if (denklestirmeAy.getBakiyeSifirlaDurum())
 			ortakIslemler.setBakiyeSifirlaDurum(list, session);
 

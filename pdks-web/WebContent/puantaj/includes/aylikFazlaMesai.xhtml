@@ -965,7 +965,7 @@
 										</ui:fragment>
 										<ui:fragment rendered="#{fazlaMesaiHesaplaHome.izinSureSaatKod}">
 											<td class="#{aylikPuantaj.trSonucClass}" style="width: 20px" align="center"><ui:fragment
-													rendered="#fazlaMesaiHesaplaHome.seciliCalismaModeli.argemi == false and {aylikPuantaj.calismaModeli.saatlikOdeme and aylikPuantaj.denklestirmeBordro.saatIzin != 0}">
+													rendered="#{fazlaMesaiHesaplaHome.seciliCalismaModeli.argemi == false and aylikPuantaj.calismaModeli.saatlikOdeme and aylikPuantaj.denklestirmeBordro.saatIzin != 0}">
 													<h:outputText value="#{authenticatedUser.sayiFormatliGoster(aylikPuantaj.denklestirmeBordro.saatIzin)}" />
 												</ui:fragment></td>
 										</ui:fragment>

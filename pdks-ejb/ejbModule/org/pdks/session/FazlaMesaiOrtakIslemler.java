@@ -1890,10 +1890,10 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						}
 						if (vardiyaGun.isIzinli() == false) {
 							if (resmiTatil) {
-								if (!tatil.isYarimGunMu())
-									resmiTatilSaat += vardiyaGun.getSaatCalisanResmiTatilKatsayisi();
-								else {
-									resmiTatilSaat += vardiyaGun.getSaatCalisanArifeTatilKatsayisi();
+								if (!tatil.isYarimGunMu()) {
+ 									resmiTatilSaat += vardiyaGun.getSaatCalisanResmiTatilKatsayisi();
+								} else if (vardiya.isHaftaTatil() == false) {
+ 									resmiTatilSaat += vardiyaGun.getSaatCalisanArifeTatilKatsayisi();
 									normalSaat += vardiyaGun.getSaatCalisanArifeNormalKatsayisi();
 								}
 							} else if (vardiyaGun.isHaftaIci()) {
@@ -3274,7 +3274,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				if (tatillerMap != null && tatillerMap.containsKey(vardiyaDateStr)) {
 					vardiyaGun.setTatil(tatillerMap.get(vardiyaDateStr));
 					vardiyaHafta.setResmiTatilVar(true);
- 				} else if (vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().isCalisma()) {
+				} else if (vardiyaGun.getVardiya() != null && vardiyaGun.getVardiya().isCalisma()) {
 					vardiyaGun.setVardiyaZamani();
 					String key = PdksUtil.convertToDateString(vardiyaGun.getIslemVardiya().getVardiyaBitZaman(), "yyyyMMdd");
 					if (tatillerMap.containsKey(key))
@@ -3540,26 +3540,6 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 		tanimlar = null;
 		return gorevTipiList;
 
-	}
-
-	/**
-	 * @param perIdList
-	 * @return
-	 */
-	public List<PersonelDenklestirme> getPdksPersonelDenklestirmeler(List<Long> perIdList, DenklestirmeAy denklestirmeAy, Session session) {
-		String fieldName = "p";
-		HashMap fields = new HashMap();
-		StringBuilder sb = new StringBuilder();
-		sb.append("select S.* from " + PersonelDenklestirme.TABLE_NAME + " S " + PdksEntityController.getSelectLOCK() + " ");
-		sb.append(" where S." + PersonelDenklestirme.COLUMN_NAME_DONEM + " = " + denklestirmeAy.getId() + " and S." + PersonelDenklestirme.COLUMN_NAME_PERSONEL + " :" + fieldName);
-		fields.put(fieldName, perIdList);
-		if (session != null)
-			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
-		List<PersonelDenklestirme> list = pdksEntityController.getSQLParamList(perIdList, sb, fieldName, fields, PersonelDenklestirme.class, session);
-		ortakIslemler.setPersonelDenklestirmeDevir(null, list, session);
-		fields = null;
-		sb = null;
-		return list;
 	}
 
 	/**

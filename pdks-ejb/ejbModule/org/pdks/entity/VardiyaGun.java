@@ -227,7 +227,7 @@ public class VardiyaGun extends BaseObject {
 					}
 
 				}
-
+				value.setVg(this);
 				this.setVardiyaSaatDB((VardiyaSaat) value.clone());
 			}
 		}
@@ -566,19 +566,19 @@ public class VardiyaGun extends BaseObject {
 	@Transient
 	public boolean addHareket(HareketKGS hareket, boolean hareketDuzelt) {
 		boolean durum = Boolean.FALSE, devam = Boolean.TRUE;
- 		Date zaman1 = PdksUtil.tariheGunEkleCikar(this.getVardiyaDate(), -2);
+		Date zaman1 = PdksUtil.tariheGunEkleCikar(this.getVardiyaDate(), -2);
 		try {
 			Date tarihHareket = PdksUtil.getDate(PdksUtil.tariheGunEkleCikar(hareket.getZaman(), -1)), sonCalismaTarihi = PdksUtil.getDate(hareket.getPersonel().getPdksPersonel().getSskCikisTarihi());
 			devam = PdksUtil.tarihKarsilastirNumeric(sonCalismaTarihi, tarihHareket) != -1;
 			if (calismaModeli != null && hareket.getKapiKGS() != null && hareket.getKapiKGS().getKapi().isArgeMi()) {
-				if (calismaModeli.isArgeKartGirisi() )
+				if (calismaModeli.isArgeKartGirisi())
 					devam = false;
 			}
 			// !tarihHareket.after(hareket.getPersonel().getPdksPersonel().getSonCalismaTarihi());
 		} catch (Exception e) {
 			devam = Boolean.TRUE;
 		}
-		
+
 		if (!devam) {
 			logger.debug("");
 		}
@@ -2191,9 +2191,11 @@ public class VardiyaGun extends BaseObject {
 	}
 
 	public void setCalismaModeli(CalismaModeli value) {
-		if (value != null && value.isArgemi()) {
-			this.yarimYuvarla = -1;
-			this.fazlaMesaiYuvarla = -1;
+		if (value != null) {
+			if (value.isArgemi()) {
+				this.yarimYuvarla = -1;
+				this.fazlaMesaiYuvarla = -1;
+			}
 		}
 		this.calismaModeli = value;
 	}
@@ -2857,8 +2859,8 @@ public class VardiyaGun extends BaseObject {
 
 	public void setIcapciMesaiSaat(Double value) {
 		if (value != null && value.doubleValue() > 0.0d) {
-			if (this.getVardiyaDateStr().endsWith("0423"))
-				logger.debug("");
+			if (this.getVardiyaDateStr().endsWith("1002") || this.getVardiyaDateStr().endsWith("1010") || this.getVardiyaDateStr().endsWith("1018") || this.getVardiyaDateStr().endsWith("1026"))
+				logger.debug(this.getVardiyaDateStr() + " " + value + " - " + this.getCalismaSuresi());
 		}
 		this.icapciMesaiSaat = value;
 	}
