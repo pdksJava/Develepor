@@ -227,7 +227,7 @@ public class VardiyaGun extends BaseObject {
 					}
 
 				}
-
+				value.setVg(this);
 				this.setVardiyaSaatDB((VardiyaSaat) value.clone());
 			}
 		}
