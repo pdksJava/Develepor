@@ -65,8 +65,13 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 	}
 
 	public void setCalismaSuresi(double value) {
-		if (!guncellendi)
+		String key = vg != null ? vg.getVardiyaKeyStr() : "";
+		if (!guncellendi) {
 			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, calismaSuresi));
+			if (guncellendi && vg != null)
+				logger.debug(id + " " + key + " " + calismaSuresi + " - " + vg.getCalismaSuresi());
+		}
+
 		this.calismaSuresi = value;
 	}
 
