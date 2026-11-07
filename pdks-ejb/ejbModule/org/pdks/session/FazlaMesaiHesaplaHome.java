@@ -2031,6 +2031,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 							CalismaModeli calismaModeli = puantaj.getCalismaModeli();
 							if (!argeGoster)
 								argeGoster = calismaModeli != null && calismaModeli.isArgemi();
+							boolean argeModel = calismaModeli.isArgemi();
 							if (calismaModeli != null && calismaModeli.getId() != null)
 								cmMap.put(calismaModeli.getId(), calismaModeli);
 							puantaj.setTrClass(renk ? VardiyaGun.STYLE_CLASS_ODD : VardiyaGun.STYLE_CLASS_EVEN);
@@ -2322,7 +2323,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 											logger.debug("");
 
 										vardiyaSaat.setNormalSure(vardiya.isCalisma() ? vardiya.getNetCalismaSuresi() : 0.0d);
-										argeDGSSureGuncelle(vardiyaGun, vardiyaSaat);
+										if (argeModel)
+											argeDGSSureGuncelle(vardiyaGun, vardiyaSaat);
 										if (hareketDurum.equals(Boolean.TRUE) && vardiyaGun.isZamanGelmedi() == false && (islemVardiya.isIcapVardiyasi() || vardiyaGun.getHareketler() != null || vardiyaGun.getResmiTatilSure() > 0.0)) {
 											double calSure = vardiyaGun.getCalismaSuresi();
 											if (calSure == 0.0 && vardiyaGun.getResmiTatilSure() > 0.0)
@@ -2357,7 +2359,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 										}
 										vardiyaSaat.setGuncellendi(vardiyaSaat.getId() == null);
 										vardiyaSaat.setNormalSure(vardiya.isCalisma() ? vardiya.getNetCalismaSuresi() : 0.0d);
-										argeDGSSureGuncelle(vardiyaGun, vardiyaSaat);
+										if (argeModel)
+											argeDGSSureGuncelle(vardiyaGun, vardiyaSaat);
 										if (vardiyaSaat != null)
 											tatilOncesiEksik = vardiyaSaat.getCalismaSuresi() < vardiyaSaat.getNormalSure();
 
@@ -2414,7 +2417,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									}
 									if (vardiyaSaat != null) {
 										if (calismaModeli.isArgemi() && vardiyaGun.getHareketler() == null && vardiyaGun.getIzin() == null)
-											argeDGSSureGuncelle(vardiyaGun, vardiyaSaat);
+											if (argeModel)
+												argeDGSSureGuncelle(vardiyaGun, vardiyaSaat);
 
 										if (vardiyaSaat.isGuncellendi()) {
 											VardiyaSaat saatYedek = (VardiyaSaat) vardiyaGun.getVardiyaSaatDB().clone();
