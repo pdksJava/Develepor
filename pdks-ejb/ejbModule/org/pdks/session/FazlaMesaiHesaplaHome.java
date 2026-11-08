@@ -2161,6 +2161,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 									vardiyaGun.setFiiliHesapla(fazlaMesaiHesapla);
 									if (islemVardiya != null) {
 										if (vardiyaGun.getVardiyaDate().getTime() >= puantaj.getIlkGun().getTime() && vardiyaGun.getVardiyaDate().getTime() <= puantaj.getSonGun().getTime()) {
+
+											paramsMap.put("bugun", gunBas);
 											paramsMap.put("fazlaMesaiHesapla", fazlaMesaiHesapla);
 											paramsMap.put("aksamVardiyaSayisi", aksamVardiyaSayisi);
 											paramsMap.put("aksamVardiyaSaatSayisi", aksamVardiyaSaatSayisi);
@@ -4724,8 +4726,24 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @param paramsMap
 	 */
 	private void vardiyaGunKontrol(AylikPuantaj islemPuantaj, VardiyaGun vGun, HashMap<String, Object> paramsMap) {
-		HashMap<String, HareketKGS> ciftHareketMap = new HashMap<String, HareketKGS>(), hareketMap = new HashMap<String, HareketKGS>();
+		Date bugun = (Date) paramsMap.get("bugun");
+		Boolean fazlaMesaiHesapla = (Boolean) paramsMap.get("fazlaMesaiHesapla");
+		Integer aksamVardiyaSayisi = (Integer) paramsMap.get("aksamVardiyaSayisi");
+		Double aksamVardiyaSaatSayisi = (Double) paramsMap.get("aksamVardiyaSaatSayisi");
+		Double sabahAksamCikisSaatSayisi = (Double) paramsMap.get("sabahAksamCikisSaatSayisi");
+		Double resmiTatilSuresi = (Double) paramsMap.get("resmiTatilSuresi");
+		Double haftaCalismaSuresi = (Double) paramsMap.get("haftaCalismaSuresi");
+
+		if (bugun == null)
+			bugun = PdksUtil.getDate(new Date());
+		Vardiya islemVardiya = vGun.getIslemVardiya();
 		boolean fazlaMesaiTalepVardiyaOnayliDurum = false;
+		String izinERPUpdateStr = ortakIslemler.getParameterKey("izinERPUpdate");
+		if (fazlaMesaiTalepOnayliDurum && vGun.getFazlaMesaiOnayla() != null)  
+			fazlaMesaiTalepVardiyaOnayliDurum = vardiyaFazlaMesaiTalepOnayKontrol(vGun, islemVardiya);
+		 
+
+		HashMap<String, HareketKGS> ciftHareketMap = new HashMap<String, HareketKGS>(), hareketMap = new HashMap<String, HareketKGS>();
 		vGun.setHataliFazlaMesailer(null);
 		vGun.setAksamKatSayisi(0.0d);
 		Date aksamVardiyaBitisZamani = null, aksamVardiyaBaslangicZamani = null;
@@ -4913,14 +4931,6 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 		}
 
-		Boolean fazlaMesaiHesapla = (Boolean) paramsMap.get("fazlaMesaiHesapla");
-		Integer aksamVardiyaSayisi = (Integer) paramsMap.get("aksamVardiyaSayisi");
-		Double aksamVardiyaSaatSayisi = (Double) paramsMap.get("aksamVardiyaSaatSayisi");
-		Double sabahAksamCikisSaatSayisi = (Double) paramsMap.get("sabahAksamCikisSaatSayisi");
-		Double resmiTatilSuresi = (Double) paramsMap.get("resmiTatilSuresi");
-		Double haftaCalismaSuresi = (Double) paramsMap.get("haftaCalismaSuresi");
-		String izinERPUpdateStr = ortakIslemler.getParameterKey("izinERPUpdate");
-		Vardiya islemVardiya = vGun.getIslemVardiya();
 		Tatil tatil = vGun.getTatil() != null ? vGun.getTatil().getOrjTatil() : null;
 		PersonelIzin personelIzin = vGun.getIzin();
 		Boolean izinli = vGun.isIzinli();
@@ -5405,9 +5415,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			personelIzinGirisiEkle(vGun, null, izinKey);
 
 		}
-		if (fazlaMesaiTalepOnayliDurum && vGun.getFazlaMesaiOnayla() != null) {
-			fazlaMesaiTalepVardiyaOnayliDurum = vardiyaFazlaMesaiTalepOnayKontrol(vGun, islemVardiya);
-		}
+
 		if (denklestirmeAyDurum && vardiya != null && vardiya.getId() != null && vGun.isAyinGunu() && vardiya.isHaftaTatil() && vGun.isHareketHatali()) {
 			logger.debug(vardiyaKey);
 		}
@@ -5434,6 +5442,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 		hareketMap = null;
 		ciftHareketMap = null;
+
 		paramsMap.put("fazlaMesaiHesapla", fazlaMesaiHesapla);
 		paramsMap.put("aksamVardiyaSayisi", aksamVardiyaSayisi);
 		paramsMap.put("aksamVardiyaSaatSayisi", aksamVardiyaSaatSayisi);
