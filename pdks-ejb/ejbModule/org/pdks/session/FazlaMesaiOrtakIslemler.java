@@ -1737,6 +1737,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 				Double gunlukKatsayi = null;
 				PersonelIzin vardiyalIzin = null;
 				for (VardiyaGun vardiyaGun : ap.getVardiyalar()) {
+					String key = vardiyaGun.getVardiyaDateStr();
 					if (vardiyaGun.isAyinGunu() && vardiyaGun.getVardiya() != null) {
 						if (gunlukKatsayi == null) {
 							gunlukKatsayi = vardiyaGun.getSaatCalisanGunlukKatsayisi();
@@ -1774,7 +1775,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						} else
 							vardiyalIzin = null;
 						if (resmiTatil)
-							logger.debug(vardiyaGun.getVardiyaDateStr());
+							logger.debug(key);
 						String izinKodu = null;
 						if (vardiyaGun.isIzinli()) {
 
@@ -1798,17 +1799,27 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 								if (haftaTatil)
 									logger.debug(vardiyaGun.getVardiyaDateStr());
 								izinTipi = personelIzin.getIzinTipi();
+								if (key.endsWith("1029"))
+									logger.debug(key);
 								if (izinTipi != null) {
-
 									izinBordroDetayTipi = ortakIslemler.getBordroDetayTipi(izinTipi, izinGrupMap);
 									izinKodu = izinBordroDetayTipi != null ? izinBordroDetayTipi.value() : izinTipi.getIzinTipiTanim().getErpKodu();
 									if (izinTipi.isUcretsizIzinTipi() || (izinBordroDetayTipi != null && izinBordroDetayTipi.equals(BordroDetayTipi.UCRETSIZ_IZIN))) {
 										calismaGun = 0;
 									} else if (saatlikCalisma) {
-										if (resmiTatil == false) {
-											Double sure = ortakIslemler.getVardiyaIzinSuresi(vardiyaGun.getSaatCalisanIzinGunKatsayisi(), vardiyaGun, personelDenklestirme, vardiyaGun.getVardiyaDate());
-											if (sure > 0.0d)
+										if (resmiTatil == false || (izinBordroDetayTipi != null && izinBordroDetayTipi.equals(BordroDetayTipi.RAPORLU_IZIN))) {
+											VardiyaGun vg = null;
+											if (resmiTatil && izinBordroDetayTipi != null && izinBordroDetayTipi.equals(BordroDetayTipi.RAPORLU_IZIN)) {
+												vg = (VardiyaGun) vardiyaGun.clone();
+												vg.setTatil(null);
+											} else
+												vg = vardiyaGun;
+											Double sure = ortakIslemler.getVardiyaIzinSuresi(vardiyaGun.getSaatCalisanIzinGunKatsayisi(), vg, personelDenklestirme, vardiyaGun.getVardiyaDate());
+											if (sure > 0.0d) {
 												izinGunSaat += sure;
+												logger.debug(vardiyaGun.getVardiyaDateStr() + " " + sure + " " + izinGunSaat);
+											}
+
 										}
 
 									}
@@ -1891,9 +1902,9 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						if (vardiyaGun.isIzinli() == false) {
 							if (resmiTatil) {
 								if (!tatil.isYarimGunMu()) {
- 									resmiTatilSaat += vardiyaGun.getSaatCalisanResmiTatilKatsayisi();
+									resmiTatilSaat += vardiyaGun.getSaatCalisanResmiTatilKatsayisi();
 								} else if (vardiya.isHaftaTatil() == false) {
- 									resmiTatilSaat += vardiyaGun.getSaatCalisanArifeTatilKatsayisi();
+									resmiTatilSaat += vardiyaGun.getSaatCalisanArifeTatilKatsayisi();
 									normalSaat += vardiyaGun.getSaatCalisanArifeNormalKatsayisi();
 								}
 							} else if (vardiyaGun.isHaftaIci()) {
