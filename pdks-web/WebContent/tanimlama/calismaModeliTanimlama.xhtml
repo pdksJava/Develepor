@@ -338,11 +338,62 @@
 
 						<s:decorate template="/layout/edit.xhtml" cellpadding="0" cellspacing="0" style="text-align : left">
 							<ui:define name="label">Bağlı #{ortakIslemler.vardiyaAciklama()} Şablonu</ui:define>
-							<h:selectOneMenu value="#{calismaModeliHome.calismaModeli.bagliVardiyaSablonu}" disabled="#{authenticatedUser.admin == false}"
+							<h:selectOneMenu value="#{calismaModeliHome.calismaModeli.bagliVardiyaSablonu}" id="sablonlar" disabled="#{authenticatedUser.admin == false}"
 								style="text-align : left">
 								<s:selectItems var="sablon" value="#{calismaModeliHome.sablonList}" label="#{sablon.adi}" noSelectionLabel="Lütfen seçiniz" />
+								<a4j:support event="onchange" ajaxSingle="true" reRender="calismaModeliGiris,vardiyalar" />
 								<s:convertEntity />
 							</h:selectOneMenu>
+							<ui:fragment rendered="#{calismaModeliHome.calismaModeli.bagliVardiyaSablonu != null}">
+								<rich:toolTip for="sablonlar">
+									<h:panelGrid columns="1">
+										<s:decorate template="/layout/edit.xhtml">
+											<ui:define name="label">
+												<h:outputText value="Şablon Adı" />
+											</ui:define>
+											<h:outputText value="#{calismaModeliHome.calismaModeli.bagliVardiyaSablonu.adi}" id="vardiyaAdi" />
+										</s:decorate>
+
+										<s:decorate template="/layout/edit.xhtml">
+											<ui:define name="label">
+												<h:outputText value="Gün Sayisi" />
+											</ui:define>
+											<h:outputText value="#{calismaModeliHome.calismaModeli.bagliVardiyaSablonu.calismaGunSayisi}" id="calismaGunSayisi" />
+										</s:decorate>
+										<s:decorate template="/layout/edit.xhtml">
+											<ui:define name="label">
+												<h:outputText value="Toplam Saat" />
+											</ui:define>
+											<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeliHome.calismaModeli.bagliVardiyaSablonu.toplamSaat)}"
+												id="toplamSaat" />
+										</s:decorate>
+
+
+										<rich:dataTable rowClasses="acik,koyu" value="#{calismaModeliHome.calismaModeli.bagliVardiyaSablonu.haftaList}" var="hs" rows="10"
+											rowKeyVar="row">
+											<f:facet name="header">
+												<h:outputText value="Haftalık Sabit #{ortakIslemler.vardiyaAciklama()} Plan" />
+											</f:facet>
+											<rich:column>
+												<f:facet name="header">
+													<h:outputText value="Gün" />
+												</f:facet>
+												<h:outputText value="#{hs.id}" />
+											</rich:column>
+											<rich:column style="text-align:center;">
+												<f:facet name="header">
+													<h:outputText value="#{ortakIslemler.vardiyaAciklama()}" />
+												</f:facet>
+												<h:outputText value="#{hs.value}" />
+											</rich:column>
+											<f:facet name="footer">
+												<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+											</f:facet>
+										</rich:dataTable>
+									</h:panelGrid>
+
+								</rich:toolTip>
+							</ui:fragment>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml" rendered="#{calismaModeliHome.saatlikCalismaVar}">
 							<ui:define name="label">Aylık Maaş Mı</ui:define>
