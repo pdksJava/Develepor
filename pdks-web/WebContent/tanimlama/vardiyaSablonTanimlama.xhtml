@@ -278,7 +278,9 @@
 								<ui:fragment rendered="#{vardiyaSablonuHome.instance.calismaModeli != null}">
 									<rich:toolTip for="perCalismaModeli">
 										<h:panelGrid columns="1">
-											 
+											 <ui:fragment>
+												<span><B>#{ortakIslemler.calismaModeliAciklama()} : </B>#{vardiyaSablonuHome.instance.calismaModeli.ozelAciklama}</span>
+											</ui:fragment>
 											<ui:fragment>
 												<span><B>Hafta Tatili : </B>#{vardiyaSablonuHome.instance.calismaModeli.haftaTatil}</span>
 											</ui:fragment>
