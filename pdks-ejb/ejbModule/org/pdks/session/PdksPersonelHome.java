@@ -3328,8 +3328,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 						viewMap.put(personelView.getSicilNo(), personelView);
 					}
 				}
-				if (!viewMap.isEmpty()) {
-					String tableName = ortakIslemler.getParameterKey(ortakIslemler.getParametrePersonelERPTableView());
+				String tableName = ortakIslemler.getParameterKey(ortakIslemler.getParametrePersonelERPTableView());
+				if (!viewMap.isEmpty() && ortakIslemler.isExisView(tableName, session)) {
 					List<PersonelERPDB> erpList = pdksEntityController.getSQLParamByFieldList(tableName, PersonelERPDB.COLUMN_NAME_PERSONEL_NO, new ArrayList(viewMap.keySet()), PersonelERPDB.class, session);
 					for (PersonelERPDB personelERPDB : erpList) {
 						viewMap.get(personelERPDB.getPersonelNo()).setYeniPersonel(Boolean.TRUE);
@@ -3963,7 +3963,10 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		PersonelIzin izin = new PersonelIzin();
 		izin.setIzinSuresi(0D);
 		personel.setPersonelIzin(izin);
-		boolean tableERPOku = ortakIslemler.getParameterKeyHasStringValue(ortakIslemler.getParametrePersonelERPTableView());
+		String tableAdi = ortakIslemler.getParametrePersonelERPTableView();
+		boolean tableERPOku = ortakIslemler.getParameterKeyHasStringValue(tableAdi);
+		if (tableERPOku)
+			tableERPOku = ortakIslemler.isExisView(tableAdi, session);
 		updateValue = false;
 		if ((authenticatedUser.isIK() || authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi()))
 			updateValue = tableERPOku || ortakIslemler.getParameterKeyHasStringValue(PersonelERPGuncelleme.PARAMETER_KEY + "Update");

@@ -83,12 +83,14 @@ public class ExcelUtil implements Serializable {
 		}
 		return comment;
 	}
+
 	public static CellStyle closeStyle(Workbook wb, CellStyle orjCellStyle) {
 		CellStyle cloneCellStyle = wb.createCellStyle();
 		cloneCellStyle.cloneStyleFrom(orjCellStyle);
-	
+
 		return cloneCellStyle;
 	}
+
 	/**
 	 * @param rgb1
 	 * @param rgb2
@@ -155,6 +157,8 @@ public class ExcelUtil implements Serializable {
 			tarih = ExcelUtil.getSheetDateValue(sheet, row, col);
 		} catch (Exception e) {
 			tarih = PdksUtil.convertToJavaDate(ExcelUtil.getSheetStringValue(sheet, row, col), pattern);
+			if (tarih == null)
+				tarih = PdksUtil.getDateFromString(ExcelUtil.getSheetStringValue(sheet, row, col));
 		}
 		return tarih;
 	}
