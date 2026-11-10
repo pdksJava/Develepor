@@ -5,6 +5,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
+import org.pdks.session.PdksUtil;
+
 /**
  * <p>
  * Java class for personelERP complex type.
@@ -140,6 +142,8 @@ public class PersonelERP extends BaseERPObject {
 	 * 
 	 */
 	public String getAdi() {
+		if (adi != null)
+			adi = PdksUtil.getWebServiceData(adi);
 		return adi;
 	}
 
@@ -161,6 +165,9 @@ public class PersonelERP extends BaseERPObject {
 	 * 
 	 */
 	public String getBolumAdi() {
+		if (bolumAdi != null)
+			bolumAdi = PdksUtil.getWebServiceData(bolumAdi);
+
 		return bolumAdi;
 	}
 
@@ -203,6 +210,9 @@ public class PersonelERP extends BaseERPObject {
 	 * 
 	 */
 	public String getBordroAltAlanAdi() {
+		if (bordroAltAlanAdi != null)
+			bordroAltAlanAdi = PdksUtil.getWebServiceData(bordroAltAlanAdi);
+
 		return bordroAltAlanAdi;
 	}
 
@@ -287,6 +297,9 @@ public class PersonelERP extends BaseERPObject {
 	 * 
 	 */
 	public String getDepartmanAdi() {
+		if (departmanAdi != null)
+			departmanAdi = PdksUtil.getWebServiceData(departmanAdi);
+
 		return departmanAdi;
 	}
 
@@ -371,6 +384,8 @@ public class PersonelERP extends BaseERPObject {
 	 * 
 	 */
 	public String getGorevi() {
+		if (gorevi != null)
+			gorevi = PdksUtil.getWebServiceData(gorevi);
 		return gorevi;
 	}
 
@@ -455,6 +470,8 @@ public class PersonelERP extends BaseERPObject {
 	 * 
 	 */
 	public String getMasrafYeriAdi() {
+		if (masrafYeriAdi != null)
+			masrafYeriAdi = PdksUtil.getWebServiceData(masrafYeriAdi);
 		return masrafYeriAdi;
 	}
 
@@ -518,6 +535,8 @@ public class PersonelERP extends BaseERPObject {
 	 * 
 	 */
 	public String getPersonelTipi() {
+		if (personelTipi != null)
+			personelTipi = PdksUtil.getWebServiceData(personelTipi);
 		return personelTipi;
 	}
 
@@ -581,6 +600,8 @@ public class PersonelERP extends BaseERPObject {
 	 * 
 	 */
 	public String getSirketAdi() {
+		if (sirketAdi != null)
+			sirketAdi = PdksUtil.getWebServiceData(sirketAdi);
 		return sirketAdi;
 	}
 
@@ -592,6 +613,7 @@ public class PersonelERP extends BaseERPObject {
 	 * 
 	 */
 	public void setSirketAdi(String value) {
+
 		this.sirketAdi = value;
 	}
 
@@ -623,6 +645,9 @@ public class PersonelERP extends BaseERPObject {
 	 * 
 	 */
 	public String getSoyadi() {
+		if (soyadi != null)
+			soyadi = PdksUtil.getWebServiceData(soyadi);
+
 		return soyadi;
 	}
 
@@ -644,6 +669,8 @@ public class PersonelERP extends BaseERPObject {
 	 * 
 	 */
 	public String getTesisAdi() {
+		if (tesisAdi != null)
+			tesisAdi = PdksUtil.getWebServiceData(tesisAdi);
 		return tesisAdi;
 	}
 
@@ -655,6 +682,7 @@ public class PersonelERP extends BaseERPObject {
 	 * 
 	 */
 	public void setTesisAdi(String value) {
+
 		this.tesisAdi = value;
 	}
 

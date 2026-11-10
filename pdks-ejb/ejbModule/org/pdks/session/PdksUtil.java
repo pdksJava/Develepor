@@ -139,6 +139,23 @@ public class PdksUtil implements Serializable {
 
 	private static boolean sistemDestekVar = false, puantajSorguAltBolumGir = false;
 
+	/**
+	 * @param value
+	 * @return
+	 */
+	public static String getWebServiceData(String value) {
+		if (value != null) {
+			if (value.indexOf("&") > 0)
+				value = value.replace("&", "&amp;");
+			if (value.indexOf(">") > 0)
+				value = value.replace(">", "&gt;");
+			if (value.indexOf("<") > 0)
+				value = value.replace("<", "&t;");
+		}
+		return value;
+
+	}
+
 	public static String adresKontrol(String adres) {
 		String str = null;
 		int responseCode = 0;
@@ -3527,7 +3544,7 @@ public class PdksUtil implements Serializable {
 				if (session == null) {
 					try {
 						// 3. Yol: Yukarıdakiler başarısız olursa eski usul yansıma (reflection) ile metodu zorluyoruz
- 						session = (Session) PdksUtil.getMethodObject(em, "getSession", null);
+						session = (Session) PdksUtil.getMethodObject(em, "getSession", null);
 					} catch (Exception e3) {
 						logger.error("Yukarıdakiler başarısız olursa eski usul yansıma (reflection) ile metodu zorluyoruz\n" + e3);
 					}
