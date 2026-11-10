@@ -268,12 +268,47 @@
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml" rendered="#{vardiyaSablonuHome.modelList != null}">
 								<ui:define name="label">#{ortakIslemler.calismaModeliAciklama()}</ui:define>
-								<h:selectOneMenu value="#{vardiyaSablonuHome.instance.calismaModeli}" style="text-align : left" disabled="#{authenticatedUser.admin == false}">
+								<h:selectOneMenu value="#{vardiyaSablonuHome.instance.calismaModeli}" id="perCalismaModeli" style="text-align : left"
+									disabled="#{authenticatedUser.admin == false}">
 									<s:selectItems var="calismaModeli" value="#{vardiyaSablonuHome.modelList}" label="#{calismaModeli.ozelAciklama}"
 										noSelectionLabel="Lütfen seçiniz" />
-									<a4j:support event="onchange" ajaxSingle="true" />
+									<a4j:support event="onchange" ajaxSingle="true"  reRender="sirketBilgi,vardiyalar" />
 									<s:convertEntity />
 								</h:selectOneMenu>
+								<ui:fragment rendered="#{vardiyaSablonuHome.instance.calismaModeli != null}">
+									<rich:toolTip for="perCalismaModeli">
+										<h:panelGrid columns="1">
+											 
+											<ui:fragment>
+												<span><B>Hafta Tatili : </B>#{vardiyaSablonuHome.instance.calismaModeli.haftaTatil}</span>
+											</ui:fragment>
+											<rich:dataTable rowClasses="acik,koyu" value="#{vardiyaSablonuHome.instance.calismaModeli.haftaSaatList}" var="hs" rows="10"
+												rowKeyVar="row">
+												<f:facet name="header">
+													<h:outputText value="Haftalık Çalışma Saatleri" />
+												</f:facet>
+												<rich:column>
+													<f:facet name="header">
+														<h:outputText value="Gün" />
+													</f:facet>
+													<h:outputText value="#{hs.id}" />
+												</rich:column>
+												<rich:column style="text-align:center;">
+													<f:facet name="header">
+														<h:outputText value="Saat" />
+													</f:facet>
+													<h:outputText value="#{hs.value}" />
+												</rich:column>
+												<f:facet name="footer">
+													<rich:datascroller renderIfSinglePage="false" maxPages="5" />
+												</f:facet>
+											</rich:dataTable>
+										</h:panelGrid>
+
+
+
+									</rich:toolTip>
+								</ui:fragment>
 							</s:decorate>
 						</h:panelGrid>
 					</a4j:outputPanel>
