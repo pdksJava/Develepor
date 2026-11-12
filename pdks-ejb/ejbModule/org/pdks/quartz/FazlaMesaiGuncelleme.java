@@ -384,7 +384,6 @@ public class FazlaMesaiGuncelleme implements Serializable {
 		if (adresStr != null)
 			adresStr = "";
 		logger.info(konu + " out " + PdksUtil.getCurrentTimeStampStr());
-
 		return adresStr;
 
 	}

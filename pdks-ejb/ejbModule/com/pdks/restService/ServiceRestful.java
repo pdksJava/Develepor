@@ -1,15 +1,23 @@
 package com.pdks.restService;
 
+import java.io.InputStream;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.TreeMap;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -75,6 +83,51 @@ public class ServiceRestful implements Serializable {
 		}
 
 		return session;
+	}
+
+	@GET
+	@Path("getLyrics")
+	@Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8" })
+	@Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
+	// http://localhost:8080/rest/srv/getLyrics?sanatci=Queen&sarki=Bohemian
+	public String getLyrics(@QueryParam("sanatci") String artist, @QueryParam("sarki") String title) throws Exception {
+		String sozler = null;
+		LinkedHashMap<String, Object> map = null;
+		String characterEncoding = StandardCharsets.UTF_8.toString();
+		BaseReturn<LinkedHashMap<String, Object>> resp = new BaseReturn<LinkedHashMap<String, Object>>();
+		resp.setCode(OPERATION_ERROR);
+		String adres = String.format("https://api.lyrics.ovh/v1/%s/%s", URLEncoder.encode(artist, characterEncoding), URLEncoder.encode(title, characterEncoding));
+		try {
+			URL url = new URL(adres);
+			HttpsURLConnection connjava = (HttpsURLConnection) url.openConnection();
+			connjava.setRequestMethod(HttpMethod.GET);
+			connjava.setDoInput(true);
+			connjava.setDoOutput(true);
+			connjava.setUseCaches(false);
+			int timeOutSaniye = 15;
+			connjava.setReadTimeout(2 * timeOutSaniye * 1000);
+			connjava.setConnectTimeout(timeOutSaniye * 1000); // set timeout to 5 seconds
+			connjava.setAllowUserInteraction(true);
+			Integer responseCode = ((HttpURLConnection) connjava).getResponseCode();
+			InputStream is = responseCode >= 400 ? null : connjava.getInputStream();
+			if (is != null) {
+				map = new LinkedHashMap<String, Object>();
+				byte[] pngData = PdksUtil.toByteArray(is);
+				sozler = String.valueOf(pngData);
+				map.put("sonuc", sozler);
+				resp.setCode(OPERATION_SUCCESS);
+			}
+
+		} catch (Exception e) {
+			map = new LinkedHashMap<String, Object>();
+			sozler = e.getMessage();
+			map.put("error", e.getMessage());
+
+		}
+		resp.setData(map);
+		sozler = gson.toJson(resp);
+		return sozler;
+
 	}
 
 	@POST

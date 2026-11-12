@@ -54,8 +54,13 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 	}
 
 	public void setNormalSure(double value) {
-		if (!guncellendi)
+		if (!guncellendi) {
+			String key = vg != null ? vg.getVardiyaKeyStr() : "";
 			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, normalSure));
+			if (guncellendi && vg != null)
+				logger.debug(id + " " + key + " " + normalSure + " - " + vg.getNormalSure());
+		}
+
 		this.normalSure = value;
 	}
 
@@ -81,8 +86,13 @@ public class VardiyaSaat extends BasePDKSObject implements Serializable, Cloneab
 	}
 
 	public void setDgsSuresi(Double value) {
-		if (!guncellendi)
+		if (!guncellendi) {
+			String key = vg != null ? vg.getVardiyaKeyStr() : "";
 			this.setGuncellendi(PdksUtil.isDoubleDegisti(value, dgsSuresi));
+			if (guncellendi && vg != null)
+				logger.debug(id + " " + key + " " + dgsSuresi + " - " + vg.getDgsSuresi());
+		}
+
 		this.dgsSuresi = value;
 	}
 

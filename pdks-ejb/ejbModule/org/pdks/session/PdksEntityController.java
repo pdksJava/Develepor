@@ -767,21 +767,29 @@ public class PdksEntityController implements Serializable {
 	public boolean isSessionKapali(Connection connection, Session sessionx) {
 		boolean kapali = true;
 		if (sessionx != null) {
-			if (connection != null) {
-				if ((sessionx.isOpen() && sessionx.isConnected()) == false) {
+			if (connection == null)
+				kapali = isSessionAcik(sessionx) == false;
+			else {
+				if (isSessionAcik(sessionx) == false) {
 					try {
 						sessionx.reconnect(connection);
-						kapali = sessionx.isConnected() == false;
+						kapali = isSessionAcik(sessionx);
 					} catch (Exception e) {
 					}
-
 				}
-			} else
-				kapali = (sessionx.isOpen() && sessionx.isConnected()) == false;
-
+			}
 		}
 		return kapali;
 
+	}
+
+	/**
+	 * @param session
+	 * @return
+	 */
+	private boolean isSessionAcik(Session session) {
+		boolean acik = session != null && session.isOpen() && session.isConnected();
+		return acik;
 	}
 
 	/**
