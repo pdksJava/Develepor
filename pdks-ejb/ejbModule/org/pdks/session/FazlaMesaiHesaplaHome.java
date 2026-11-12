@@ -5901,7 +5901,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			if (mailGonder) {
 				toList = ortakIslemler.IKKullanicilariBul(new ArrayList<User>(), userLogin.getPdksPersonel(), session);
 				if (!toList.isEmpty() || !yoneticiMap.isEmpty()) {
-					List<User> adminUserList = ortakIslemler.bccAdminAdres(session, null);
+					List<User> adminUserList = ortakIslemler.bccAdminAdres(session);
 					Tanim bolum = null;
 					if (seciliEkSaha3Id != null && seciliEkSaha3Id > 0) {
 

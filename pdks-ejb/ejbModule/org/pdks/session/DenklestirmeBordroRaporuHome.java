@@ -419,7 +419,6 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 						departman = sirket.getDepartman();
 						departmanId = departman.getId();
 						tesisId = null;
-						boolean sirketCalistir = true;
 						Long pdksUserId = param.containsKey("pdksUserId") ? Long.parseLong(param.get("pdksUserId")) : null;
 						if (pdksUserId != null)
 							pdksUser = (User) pdksEntityController.getSQLParamByFieldObject(User.TABLE_NAME, User.COLUMN_NAME_ID, pdksUserId, User.class, session);
@@ -430,61 +429,60 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 						} catch (Exception e) {
 
 						}
-
+						
 						pdksUser.setAdmin(true);
 						pdksUser.setLogin(false);
 						departmanId = departman.getId();
 						String donemStr = denklestirmeAy.getAyAdi() + " " + denklestirmeAy.getYil() + " : " + sirket.getAd();
+						LinkedHashMap<Long, Tanim> tesisMap = new LinkedHashMap<Long, Tanim>();
 						if (sirket.isTesisDurumu()) {
 							String tesisIdStr = param.get("tesisId");
-							List<Long> idList = new ArrayList<Long>();
+							List<Long> tesisIdList = new ArrayList<Long>();
 							if (tesisIdStr.equals("*")) {
-								sirketCalistir = false;
-								DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
+ 								DepartmanDenklestirmeDonemi denklestirmeDonemi = new DepartmanDenklestirmeDonemi();
 								AylikPuantaj aylikPuantaj = fazlaMesaiOrtakIslemler.getAylikPuantaj(denklestirmeAy.getAy(), denklestirmeAy.getYil(), denklestirmeDonemi, session);
 								aylikPuantaj.setLoginUser(pdksUser);
 								aylikPuantaj.setDenklestirmeAy(denklestirmeAy);
 								List<SelectItem> tesisDetayList = fazlaMesaiOrtakIslemler.getFazlaMesaiTesisList(sirket, aylikPuantaj, false, session);
 								for (SelectItem selectItem : tesisDetayList)
-									idList.add((Long) selectItem.getValue());
+									tesisIdList.add((Long) selectItem.getValue());
 								tesisDetayList = null;
 							} else {
-
 								Long paramId = param.containsKey("tesisId") ? Long.parseLong(tesisIdStr) : null;
 								if (paramId != null)
-									idList.add(paramId);
-
+									tesisIdList.add(paramId);
 							}
-							if (!idList.isEmpty()) {
-								sirketCalistir = false;
-								List<Tanim> tesisList = pdksEntityController.getSQLParamByFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, idList, Tanim.class, session);
+							if (!tesisIdList.isEmpty()) {
+ 								List<Tanim> tesisList = pdksEntityController.getSQLParamByFieldList(Tanim.TABLE_NAME, Tanim.COLUMN_NAME_ID, tesisIdList, Tanim.class, session);
 								if (tesisList.size() > 1)
 									tesisList = PdksUtil.sortTanimList(Constants.TR_LOCALE, tesisList);
+								tesisIdList.clear();
 								for (Tanim tesis : tesisList) {
 									tesisId = tesis.getId();
-									String str = PdksUtil.replaceAll(donemStr + " " + tesis.getAciklama(), "  ", " ").trim();
-									if (login == false)
-										logger.info(str + " in " + PdksUtil.getCurrentTimeStampStr());
-									sirketFazlaMesaiGuncelleme();
-									if (login == false)
-										logger.info(str + " out " + PdksUtil.getCurrentTimeStampStr());
-
-								}
+									tesisMap.put(tesisId, tesis);
+ 								}
 								tesisList = null;
+								tesisIdList=null;
 							}
-							idList = null;
-						}
-						if (sirketCalistir) {
-							String str = PdksUtil.replaceAll(donemStr, "  ", " ").trim();
-
-							tesisId = null;
-							if (login == false)
-								logger.info(str + " in " + PdksUtil.getCurrentTimeStampStr());
-							sirketFazlaMesaiGuncelleme();
-							if (login == false)
-								logger.info(str + " out " + PdksUtil.getCurrentTimeStampStr());
-
-						}
+ 						} else
+ 							tesisMap.put(null, null);
+						if (tesisMap.isEmpty() == false) {
+							for (Iterator iterator = tesisMap.keySet().iterator(); iterator.hasNext();) {
+								tesisId = (Long) iterator.next();
+								String str = "";
+								if (tesisId != null) {
+									Tanim tesis = tesisMap.get(tesisId);
+									str = PdksUtil.replaceAll(donemStr + " " + tesis.getAciklama(), "  ", " ").trim();
+								} else
+									str = PdksUtil.replaceAll(donemStr, "  ", " ").trim();
+								if (login == false)
+									logger.info(str + " in " + PdksUtil.getCurrentTimeStampStr());
+								sirketFazlaMesaiGuncelleme();
+								if (login == false)
+									logger.info(str + " out " + PdksUtil.getCurrentTimeStampStr());
+							}
+ 						}
+ 						tesisMap = null;
 					}
 
 				} catch (Exception e) {
@@ -500,6 +498,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	public String sirketFazlaMesaiGuncelleme() {
 		HashMap fields = new HashMap();
 		fields.put("id", sirketId);
+		if (pdksEntityController.isSessionKapali(null, session))
+			session = PdksUtil.getSession(entityManager, authenticatedUser == null);
 		if (session != null)
 			fields.put(PdksEntityController.MAP_KEY_SESSION, session);
 		session.clear();
@@ -592,12 +592,9 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 			logYaz = ortakIslemler.getCanliDurum() == false && ortakIslemler.getTestSunucuDurum() == false;
 		Sirket seciliSirket = (Sirket) paramMap.get("seciliSirket");
 		Long seciliTesisId = paramMap.containsKey("seciliTesisId") ? (Long) paramMap.get("seciliTesisId") : null;
-		if (pdksEntityController.isSessionKapali(null, session)) {
+		if (pdksEntityController.isSessionKapali(null, session))  
 			session = PdksUtil.getSessionUser(entityManager, loginUser);
-			if (authenticatedUser != null)
-				authenticatedUser.putSessionMap("bolumFazlaMesai", session);
-		}
-		List<SelectItem> bolumList = fazlaMesaiOrtakIslemler.getFazlaMesaiBolumList(seciliSirket, seciliTesisId != null ? String.valueOf(seciliTesisId) : "", aylikPuantaj, loginUser.isAdmin() == false, session);
+  		List<SelectItem> bolumList = fazlaMesaiOrtakIslemler.getFazlaMesaiBolumList(seciliSirket, seciliTesisId != null ? String.valueOf(seciliTesisId) : "", aylikPuantaj, loginUser.isAdmin() == false, session);
 		AylikPuantaj ap = aylikPuantaj != null ? (AylikPuantaj) aylikPuantaj.clone() : new AylikPuantaj(denklestirmeAy);
 		if (ap.getLoginUser() == null)
 			ap.setLoginUser(loginUser);

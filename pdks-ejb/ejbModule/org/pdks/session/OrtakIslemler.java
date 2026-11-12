@@ -26658,74 +26658,56 @@ public class OrtakIslemler implements Serializable {
 
 	/**
 	 * @param session
-	 * @param tipi
 	 * @return
 	 */
-	public List<User> bccAdminAdres(Session session, String tipi) {
+	public List<User> bccAdminAdres(Session session) {
 		List<User> userList = null;
 		HashMap map = new HashMap();
 		Date bugun = PdksUtil.getDate(new Date());
-		if (tipi == null) {
-			String bccAdresStr = PdksUtil.isSistemDestekVar() ? getParameterKey("bccAdres") : "";
-			if (bccAdresStr != null && bccAdresStr.indexOf("@") > 1) {
-				List<String> bccAdresler = PdksUtil.getListFromString(bccAdresStr, null);
-				if (bccAdresler != null && !bccAdresler.isEmpty()) {
-					userList = new ArrayList<User>();
-					for (String email : bccAdresler) {
-						User user = new User();
-						user.setEmail(email);
-						userList.add(user);
-					}
-					map.clear();
-					map.put("email", bccAdresler);
-					map.put("durum=", Boolean.TRUE);
-					map.put("pdksPersonel.durum=", Boolean.TRUE);
-					map.put("pdksPersonel.iseBaslamaTarihi <= ", bugun);
-					map.put("pdksPersonel.sskCikisTarihi >= ", bugun);
-					if (session != null)
-						map.put(PdksEntityController.MAP_KEY_SESSION, session);
-					List<User> list = pdksEntityController.getObjectByInnerObjectListInLogic(map, User.class);
-					if (!list.isEmpty() && userList.size() >= list.size()) {
-						for (int i = 0; i < userList.size(); i++) {
-							User user = userList.get(i);
-							for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-								User userDb = (User) iterator.next();
-								if (userDb.getEmail().equals(user.getEmail())) {
-									userList.set(i, userDb);
-									iterator.remove();
-									break;
-								}
-
-							}
+		String bccAdresStr = PdksUtil.isSistemDestekVar() ? getParameterKey("bccAdres") : "";
+		if (bccAdresStr != null && bccAdresStr.indexOf("@") > 1) {
+			List<String> bccAdresler = PdksUtil.getListFromString(bccAdresStr, null);
+			if (bccAdresler != null && !bccAdresler.isEmpty()) {
+				userList = new ArrayList<User>();
+				for (String email : bccAdresler) {
+					User user = new User();
+					user.setEmail(email);
+					userList.add(user);
+				}
+ 				List<User> list = pdksEntityController.getSQLParamByAktifFieldList(User.TABLE_NAME, User.COLUMN_NAME_EMAIL, bccAdresler, User.class, session);
+				if (!list.isEmpty() && userList.size() >= list.size()) {
+					userList.clear();
+					for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+						User userDb = (User) iterator.next();
+						Personel personel = userDb.getPdksPersonel();
+						if (personel.isCalisiyorGun(bugun)) {
+							userList.add(userDb);
 						}
 					}
-					list = null;
 				}
-				bccAdresler = null;
+				list = null;
 			}
+			bccAdresler = null;
 		}
 
 		if (userList == null) {
 			map.clear();
 			map.put(PdksEntityController.MAP_KEY_SELECT, "user");
-			// map.put("role.rolename ", Arrays.asList(Role.TIPI_ADMIN, Role.TIPI_SISTEM_YONETICI));
 			map.put("role.rolename=", Role.TIPI_ADMIN);
-			map.put("user.durum=", Boolean.TRUE);
-			map.put("user.pdksPersonel.durum=", Boolean.TRUE);
-			map.put("user.pdksPersonel.iseBaslamaTarihi <= ", bugun);
-			map.put("user.pdksPersonel.sskCikisTarihi >= ", bugun);
 			if (session != null)
 				map.put(PdksEntityController.MAP_KEY_SESSION, session);
 			userList = pdksEntityController.getObjectByInnerObjectListInLogic(map, UserRoles.class);
+			for (Iterator iterator = userList.iterator(); iterator.hasNext();) {
+				User user = (User) iterator.next();
+				Personel personel = user.getPdksPersonel();
+				if (user.getDurum() == false || personel.isCalisiyorGun(bugun) == false)
+					iterator.remove();
+			}
 			map = null;
 		}
 		map = null;
-		if (!PdksUtil.isSistemDestekVar()) {
-			if (userList == null)
-				userList = new ArrayList<User>();
-			else
-				userList.clear();
-		}
+		if (!PdksUtil.isSistemDestekVar())
+			userList.clear();
 
 		return userList;
 	}

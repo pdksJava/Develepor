@@ -2789,7 +2789,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 			bccList = new ArrayList<User>();
 		else
 			bccList.clear();
-		List<User> adminUserList = ortakIslemler.bccAdminAdres(session, null);
+		List<User> adminUserList = ortakIslemler.bccAdminAdres(session);
 		if (!adminUserList.isEmpty())
 			bccList.addAll(adminUserList);
 		mailKonu = "İzin İptal";
@@ -4592,7 +4592,7 @@ public class PersonelIzinGirisiHome extends EntityHome<PersonelIzin> implements 
 	 */
 	private void adminBcc() {
 		// List<User> adminUserList = ortakIslemler.getAdminBul();
-		List<User> adminUserList = ortakIslemler.bccAdminAdres(session, null);
+		List<User> adminUserList = ortakIslemler.bccAdminAdres(session);
 		if (!adminUserList.isEmpty()) {
 			List<String> adminMailList = new ArrayList<String>();
 			for (User user : adminUserList)

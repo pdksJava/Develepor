@@ -140,7 +140,7 @@ public class Zamanlayici implements Serializable {
 		if (pdksEntityController.isSessionKapali(null, session))
 			session = PdksUtil.getSession(entityManager, authenticatedUser == null);
 		if (userList == null || userList.isEmpty()) {
-			userList = ortakIslemler.bccAdminAdres(session, null);
+			userList = ortakIslemler.bccAdminAdres(session);
 			xaciklama += " ( " + PdksUtil.getCurrentTimeStampStr() + " ) ";
 		} else
 			thisIp = null;
