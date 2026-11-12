@@ -25644,15 +25644,15 @@ public class OrtakIslemler implements Serializable {
 		Calendar cal = Calendar.getInstance();
 		String vardiyaDateStr = vardiyaGun.getVardiyaDateStr();
 		boolean saatlik = izinTipi.getSaatGosterilecek() && izinTipi.getGunGosterilecek().booleanValue() == false;
-		if (vardiyaDateStr.equals("20240801"))
-			logger.debug(personelIzin.getId());
+		// if (izinTipi.isSenelikIzin() && vardiyaDateStr.endsWith("1029"))
+		// logger.debug(personelIzin.getId());
 		try {
 			boolean girisYok = izinTipi.getPersonelGirisTipi() == null || izinTipi.getPersonelGirisTipi().equals(IzinTipi.GIRIS_TIPI_YOK);
 			Tatil tatil = girisYok == false ? vardiyaGun.getTatil() : null;
-			if (vardiyaGun.getVardiyaDateStr().endsWith("0225"))
+			if (izinTipi.isSenelikIzin() && vardiyaDateStr.endsWith("1029"))
 				logger.debug("");
 			Date bitisGun = null;
-			if (girisYok == false) {
+			if (girisYok == false || tatilSay == false) {
 				bitisGun = PdksUtil.getDate(personelIzin.getBitisZamani());
 				if (vardiyaGun.getVardiyaDate().before(bitisGun))
 					bitisGun = null;

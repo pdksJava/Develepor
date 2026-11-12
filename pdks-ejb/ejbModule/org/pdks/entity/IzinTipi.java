@@ -766,7 +766,8 @@ public class IzinTipi extends BaseObject {
 
 	@Transient
 	public Boolean isTatilSayilir() {
-		return (tatilSay != null && tatilSay.booleanValue() && isSenelikIzin() == false);
+		boolean tatilMi = (tatilSay != null && tatilSay.booleanValue() && isSenelikIzin() == false);
+		return tatilMi;
 	}
 
 	@Transient
