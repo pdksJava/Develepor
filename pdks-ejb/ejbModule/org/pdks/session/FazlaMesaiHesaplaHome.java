@@ -2324,7 +2324,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 										if (key.endsWith("1010") || key.endsWith("1018"))
 											logger.debug("");
 
-										vardiyaSaat.setNormalSure(vardiya.isCalisma() ? vardiya.getNetCalismaSuresi() : 0.0d);
+										vardiyaSaat.setNormalSure(vardiya.isCalisma() && vardiyaGun.isIzinli() == false ? vardiya.getNetCalismaSuresi() : 0.0d);
 										if (argeModel)
 											argeDGSSureGuncelle(vardiyaGun, vardiyaSaat);
 										if (hareketDurum.equals(Boolean.TRUE) && vardiyaGun.isZamanGelmedi() == false && (islemVardiya.isIcapVardiyasi() || vardiyaGun.getHareketler() != null || vardiyaGun.getResmiTatilSure() > 0.0)) {
@@ -2424,7 +2424,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 										if (vardiyaSaat.isGuncellendi()) {
 											VardiyaSaat saatYedek = (VardiyaSaat) vardiyaGun.getVardiyaSaatDB().clone();
-
+											saatYedek.setGuncellendi(vardiyaSaat.getId() == null);
 											if (vardiyaSaat.getId() == null || islemVardiya.isIcapVardiyasi() == false) {
 												logger.debug(vardiyaGun.getVardiyaKeyStr() + " " + saatYedek.getCalismaSuresi() + " " + vardiyaSaat.getCalismaSuresi());
 												vardiyaSaat.setResmiTatilKanunenEklenenSure(vardiyaGun.getResmiTatilKanunenEklenenSure());
@@ -2612,6 +2612,9 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 													addSaveList(keyList, saveList, vg);
 												}
 												vardiyaSaat.setGuncellendi(vardiyaSaat.getId() == null);
+												if (key.endsWith("1103"))
+													logger.debug(key + " " + vardiyaSaat.getCalismaSuresi() + " - " + vg.getCalismaSuresi());
+
 												if (vg.getDurum()) {
 													vardiyaSaat.setNormalSure(normalSure);
 													double saat = vg.ucretiOdenenMesaiHesapla();
@@ -2632,10 +2635,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 													if (vg.getGecenAyResmiTatilSure() > 0.0d && islemVardiya.isIcapVardiyasi() == false) {
 														vardiyaSaat.setCalismaSuresi(vardiyaSaat.getCalismaSuresi() + vg.getGecenAyResmiTatilSure());
 													}
-													if (islemVardiya.isIcapVardiyasi()) {
-														if (key.endsWith("1002") || key.endsWith("1010") || key.endsWith("1018") || key.endsWith("1026"))
-															logger.debug(key + " " + vardiyaSaat.getCalismaSuresi() + " - " + vg.getCalismaSuresi());
-													}
+
 													vardiyaSaat.setCalismaSuresi(calSure);
 													vardiyaSaat.setResmiTatilKanunenEklenenSure(vg.getResmiTatilKanunenEklenenSure());
 													vardiyaSaat.setResmiTatilSure(vg.getResmiTatilSure());
@@ -2652,6 +2652,8 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 													if (vardiyaSaat.isGuncellendi() == false && ekSaatEkle)
 														vardiyaSaat.setGuncellendi(true);
+													if (key.endsWith("1103"))
+														logger.debug(key + " " + vardiyaSaat.getCalismaSuresi() + " - " + vg.getCalismaSuresi());
 
 													if (vardiyaSaat.isGuncellendi() || ekSaatEkle) {
 														if (ekSaatEkle) {
@@ -2732,6 +2734,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 
 									}
 									if (flushPuantaj) {
+										logger.debug(personel.getPdksSicilNo() + " " + personel.getAdSoyad());
 										sessionFlush();
 										flushPuantaj = false;
 										if (ts != null && ts.isActive())
@@ -5347,7 +5350,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 			hareketMap = null;
 			ciftHareketMap = null;
 		} else {
- 			if (vGun.getIzin() == null && vGun.getVardiya() != null && vGun.getCalismaSuresi() > 0) {
+			if (vGun.getIzin() == null && vGun.getVardiya() != null && vGun.getCalismaSuresi() > 0) {
 				HashMap<String, Object> aksamMap = aksamSureHesapla(vGun, aksamVardiyaBitisZamani, aksamVardiyaBaslangicZamani, aksamVardiyaSayisi, aksamVardiyaSaatSayisi);
 				if (aksamMap != null) {
 					aksamVardiyaSayisi = aksamMap.containsKey("gun") ? (Integer) aksamMap.get("gun") : aksamVardiyaSayisi;
