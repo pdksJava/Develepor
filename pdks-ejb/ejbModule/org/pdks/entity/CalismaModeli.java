@@ -20,6 +20,7 @@ import javax.persistence.Transient;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.pdks.enums.ModelZamanBirimi;
 import org.pdks.security.entity.User;
 import org.pdks.session.PdksUtil;
 
@@ -90,11 +91,12 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	private Boolean ortakVardiya = Boolean.FALSE, fazlaMesaiGoruntulensin = Boolean.TRUE, ilkPlanOnayliDurum = Boolean.FALSE, gunMaxCalismaOdemeDurum = Boolean.TRUE;
 	private Boolean genelModel = Boolean.TRUE, idariModel = Boolean.FALSE, suaDurum = Boolean.FALSE, haftaTatilHareketGuncelle = Boolean.FALSE, offHareketGuncelle = Boolean.FALSE;
 	private Boolean yoneticiGuncelle = Boolean.FALSE;
-	private Integer haftaTatilGun = Calendar.SUNDAY, gunlukSaatKatSayi = 1;
+	private Integer haftaTatilGun = Calendar.SUNDAY, gunlukSaatKatSayi = ModelZamanBirimi.SAAT.value();
 	private VardiyaSablonu bagliVardiyaSablonu;
 	private Departman departman;
 	private Tanim personelTipi, arge;
 	private Boolean aylikMaas = Boolean.TRUE;
+	private ModelZamanBirimi zamanBirimi = ModelZamanBirimi.SAAT;
 
 	private User guncelleyenUser, olusturanUser;
 	private Date olusturmaTarihi = new Date(), guncellemeTarihi;
@@ -377,8 +379,10 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 		return gunlukSaatKatSayi;
 	}
 
-	public void setGunlukSaatKatSayi(Integer gunlukSaatKatSayi) {
-		this.gunlukSaatKatSayi = gunlukSaatKatSayi;
+	public void setGunlukSaatKatSayi(Integer value) {
+		if (value != null)
+			this.zamanBirimi = ModelZamanBirimi.fromValue(value);
+		this.gunlukSaatKatSayi = value;
 	}
 
 	@Column(name = COLUMN_NAME_ORTAK_VARDIYA)
@@ -908,7 +912,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 
 	@Transient
 	public boolean isArgemi() {
-		return arge != null ;
+		return arge != null;
 	}
 
 	@Transient
@@ -934,6 +938,27 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 
 		}
 		return islemDurum;
+	}
+
+	@Transient
+	public ModelZamanBirimi getZamanBirimi() {
+		return zamanBirimi;
+	}
+
+	public void setZamanBirimi(ModelZamanBirimi zamanBirimi) {
+		this.zamanBirimi = zamanBirimi;
+	}
+
+	@Transient
+	public String getZamanBirimiAciklama(Integer gsK) {
+		String str = gsK == null || gsK.equals(ModelZamanBirimi.SAAT.value()) ? "Saat" : "Dakika";
+		return str;
+	}
+
+	@Transient
+	public String getZamanBirimiAciklama() {
+		String str = getZamanBirimiAciklama(gunlukSaatKatSayi);
+		return str;
 	}
 
 	@Transient

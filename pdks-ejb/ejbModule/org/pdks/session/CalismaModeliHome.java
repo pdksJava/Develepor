@@ -42,6 +42,7 @@ import org.pdks.entity.Sirket;
 import org.pdks.entity.Tanim;
 import org.pdks.entity.Vardiya;
 import org.pdks.entity.VardiyaSablonu;
+import org.pdks.enums.ModelZamanBirimi;
 import org.pdks.security.entity.User;
 
 @Name("calismaModeliHome")
@@ -78,7 +79,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 	private List<Vardiya> vardiyaList = new ArrayList<Vardiya>(), kayitliVardiyaList = new ArrayList<Vardiya>();
 	private List<CalismaModeliGun> cmGunList;
 	private List<Departman> departmanList;
-	private List<SelectItem> haftaTatilGunleri, tesisIdList, argeTipiList;
+	private List<SelectItem> haftaTatilGunleri, tesisIdList, argeTipiList, zamanBirimList;
 	private Long tesisId;
 
 	private HashMap<Integer, List<CalismaModeliGun>> cmGunMap;
@@ -108,7 +109,8 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 		double girilenSaat = value == null ? -1 : ((Number) value).doubleValue();
 		double max = getMaxSaat() != null ? getMaxSaat() : 0.0;
 		if (girilenSaat < 0 || girilenSaat > max) {
-			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Hata", "Girilen saat 0 ile " + max + " arasında olmalıdır.");
+			String mesaj = "Girilen " + calismaModeli.getZamanBirimiAciklama() + " 0 ile " + authenticatedUser.sayiFormatliGoster(max) + " arasında olmalıdır.";
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, mesaj, mesaj);
 			throw new ValidatorException(msg);
 		}
 	}
@@ -297,6 +299,11 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 			if (tanim.getDurum())
 				argeTipiList.add(new SelectItem(tanim.getId(), tanim.getAciklama()));
 		}
+		zamanBirimList.clear();
+		for (ModelZamanBirimi c : ModelZamanBirimi.values()) {
+			Integer birim = c.value();
+			zamanBirimList.add(new SelectItem(birim, cm.getZamanBirimiAciklama(birim)));
+		}
 
 		gunleriSifirla();
 		Long departmanId = cm.getDepartman() != null ? cm.getDepartman().getId() : null;
@@ -377,6 +384,9 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 		pdksSirketList = ortakIslemler.getDepartmanPDKSSirketList(null, session);
 		if (argeTipiList == null)
 			argeTipiList = new ArrayList<SelectItem>();
+		if (zamanBirimList == null)
+			zamanBirimList = new ArrayList<SelectItem>();
+
 		fillCalismaModeliList();
 	}
 
@@ -1067,6 +1077,14 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 
 	public void setArgeTipiList(List<SelectItem> argeTipiList) {
 		this.argeTipiList = argeTipiList;
+	}
+
+	public List<SelectItem> getZamanBirimList() {
+		return zamanBirimList;
+	}
+
+	public void setZamanBirimList(List<SelectItem> zamanBirimList) {
+		this.zamanBirimList = zamanBirimList;
 	}
 
 }
