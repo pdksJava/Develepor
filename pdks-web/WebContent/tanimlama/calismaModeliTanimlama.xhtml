@@ -112,7 +112,7 @@
 													<tbody>
 														<a4j:repeat value="#{calismaModeli.calismaModeliGunler}" var="cmg">
 															<ui:fragment rendered="#{cmg.gunTipi==cmg.saat}">
-																<tr>
+																<tr class="#{cmg.classAdi}">
 																	<td nowrap="nowrap">#{ortakIslemler.getGunAdi(cmg.haftaGun-1,null)}</td>
 																	<td nowrap="nowrap" align="center">#{authenticatedUser.sayiFormatliGoster(cmg.sure/calismaModeli.gunlukSaatKatSayi)}</td>
 																</tr>

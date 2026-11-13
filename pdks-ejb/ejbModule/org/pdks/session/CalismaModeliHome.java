@@ -568,6 +568,7 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 						CalismaModeli cm = map.get(cmg.getCalismaModeli().getId());
 						if (cm.getCalismaModeliGunler() == null)
 							cm.setCalismaModeliGunler(new ArrayList<CalismaModeliGun>());
+						cmg.setClassAdi(cm.getCalismaModeliGunler().size() % 2 == 1 ? "acik" : "koyu");
 						cm.getCalismaModeliGunler().add(cmg);
 						iterator.remove();
 					}

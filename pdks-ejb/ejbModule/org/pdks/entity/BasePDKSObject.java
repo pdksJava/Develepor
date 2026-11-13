@@ -28,6 +28,10 @@ public abstract class BasePDKSObject implements Serializable, Cloneable, PdksInt
 	protected User loginUser;
 
 	protected Boolean guncellendi;
+	
+	protected String classAdi;
+	
+	
 
 	protected boolean degisti = Boolean.FALSE, checkBoxDurum = Boolean.FALSE;
 
@@ -104,6 +108,15 @@ public abstract class BasePDKSObject implements Serializable, Cloneable, PdksInt
 	public void setCheckBoxDurum(boolean checkBoxDurum) {
 		this.checkBoxDurum = checkBoxDurum;
 	}
+	
+	@Transient
+	public String getClassAdi() {
+		return classAdi;
+	}
+
+	public void setClassAdi(String classAdi) {
+		this.classAdi = classAdi;
+	}
 
 	@Transient
 	public Object cloneEmpty() {
@@ -116,4 +129,5 @@ public abstract class BasePDKSObject implements Serializable, Cloneable, PdksInt
 		}
 		return object;
 	}
+
 }
