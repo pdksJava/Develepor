@@ -89,19 +89,51 @@
 									<f:facet name="header">
 										<h:outputText value="Hafta İçi (Saat)" />
 									</f:facet>
-									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.haftaIci/calismaModeli.gunlukSaatKatSayi)}" rendered="#{calismaModeli.haftaIci != 0}" />
+									<h:panelGrid columns="2">
+										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.haftaIci/calismaModeli.gunlukSaatKatSayi)}"
+											rendered="#{calismaModeli.haftaIci != 0}" />
+										<ui:fragment rendered="#{calismaModeli.calismaModeliGunler!=null}">
+											<DIV id="haftaIciGoster#{calismaModeli.id}">
+												<h:graphicImage value="/img/msginfo.png" style="border:0" height="18" />
+											</DIV>
+											<rich:toolTip for="haftaIciGoster#{calismaModeli.id}">
+												<table lass="rich-table">
+													<thead class="rich-table-thead">
+														<tr class="rich-table-subheader">
+															<th>Gün</th>
+															<th>Saat</th>
+														</tr>
+													</thead>
+													<tbody>
+														<a4j:repeat value="#{calismaModeli.calismaModeliGunler}" var="cmg">
+															<ui:fragment rendered="#{cmg.gunTipi==cmg.saat}">
+																<tr>
+																	<td>#{ortakIslemler.getGunAdi(cmg.haftaGun-1,null)}</td>
+																	<td>#{authenticatedUser.sayiFormatliGoster(cmg.sure/calismaModeli.gunlukSaatKatSayi)}</td>
+																</tr>
+															</ui:fragment>
+														</a4j:repeat>
+													</tbody>
+												</table>
+
+
+											</rich:toolTip>
+										</ui:fragment>
+									</h:panelGrid>
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="#{ortakIslemler.getGunAdi(6,null)} (Saat)" />
 									</f:facet>
-									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.cumartesiSaat/calismaModeli.gunlukSaatKatSayi)}" rendered="#{calismaModeli.cumartesiSaat != 0}" />
+									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.cumartesiSaat/calismaModeli.gunlukSaatKatSayi)}"
+										rendered="#{calismaModeli.cumartesiSaat != 0}" />
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="#{ortakIslemler.getGunAdi(7,null)} (Saat)" />
 									</f:facet>
-									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.pazarSaat/calismaModeli.gunlukSaatKatSayi)}" rendered="#{calismaModeli.pazarSaat != 0}" />
+									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.pazarSaat/calismaModeli.gunlukSaatKatSayi)}"
+										rendered="#{calismaModeli.pazarSaat != 0}" />
 								</rich:column>
 								<c:if test="#{calismaModeliHome.izinGoster}">
 
@@ -109,7 +141,8 @@
 										<f:facet name="header">
 											<h:outputText value="İzin (Saat)" />
 										</f:facet>
-										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.izin/calismaModeli.gunlukSaatKatSayi)}" rendered="#{calismaModeli.izin != 0}" />
+										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.izin/calismaModeli.gunlukSaatKatSayi)}"
+											rendered="#{calismaModeli.izin != 0}" />
 									</rich:column>
 									<rich:column>
 										<f:facet name="header">
@@ -129,7 +162,8 @@
 									<f:facet name="header">
 										<h:outputText value="Arife (Saat)" />
 									</f:facet>
-									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.arife)/calismaModeli.gunlukSaatKatSayi}" rendered="#{calismaModeli.arife != 0}" />
+									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.arife)/calismaModeli.gunlukSaatKatSayi}"
+										rendered="#{calismaModeli.arife != 0}" />
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
