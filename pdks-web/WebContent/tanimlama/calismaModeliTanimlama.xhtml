@@ -89,19 +89,19 @@
 									<f:facet name="header">
 										<h:outputText value="Hafta İçi (Saat)" />
 									</f:facet>
-									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.haftaIci)}" rendered="#{calismaModeli.haftaIci != 0}" />
+									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.haftaIci/calismaModeli.gunlukSaatKatSayi)}" rendered="#{calismaModeli.haftaIci != 0}" />
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="#{ortakIslemler.getGunAdi(6,null)} (Saat)" />
 									</f:facet>
-									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.cumartesiSaat)}" rendered="#{calismaModeli.cumartesiSaat != 0}" />
+									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.cumartesiSaat/calismaModeli.gunlukSaatKatSayi)}" rendered="#{calismaModeli.cumartesiSaat != 0}" />
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="#{ortakIslemler.getGunAdi(7,null)} (Saat)" />
 									</f:facet>
-									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.pazarSaat)}" rendered="#{calismaModeli.pazarSaat != 0}" />
+									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.pazarSaat/calismaModeli.gunlukSaatKatSayi)}" rendered="#{calismaModeli.pazarSaat != 0}" />
 								</rich:column>
 								<c:if test="#{calismaModeliHome.izinGoster}">
 
@@ -109,18 +109,18 @@
 										<f:facet name="header">
 											<h:outputText value="İzin (Saat)" />
 										</f:facet>
-										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.izin)}" rendered="#{calismaModeli.izin != 0}" />
+										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.izin/calismaModeli.gunlukSaatKatSayi)}" rendered="#{calismaModeli.izin != 0}" />
 									</rich:column>
 									<rich:column>
 										<f:facet name="header">
-											<h:outputText value="İzin #{ortakIslemler.getGunAdi(6,null)} (Saat)" />
+											<h:outputText value="İzin #{ortakIslemler.getGunAdi(6,null)/calismaModeli.gunlukSaatKatSayi} (Saat)" />
 										</f:facet>
 										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.cumartesiIzinSaat)}"
 											rendered="#{calismaModeli.cumartesiIzinSaat != 0}" />
 									</rich:column>
 									<rich:column>
 										<f:facet name="header">
-											<h:outputText value="İzin #{ortakIslemler.getGunAdi(7,null)} (Saat)" />
+											<h:outputText value="İzin #{ortakIslemler.getGunAdi(7,null)/calismaModeli.gunlukSaatKatSayi} (Saat)" />
 										</f:facet>
 										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.pazarIzinSaat)}" rendered="#{calismaModeli.pazarIzinSaat != 0}" />
 									</rich:column>
@@ -129,7 +129,7 @@
 									<f:facet name="header">
 										<h:outputText value="Arife (Saat)" />
 									</f:facet>
-									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.arife)}" rendered="#{calismaModeli.arife != 0}" />
+									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.arife)/calismaModeli.gunlukSaatKatSayi}" rendered="#{calismaModeli.arife != 0}" />
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
@@ -412,15 +412,24 @@
 							</h:selectOneMenu>
 						</s:decorate>
 
+						<s:decorate template="/layout/edit.xhtml">
+							<ui:define name="label">Günlük Saat Katsayı</ui:define>
 
+							<h:inputText required="true" id="gunlukSaatKatSayi" value="#{calismaModeliHome.calismaModeli.gunlukSaatKatSayi}"
+								disabled="#{authenticatedUser.admin == false}" size="6" validatorMessage="Hafta içi saati giriniz">
+								<f:validateDoubleRange minimum="1" maximum="60" />
+								<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{ortakIslemler.emtpyAjaxFunction()}"
+									reRender="calismaModeliGiris" />
+							</h:inputText>
+
+						</s:decorate>
 
 
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Hafta İçi (Saati)</ui:define>
 							<ui:fragment>
 								<h:inputText required="true" id="haftaIci" value="#{calismaModeliHome.calismaModeli.haftaIci}" disabled="#{authenticatedUser.admin == false}"
-									size="6" validatorMessage="Hafta İçi saati giriniz">
-									<f:validateDoubleRange minimum="0" maximum="12" />
+									size="6" validatorMessage="Hafta içi saati giriniz" validator="#{calismaModeliHome.validateSaat}">
 									<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="haftaIci" />
 								</h:inputText>
 								<a4j:commandLink status="ajaxStatus" ajaxSingle="true" id="haftaIciLink"
@@ -435,16 +444,16 @@
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">#{ortakIslemler.getGunAdi(6,null)} (Saati)</ui:define>
 							<h:inputText required="true" value="#{calismaModeliHome.calismaModeli.cumartesiSaat}" disabled="#{authenticatedUser.admin == false}" size="6"
-								validatorMessage="#{ortakIslemler.getGunAdi(6,null)} saati giriniz" id="cumartesiSaat">
-								<f:validateDoubleRange minimum="0" maximum="12" />
+								validatorMessage="#{ortakIslemler.getGunAdi(6,null)} saati giriniz" id="cumartesiSaat" validator="#{calismaModeliHome.validateSaat}">
+
 								<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="cumartesiSaat" />
 							</h:inputText>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">#{ortakIslemler.getGunAdi(7,null)} (Saati)</ui:define>
 							<h:inputText required="true" value="#{calismaModeliHome.calismaModeli.pazarSaat}" disabled="#{authenticatedUser.admin == false}" size="6"
-								validatorMessage="#{ortakIslemler.getGunAdi(7,null)} saati giriniz" id="pazarSaat">
-								<f:validateDoubleRange minimum="0" maximum="12" />
+								validatorMessage="#{ortakIslemler.getGunAdi(7,null)} saati giriniz" id="pazarSaat" validator="#{calismaModeliHome.validateSaat}">
+
 								<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="pazarSaat" />
 							</h:inputText>
 						</s:decorate>
@@ -452,16 +461,17 @@
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">İzin (Saati)</ui:define>
 								<h:inputText required="true" value="#{calismaModeliHome.calismaModeli.izin}" disabled="#{authenticatedUser.admin == false}" size="6"
-									validatorMessage="İzin günü saati giriniz" id="izin">
-									<f:validateDoubleRange minimum="0" maximum="12" />
+									validatorMessage="İzin günü saati giriniz" id="izin" validator="#{calismaModeliHome.validateSaat}">
+
 									<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="izin" />
 								</h:inputText>
 							</s:decorate>
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">İzin #{ortakIslemler.getGunAdi(6,null)} (Saati)</ui:define>
 								<h:inputText required="true" value="#{calismaModeliHome.calismaModeli.cumartesiIzinSaat}" disabled="#{authenticatedUser.admin == false}"
-									size="6" validatorMessage="#{ortakIslemler.getGunAdi(6,null)} izin günü saati giriniz" id="cumartesiIzinSaat">
-									<f:validateDoubleRange minimum="0" maximum="12" />
+									size="6" validatorMessage="#{ortakIslemler.getGunAdi(6,null)} izin günü saati giriniz" id="cumartesiIzinSaat"
+									validator="#{calismaModeliHome.validateSaat}">
+
 									<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{ortakIslemler.emtpyAjaxFunction()}"
 										reRender="cumartesiIzinSaat" />
 								</h:inputText>
@@ -469,8 +479,9 @@
 							<s:decorate template="/layout/edit.xhtml">
 								<ui:define name="label">İzin #{ortakIslemler.getGunAdi(7,null)} (Saati)</ui:define>
 								<h:inputText required="true" value="#{calismaModeliHome.calismaModeli.pazarIzinSaat}" disabled="#{authenticatedUser.admin == false}" size="6"
-									validatorMessage="#{ortakIslemler.getGunAdi(7,null)} izin günü saati giriniz" id="pazarIzinSaat">
-									<f:validateDoubleRange minimum="0" maximum="12" />
+									validatorMessage="#{ortakIslemler.getGunAdi(7,null)} izin günü saati giriniz" id="pazarIzinSaat"
+									validator="#{calismaModeliHome.validateSaat}">
+
 									<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="pazarIzinSaat" />
 								</h:inputText>
 							</s:decorate>
@@ -479,8 +490,8 @@
 							<ui:define name="label">Süt İzin (Saati)</ui:define>
 							<ui:fragment>
 								<h:inputText required="true" value="#{calismaModeliHome.calismaModeli.haftaIciSutIzniSure}" disabled="#{authenticatedUser.admin == false}"
-									size="6" validatorMessage="İzin günü saati giriniz" id="haftaIciSutIzniSure">
-									<f:validateDoubleRange minimum="0" maximum="12" />
+									size="6" validatorMessage="İzin günü saati giriniz" id="haftaIciSutIzniSure" validator="#{calismaModeliHome.validateSaat}">
+
 									<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{ortakIslemler.emtpyAjaxFunction()}"
 										reRender="haftaIciSutIzniSure" />
 
@@ -496,8 +507,8 @@
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Süt İzin #{ortakIslemler.getGunAdi(6,null)} (Saati)</ui:define>
 							<h:inputText required="true" value="#{calismaModeliHome.calismaModeli.cumartesiSutIzniSure}" disabled="#{authenticatedUser.admin == false}"
-								size="6" validatorMessage="İzin günü saati giriniz" id="cumartesiSutIzniSure">
-								<f:validateDoubleRange minimum="0" maximum="12" />
+								size="6" validatorMessage="İzin günü saati giriniz" id="cumartesiSutIzniSure" validator="#{calismaModeliHome.validateSaat}">
+
 								<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{ortakIslemler.emtpyAjaxFunction()}"
 									reRender="cumartesiSutIzniSure" />
 							</h:inputText>
@@ -505,8 +516,8 @@
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Süt İzin #{ortakIslemler.getGunAdi(7,null)} (Saati)</ui:define>
 							<h:inputText required="true" value="#{calismaModeliHome.calismaModeli.pazarSutIzniSure}" disabled="#{authenticatedUser.admin == false}"
-								size="6" validatorMessage="İzin günü saati giriniz" id="pazarSutIzniSure">
-								<f:validateDoubleRange minimum="0" maximum="12" />
+								size="6" validatorMessage="İzin günü saati giriniz" id="pazarSutIzniSure" validator="#{calismaModeliHome.validateSaat}">
+
 								<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="pazarSutIzniSure" />
 							</h:inputText>
 						</s:decorate>
@@ -514,8 +525,8 @@
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Süt İzin Sabit (Saati)</ui:define>
 							<h:inputText value="#{calismaModeliHome.calismaModeli.sutIzniSabitSaat}" disabled="#{authenticatedUser.admin == false}" size="6"
-								id="sutIzniSabitSaat">
-								<f:validateDoubleRange minimum="0" maximum="12" />
+								id="sutIzniSabitSaat" validator="#{calismaModeliHome.validateSaat}">
+
 								<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="sutIzniSabitSaat" />
 
 							</h:inputText>
@@ -525,8 +536,8 @@
 						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Arife Günü (Saati)</ui:define>
 							<h:inputText required="true" value="#{calismaModeliHome.calismaModeli.arife}" disabled="#{authenticatedUser.admin == false}" size="6"
-								validatorMessage="Arife günü saati giriniz">
-								<f:validateDoubleRange minimum="0" maximum="12" />
+								validatorMessage="Arife günü saati giriniz" validator="#{calismaModeliHome.validateSaat}">
+
 							</h:inputText>
 						</s:decorate>
 						<s:decorate template="/layout/edit.xhtml" disabled="#{authenticatedUser.admin == false}">
@@ -717,8 +728,8 @@
 								<s:decorate template="/layout/edit.xhtml">
 									<ui:define name="label">  #{ortakIslemler.getGunAdi(cmg.haftaGun-1,null)} (Saati)</ui:define>
 									<h:inputText required="true" value="#{cmg.sure}" size="6"
-										validatorMessage="#{ortakIslemler.getGunAdi(cmg.haftaGun-1,null)} günü saati giriniz">
-										<f:validateDoubleRange minimum="0" maximum="12" />
+										validatorMessage="#{ortakIslemler.getGunAdi(cmg.haftaGun-1,null)} günü saati giriniz" validator="#{calismaModeliHome.validateSaat}">
+
 										<a4j:support event="onchange" status="ajaxStatus" ajaxSingle="true" action="#{ortakIslemler.emtpyAjaxFunction()}" reRender="haftaIciGunler" />
 									</h:inputText>
 								</s:decorate>

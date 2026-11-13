@@ -12,7 +12,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.faces.validator.ValidatorException;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
@@ -98,6 +102,20 @@ public class CalismaModeliHome extends EntityHome<CalismaModeli> implements Seri
 	@Override
 	public void create() {
 		super.create();
+	}
+
+	public void validateSaat(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+ 		double girilenSaat = value == null ? -1 : ((Number) value).doubleValue();
+		double max = getMaxSaat() != null ? getMaxSaat() : 0.0;
+		if (girilenSaat < 0 || girilenSaat > max) {
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Hata", "Girilen saat 0 ile " + max + " arasında olmalıdır.");
+			throw new ValidatorException(msg);
+		}
+	}
+
+	public Integer getMaxSaat() {
+		int saat = (calismaModeli != null && calismaModeli.getGunlukSaatKatSayi() != null ? calismaModeli.getGunlukSaatKatSayi() : 1) * 12;
+		return saat;
 	}
 
 	/**

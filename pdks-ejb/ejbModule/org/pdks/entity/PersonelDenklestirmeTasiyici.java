@@ -432,7 +432,7 @@ public class PersonelDenklestirmeTasiyici extends BaseObject {
 	}
 
 	public void setCalismaModeli(CalismaModeli value) {
-		if (value != null && value.isArgemi())
+		if (value != null && (value.isArgemi() || value.getGunlukSaatKatSayi() > 1))
 			this.yarimYuvarla = -1;
 		this.calismaModeli = value;
 	}
