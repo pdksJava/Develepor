@@ -15582,6 +15582,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
+	@Transactional
 	public boolean saveOrUpdate(Object object, User user, Session session) {
 		boolean islem = false;
 		if (object != null) {
@@ -15603,6 +15604,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
+	@Transactional
 	public boolean saveOrUpdate(Session session, HashMap<String, Object> veriMap, Object object) {
 		boolean islem = false;
 		if (object != null && veriMap != null) {
