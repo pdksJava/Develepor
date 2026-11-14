@@ -652,6 +652,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
+	@Transactional
 	public Date updatePersonelAPI(String sirketKodu, String personelNo, Session session) {
 		Date guncellemeTarih = null;
 		if (personelNo == null)
@@ -906,6 +907,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
+	@Transactional
 	public Date updateIzinAPI(String sirketKodu, String personelNo, Session session) {
 		Date guncellemeTarih = null;
 		if (personelNo == null)
@@ -15643,6 +15645,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
+	@Transactional
 	public boolean updatePersonelDenklestirmeStoreProcedure(PersonelDenklestirme pd, User user, Session session) {
 		boolean islem = false;
 		Long pdId = pd != null ? pd.getId() : null;
@@ -15719,6 +15722,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
+	@Transactional
 	public boolean updateVardiyaGunStoreProcedure(VardiyaGun vg, User user, Session session) {
 		boolean islem = false;
 		Long vardiyaId = vg.getId() != null && vg.getVardiya() != null ? vg.getVardiya().getId() : null;
@@ -15730,6 +15734,7 @@ public class OrtakIslemler implements Serializable {
 				vs.setNormalSure(vg.getVardiya().getNetCalismaSuresi());
 				session.saveOrUpdate(vs);
 				vg.setVardiyaSaat(vs);
+
 			}
 			Long saatId = vg.getVardiyaSaat() != null ? vg.getVardiyaSaat().getId() : null;
 			LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
@@ -15741,10 +15746,11 @@ public class OrtakIslemler implements Serializable {
 			veriMap.put("guncelleyen", user != null ? user.getId() : null);
 			List<VardiyaGun> list = null;
 			Gson gson = new Gson();
+			veriMap.put("logYaz", false);
 			try {
 				list = pdksEntityController.execSPList(session, veriMap, FazlaMesaiOrtakIslemler.SP_CALISMA_PLANI_GUNCELLEME_ADI, VardiyaGun.class);
 			} catch (Exception e) {
-				logger.error(e + "\n" + FazlaMesaiOrtakIslemler.SP_CALISMA_PLANI_GUNCELLEME_ADI + "\n" + gson.toJson(veriMap));
+				logger.debug(e + "\n" + FazlaMesaiOrtakIslemler.SP_CALISMA_PLANI_GUNCELLEME_ADI + "\n" + gson.toJson(veriMap));
 			}
 			if (list != null) {
 				islem = list.isEmpty() == false;

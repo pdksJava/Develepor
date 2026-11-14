@@ -496,7 +496,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 								tesisId = (Long) iterator.next();
 								String str = "";
 								paramMap.clear();
-								
+
 								paramMap.put("loginUser", loginUser);
 								paramMap.put("denklestirmeDonemi", denklestirmeDonemi);
 								paramMap.put("aylikPuantaj", aylikPuantaj);
@@ -732,6 +732,8 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 								String idStr = ortakIslemler.getEncodeStringByBase64(linkStr);
 								vardiyaGunHome.sayfaCalismaPlanOlustur(idStr, loginUser);
 								logger.info(str + " aylikPuantajOlusturuluyor out " + PdksUtil.getCurrentTimeStampStr());
+								if (loginUser.isLogin() == false)
+									session.clear();
 							}
 						} catch (Exception e) {
 							logger.error(seciliEkSaha3Id + " " + e);

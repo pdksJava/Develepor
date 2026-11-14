@@ -879,9 +879,13 @@ public class PdksEntityController implements Serializable {
 	@Transactional
 	public List execSPList(Session session, LinkedHashMap<String, Object> veriMap, String sp, Class class1) throws Exception {
 		List sonucList = null;
-		boolean manuelReadUnCommitted = false, sessinYok = false;
+		boolean manuelReadUnCommitted = false, sessinYok = false, logYaz = true;
 		try {
 			if (veriMap != null) {
+				if (veriMap.containsKey("logYaz")) {
+					logYaz = (Boolean) veriMap.get("logYaz");
+					veriMap.remove("logYaz");
+				}
 				if (veriMap.containsKey(MAP_KEY_SESSION)) {
 					session = (Session) veriMap.get(MAP_KEY_SESSION);
 					veriMap.remove(MAP_KEY_SESSION);
@@ -908,10 +912,12 @@ public class PdksEntityController implements Serializable {
 			if (sessinYok)
 				sessionClose(session);
 		} catch (Exception e) {
-			StringBuffer sb = getExecStringSP(veriMap, sp);
+			if (logYaz) {
+				StringBuffer sb = getExecStringSP(veriMap, sp);
+				logger.error(sb.toString() + "\n" + e);
+				sb = null;
+			}
 
-			logger.error(sb.toString() + "\n" + e);
-			sb = null;
 			throw new Exception(e);
 		}
 		if (manuelReadUnCommitted)

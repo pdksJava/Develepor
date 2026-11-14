@@ -4460,12 +4460,13 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	@Transactional
 	private boolean vardiyaSaatKaydet(VardiyaGun pdksVardiyaGun) {
 		boolean kayit = false;
-		if (pdksVardiyaGun.isAyinGunu() && denklestirmeAy.getDurum() && authenticatedUser == null) {
+		if (pdksVardiyaGun.isAyinGunu() && denklestirmeAy.getDurum()) {
 			pdksVardiyaGun.setDurum(false);
-			if (pdksVardiyaGun.getVardiya().isCalisma() && pdksVardiyaGun.getId() != null && pdksVardiyaGun.getIzin() == null && pdksVardiyaGun.getVardiyaSaat() == null) {
+			if (pdksVardiyaGun.getVardiya().isCalisma()&& pdksVardiyaGun.getIzin() == null && pdksVardiyaGun.getVardiyaSaat() == null) {
 				VardiyaSaat vs = new VardiyaSaat();
 				vs.setNormalSure(pdksVardiyaGun.getVardiya().getNetCalismaSuresi());
 				saveOrUpdate(vs);
+
 				pdksVardiyaGun.setVardiyaSaat(vs);
 				kayit = true;
 			}
@@ -7780,7 +7781,11 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								}
 								if (kayit) {
 									vardiyaSaatKaydet(pdksVardiyaGun);
-									boolean islemDurum = saveOrUpdate(pdksVardiyaGun);
+									boolean islemDurum = true;
+									if (getPdksUser().isLogin() == false && pdksVardiyaGun.getId() == null)
+										session.saveOrUpdate(pdksVardiyaGun);
+									else
+										islemDurum = saveOrUpdate(pdksVardiyaGun);
 									if (islemDurum)
 										flush = true;
 								}
@@ -9694,7 +9699,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 			if (sutIzniGoster) {
 				sb.append(" union ");
 				sb.append(" select 0 as OZEL_MODEL, V.ID " + CalismaModeliVardiya.COLUMN_NAME_VARDIYA + " from " + Vardiya.TABLE_NAME + " V " + PdksEntityController.getSelectLOCK());
-				sb.append(" where " + Vardiya.COLUMN_NAME_SUT_IZNI + " = 1 " );
+				sb.append(" where " + Vardiya.COLUMN_NAME_SUT_IZNI + " = 1 ");
 			}
 			if (sua) {
 				sb.append(" union ");
