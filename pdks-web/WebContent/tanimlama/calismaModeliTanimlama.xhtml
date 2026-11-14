@@ -131,7 +131,7 @@
 									<f:facet name="header">
 										<h:outputText value="#{ortakIslemler.getGunAdi(6,null)} (Saat)" />
 									</f:facet>
-									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(/calismaModeli.getSaatHesabi(calismaModeli.cumartesiSaat))}"
+									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.getSaatHesabi(calismaModeli.cumartesiSaat))}"
 										rendered="#{calismaModeli.cumartesiSaat != 0}" />
 								</rich:column>
 								<rich:column>
