@@ -2,7 +2,7 @@ package org.pdks.enums;
 
 public enum ModelZamanBirimi {
 
-	 DAKIKA(60), SAAT(1);
+	SAAT(1), DAKIKA(60);
 
 	private final Integer value;
 
