@@ -8326,6 +8326,9 @@ public class OrtakIslemler implements Serializable {
 			Calendar cal = Calendar.getInstance();
 			Date bugun = PdksUtil.getDate(cal.getTime());
 			Date tarih = PdksUtil.tariheAyEkleCikar(bugun, -2);
+			Date iptalTarihi = PdksUtil.tariheAyEkleCikar(tarih, -2);
+			if (iptalTarihi != null && iptalTarihi.before(sistemBasTarihi))
+				iptalTarihi = sistemBasTarihi;
 			boolean iptalDevam = authenticatedUser != null && (authenticatedUser.isAdmin() || authenticatedUser.isSistemYoneticisi());
 			if (!iptalDevam) {
 				int saat = cal.get(Calendar.HOUR_OF_DAY), dakika = cal.get(Calendar.MINUTE);
@@ -8334,27 +8337,29 @@ public class OrtakIslemler implements Serializable {
 			HashMap fields = new HashMap();
 			StringBuilder sb = new StringBuilder();
 			if (referansNoList == null && (guncellemeDurum || iptalDevam || perList != null)) {
+
 				perNo = perList != null && perList.isEmpty() == false ? perList.get(0) : null;
 				sb = new StringBuilder();
 				sb.append(" select I.* from " + IzinReferansERP.TABLE_NAME + " E " + PdksEntityController.getSelectLOCK());
 				sb.append(" inner join " + PersonelIzin.TABLE_NAME + " I " + PdksEntityController.getJoinLOCK() + " on I." + PersonelIzin.COLUMN_NAME_ID + " = E." + IzinReferansERP.COLUMN_NAME_IZIN_ID);
 				sb.append(" and I." + PersonelIzin.COLUMN_NAME_IZIN_DURUMU + " not in (" + PersonelIzin.IZIN_DURUMU_REDEDILDI + "," + PersonelIzin.IZIN_DURUMU_SISTEM_IPTAL + ")");
-				if (perNo == null) {
-					sb.append(" and I." + PersonelIzin.COLUMN_NAME_BITIS_ZAMANI + " < :t1");
-					fields.put("t1", PdksUtil.tariheAyEkleCikar(tarih, -1));
-				} else {
+				if (perNo != null) {
 					sb.append(" inner join " + Personel.TABLE_NAME + " P " + PdksEntityController.getJoinLOCK() + " on I." + PersonelIzin.COLUMN_NAME_PERSONEL + " = P." + Personel.COLUMN_NAME_ID);
 					sb.append(" and P." + Personel.COLUMN_NAME_PDKS_SICIL_NO + " = :p1");
 					fields.put("p1", perNo);
 				}
-				if (sistemBasTarihi != null) {
-					sb.append(" and I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " >= :st");
-					fields.put("st", sistemBasTarihi);
-				}
+
+				sb.append(" and I." + PersonelIzin.COLUMN_NAME_BASLANGIC_ZAMANI + " > :st");
+				fields.put("st", iptalTarihi);
+
 				sb.append(" where E." + IzinReferansERP.COLUMN_NAME_SILINEBILIR + " = 1 and E." + IzinReferansERP.COLUMN_NAME_ID + " not in (select " + IzinERPDB.COLUMN_NAME_REFERANS_NO + " from " + izinERPTableViewAdi + " " + PdksEntityController.getSelectLOCK());
 				if (perNo != null) {
 					sb.append(" where " + IzinERPDB.COLUMN_NAME_PERSONEL_NO + " = :p2");
 					fields.put("p2", perNo);
+				} else {
+					sb.append(" where " + IzinERPDB.COLUMN_NAME_BAS_TARIHI + " > :t1");
+					fields.put("t1", iptalTarihi);
+
 				}
 				sb.append(")");
 				sb.append(" and E." + DeleteIzinERPView.COLUMN_NAME_ID + " Not like :r");
@@ -8378,6 +8383,7 @@ public class OrtakIslemler implements Serializable {
 					pdksEntityController.sessionFlush(session);
 				}
 				izinList = null;
+
 			}
 
 			if (perList == null && referansNoList == null) {
@@ -26674,7 +26680,7 @@ public class OrtakIslemler implements Serializable {
 					user.setEmail(email);
 					userList.add(user);
 				}
- 				List<User> list = pdksEntityController.getSQLParamByAktifFieldList(User.TABLE_NAME, User.COLUMN_NAME_EMAIL, bccAdresler, User.class, session);
+				List<User> list = pdksEntityController.getSQLParamByAktifFieldList(User.TABLE_NAME, User.COLUMN_NAME_EMAIL, bccAdresler, User.class, session);
 				if (!list.isEmpty() && userList.size() >= list.size()) {
 					userList.clear();
 					for (Iterator iterator = list.iterator(); iterator.hasNext();) {
