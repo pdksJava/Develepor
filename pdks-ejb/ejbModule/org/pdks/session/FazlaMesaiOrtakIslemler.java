@@ -354,6 +354,8 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 						}
 						calismaModeliGunList = null;
 					}
+					CalismaModeli cmYedek = (CalismaModeli) cm.cloneEmpty();
+					cmYedek.setGunlukSaatKatSayi(1);
 					Calendar cal = Calendar.getInstance();
 					for (VardiyaGun vg : vardiyaGunList) {
 						if (vg.isAyinGunu()) {
@@ -367,14 +369,14 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 							}
 
 							if (vg.getTatil() == null) {
-								gunSure = cm.getSaat(dayOfWeek);
-								double sutIzinSure = cm.getSutIzinSaat(dayOfWeek);
+								gunSure = cmYedek.getSaat(dayOfWeek);
+								double sutIzinSure = cmYedek.getSutIzinSaat(dayOfWeek);
 								double izinSure = sutIzinSure > 7.5d ? 7.5d : sutIzinSure;
 								toplamIzinSure += izinSure;
 							} else if (vg.getTatil().isYarimGunMu()) {
 								if (PdksUtil.tarihKarsilastirNumeric(vg.getVardiyaDate(), vg.getTatil().getBasTarih()) == 0) {
 									if (vg.isHaftaIci() || cm.getSaat(dayOfWeek) > 0.0d) {
-										gunSure += cm.getArife();
+										gunSure += cmYedek.getArife();
 										logger.debug(key + " " + sure);
 										toplamIzinSure += cm.getArife();
 									}
@@ -394,14 +396,14 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 
 				if (calismaModeliAy.getSure() == 0.0d || calismaModeliAy.getToplamIzinSure() == 0.0d) {
 					if (cm.isIdariModelMi()) {
-						dm.setSure(sure);
-						dm.setToplamIzinSure(toplamIzinSure);
+						dm.setSure(sure / cm.getGunlukSaatKatSayi());
+						dm.setToplamIzinSure(toplamIzinSure / cm.getGunlukSaatKatSayi());
 						pdksEntityController.saveOrUpdate(session, null, dm);
 					}
 					if (calismaModeliAy.getSure() == 0.0d)
-						calismaModeliAy.setSure(sure);
+						calismaModeliAy.setSure(sure / cm.getGunlukSaatKatSayi());
 					if (calismaModeliAy.getToplamIzinSure() == 0.0d)
-						calismaModeliAy.setToplamIzinSure(toplamIzinSure);
+						calismaModeliAy.setToplamIzinSure(toplamIzinSure / cm.getGunlukSaatKatSayi());
 					if (dm.getId() != null) {
 						pdksEntityController.saveOrUpdate(session, null, calismaModeliAy);
 						flush = true;
