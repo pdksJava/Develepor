@@ -380,6 +380,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param object
 	 * @return
 	 */
+	@Transactional
 	private boolean saveOrUpdate(Object object) {
 		boolean islem = false;
 		if (object != null) {
@@ -403,7 +404,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	/**
 	 * 
 	 */
-
+	@Transactional
 	private void sessionFlush() {
 		try {
 			pdksEntityController.sessionFlush(session);
@@ -3749,7 +3750,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	/**
 	 * 
 	 */
-
+	@Transactional
 	private void savePlanLastParameter() {
 
 		LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
@@ -6212,7 +6213,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	 * @param aylikPuantaj
 	 * @return
 	 */
-
+	@Transactional
 	private Boolean saveOnay(Session session, AylikPuantaj aylikPuantaj) {
 		Personel personel = aylikPuantaj.getPdksPersonel();
 		PersonelDenklestirme pd = aylikPuantaj.getPersonelDenklestirme();
@@ -11977,7 +11978,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 	/**
 	 * @param personelDenklestirme
 	 */
-
+	@Transactional
 	private void savePersonelDenklestirme(PersonelDenklestirme pd) {
 		long donem = ikRole ? Long.parseLong(PdksUtil.convertToDateString(new Date(), "yyyyMM")) : 999999L;
 		pd.setGuncellemeTarihi(new Date());

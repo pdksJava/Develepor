@@ -618,6 +618,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	 * @param paramMap
 	 * @return
 	 */
+	@Transactional
 	private boolean bolumFazlaMesai(LinkedHashMap<String, Object> paramMap) {
 		User loginUser = (User) paramMap.get("loginUser");
 
@@ -791,7 +792,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	 * @param pd
 	 * @return
 	 */
-
+	@Transactional
 	public String saveLastParameter(AylikPuantaj ap) {
 		Map<String, String> map1 = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap();
 		PersonelDenklestirme pd = ap.getPersonelDenklestirme();
@@ -986,7 +987,7 @@ public class DenklestirmeBordroRaporuHome extends EntityHome<DenklestirmeAy> imp
 	/**
 	 * 
 	 */
-
+	@Transactional
 	private void saveLastParameter() {
 		LinkedHashMap<String, Object> lastMap = new LinkedHashMap<String, Object>();
 		lastMap.put("yil", "" + yil);

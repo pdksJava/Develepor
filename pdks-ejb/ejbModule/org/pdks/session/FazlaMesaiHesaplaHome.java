@@ -258,6 +258,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	 * @param object
 	 * @return
 	 */
+	@Transactional
 	public boolean saveOrUpdate(Object object) {
 		boolean islem = false;
 		if (object != null) {
@@ -279,7 +280,7 @@ public class FazlaMesaiHesaplaHome extends EntityHome<DepartmanDenklestirmeDonem
 	/**
 	 * 
 	 */
-
+	@Transactional
 	private void sessionFlush() {
 		try {
 			// if (authenticatedUser != null)
