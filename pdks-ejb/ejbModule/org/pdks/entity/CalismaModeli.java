@@ -1,6 +1,7 @@
 package org.pdks.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -776,6 +777,22 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 				}
 			}
 		}
+		return sure;
+	}
+
+	@Transient
+	public Double getSaatHesabi(Double deger) {
+		Double sure = deger;
+		if (deger != null) {
+			if (gunlukSaatKatSayi == null)
+				gunlukSaatKatSayi = ModelZamanBirimi.SAAT.value();
+			if (gunlukSaatKatSayi > 1) {
+ 				BigDecimal bd = new BigDecimal(deger).divide(new BigDecimal(gunlukSaatKatSayi));
+				sure = bd.doubleValue();
+				bd = null;
+			}
+		}
+
 		return sure;
 	}
 

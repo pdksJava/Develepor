@@ -90,7 +90,7 @@
 										<h:outputText value="Hafta İçi (Saat)" />
 									</f:facet>
 									<h:panelGrid columns="2">
-										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.haftaIci/calismaModeli.gunlukSaatKatSayi)}"
+										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.getSaatHesabi(calismaModeli.haftaIci))}"
 											rendered="#{calismaModeli.haftaIci != 0}" />
 										<ui:fragment rendered="#{calismaModeli.calismaModeliGunler!=null}">
 											<DIV id="haftaIciGoster#{calismaModeli.id}">
@@ -115,7 +115,7 @@
 															<ui:fragment rendered="#{cmg.gunTipi==cmg.saat}">
 																<tr class="#{cmg.classAdi}">
 																	<td nowrap="nowrap">#{ortakIslemler.getGunAdi(cmg.haftaGun-1,null)}</td>
-																	<td nowrap="nowrap" align="center">#{authenticatedUser.sayiFormatliGoster(cmg.sure/calismaModeli.gunlukSaatKatSayi)}</td>
+																	<td nowrap="nowrap" align="center">#{authenticatedUser.sayiFormatliGoster(calismaModeli.getSaatHesabi(cmg.sure))}</td>
 																</tr>
 															</ui:fragment>
 														</a4j:repeat>
@@ -131,14 +131,14 @@
 									<f:facet name="header">
 										<h:outputText value="#{ortakIslemler.getGunAdi(6,null)} (Saat)" />
 									</f:facet>
-									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.cumartesiSaat/calismaModeli.gunlukSaatKatSayi)}"
+									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(/calismaModeli.getSaatHesabi(calismaModeli.cumartesiSaat))}"
 										rendered="#{calismaModeli.cumartesiSaat != 0}" />
 								</rich:column>
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="#{ortakIslemler.getGunAdi(7,null)} (Saat)" />
 									</f:facet>
-									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.pazarSaat/calismaModeli.gunlukSaatKatSayi)}"
+									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.getSaatHesabi(calismaModeli.pazarSaat))}"
 										rendered="#{calismaModeli.pazarSaat != 0}" />
 								</rich:column>
 								<c:if test="#{calismaModeliHome.izinGoster}">
@@ -147,28 +147,28 @@
 										<f:facet name="header">
 											<h:outputText value="İzin (Saat)" />
 										</f:facet>
-										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.izin/calismaModeli.gunlukSaatKatSayi)}"
+										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.getSaatHesabi(calismaModeli.izin))}"
 											rendered="#{calismaModeli.izin != 0}" />
 									</rich:column>
 									<rich:column>
 										<f:facet name="header">
-											<h:outputText value="İzin #{ortakIslemler.getGunAdi(6,null)/calismaModeli.gunlukSaatKatSayi} (Saat)" />
+											<h:outputText value="İzin #{ortakIslemler.getGunAdi(6,null)} (Saat)" />
 										</f:facet>
-										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.cumartesiIzinSaat)}"
+										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.getSaatHesabi(calismaModeli.cumartesiIzinSaat))}"
 											rendered="#{calismaModeli.cumartesiIzinSaat != 0}" />
 									</rich:column>
 									<rich:column>
 										<f:facet name="header">
-											<h:outputText value="İzin #{ortakIslemler.getGunAdi(7,null)/calismaModeli.gunlukSaatKatSayi} (Saat)" />
+											<h:outputText value="İzin #{ ortakIslemler.getGunAdi(7,null) } (Saat)" />
 										</f:facet>
-										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.pazarIzinSaat)}" rendered="#{calismaModeli.pazarIzinSaat != 0}" />
+										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.getSaatHesabi(calismaModeli.pazarIzinSaat))}" rendered="#{calismaModeli.pazarIzinSaat != 0}" />
 									</rich:column>
 								</c:if>
 								<rich:column>
 									<f:facet name="header">
 										<h:outputText value="Arife (Saat)" />
 									</f:facet>
-									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.arife)/calismaModeli.gunlukSaatKatSayi}"
+									<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.getSaatHesabi(calismaModeli.arife))}"
 										rendered="#{calismaModeli.arife != 0}" />
 								</rich:column>
 								<rich:column>
