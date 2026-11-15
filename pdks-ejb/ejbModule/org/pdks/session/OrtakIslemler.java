@@ -11189,7 +11189,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-
+@Transactional 
 	public boolean vardiyaHareketlerdenGuncelle(TreeMap<Long, PersonelDenklestirmeTasiyici> personelDenklestirmeMap, TreeMap<Long, List<VardiyaGun>> personelVardiyaBulMap, HashMap<Long, ArrayList<VardiyaGun>> calismaPlaniMap, HashMap<Long, Boolean> hareketKaydiVardiyaMap,
 			HashMap<Long, ArrayList<HareketKGS>> personelHareketMap, Liste suaListe, Session session) {
 		List<Long> suaPerIdList = suaListe != null ? (List<Long>) suaListe.getId() : new ArrayList<Long>();
