@@ -26,15 +26,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Session;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.async.Asynchronous;
-import org.jboss.seam.annotations.async.Expiration;
-import org.jboss.seam.annotations.async.IntervalCron;
-import org.jboss.seam.async.QuartzTriggerHandle;
 import org.jboss.seam.faces.Renderer;
 import org.pdks.entity.AramaSecenekleri;
 import org.pdks.entity.CalismaModeli;
@@ -46,8 +39,6 @@ import org.pdks.entity.Kapi;
 import org.pdks.entity.KapiView;
 import org.pdks.entity.Liste;
 import org.pdks.entity.Notice;
-import org.pdks.entity.Parameter;
-import org.pdks.entity.PdksLog;
 import org.pdks.entity.Personel;
 import org.pdks.entity.PersonelGeciciYonetici;
 import org.pdks.entity.PersonelKGS;
@@ -82,8 +73,8 @@ import com.pdks.webservice.MailPersonel;
 import com.pdks.webservice.MailStatu;
 
 @Name("iseGelmemeUyari")
-@AutoCreate
-@Scope(ScopeType.APPLICATION)
+// @AutoCreate
+// @Scope(ScopeType.APPLICATION)
 public class IseGelmemeUyari implements Serializable {
 
 	/**
@@ -91,7 +82,7 @@ public class IseGelmemeUyari implements Serializable {
 	 */
 	private static final long serialVersionUID = 6477701530769282426L;
 	static Logger logger = Logger.getLogger(IseGelmemeUyari.class);
-	private static final String PARAMETER_KEY = "uyariMail";
+	protected static final String PARAMETER_KEY = "uyariMail";
 
 	@In(required = false, create = true)
 	PdksEntityController pdksEntityController;
@@ -1077,6 +1068,8 @@ public class IseGelmemeUyari implements Serializable {
 											if (userIKMap.containsKey(perKey)) {
 												List<User> userList = userIKMap.get(perKey);
 												for (User userIK : userList) {
+													if (userIK.isDurum() == false)
+														continue;
 													String mailIK = userIK.getEmail();
 													if (userIKMailMap.containsKey(mailIK) == false) {
 														User userYeni = (User) userIK.clone();
@@ -2434,64 +2427,63 @@ public class IseGelmemeUyari implements Serializable {
 	 * @param interval
 	 * @return
 	 */
-	@Asynchronous
-	@SuppressWarnings("unchecked")
-	// @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public QuartzTriggerHandle iseGelmeDurumuTimer(@Expiration Date when, @IntervalCron String interval) {
-		hataKonum = "iseGelmeDurumuTimer başladı ";
-		hataKonum = "iseGelmeDurumuTimer kontrol ediliyor ";
-		if (pdksEntityController != null && !isCalisiyor()) {
-			boolean hataGonder = Boolean.FALSE;
-			Session session = null;
-			try {
-
-				setCalisiyor(Boolean.TRUE);
-				boolean zamanTamam = PdksUtil.zamanKontrolDurum();
-				// zamanTamam = true;
-				if (zamanTamam && (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum() == false)) {
-					izinDahil = true;
-					// logger.error("Ise gelme durumu " + PdksUtil.getCurrentTimeStampStr());
-					session = PdksUtil.getSession(entityManager, Boolean.TRUE);
-					hataKonum = "Paramatre okunuyor ";
-					Parameter parameter = ortakIslemler.getParameterAktif(session, PARAMETER_KEY);
-					if (parameter == null) {
-						parameter = ortakIslemler.getParameterAktif(session, PARAMETER_KEY + "IzinHaric");
-						izinDahil = parameter == null;
-					}
-
-					String value = (parameter != null && parameter.getActive()) ? parameter.getValue() : null;
-					hataKonum = "Paramatre okundu ";
-					if (value != null) {
-						hataGonder = Boolean.TRUE;
-						hataKonum = "Zaman kontrolu yapılıyor ";
-						Date time = ortakIslemler.getBugun();
-						boolean zamanDurum = PdksUtil.getTestDurum() == false && PdksUtil.zamanKontrol(PARAMETER_KEY, value, time) && ortakIslemler.getGuncellemeDurum(PdksLog.TABLE_NAME, session);
-						// if (!zamanDurum)
-						// zamanDurum = PdksUtil.getTestDurum();
-						if (zamanDurum)
-							iseGelmemeDurumuCalistir(null, null, session, null, false, true);
-					}
-				}
-			} catch (Exception e) {
-				logger.error("Pdks hata in : \n");
-				e.printStackTrace();
-				logger.error("Pdks hata out : " + e.getMessage());
-				logger.error("iseGelmeDurumuTimer : " + e.getMessage());
-				if (hataGonder)
-					try {
-						zamanlayici.mailGonder(session, null, "İşe gelme durumu", "İşe gelme durumu kontrolü tamamlanmadı." + e.getMessage() + " ( " + hataKonum + " )", null, Boolean.TRUE);
-
-					} catch (Exception e2) {
-						logger.error("iseGelmeDurumuTimer 2 : " + e.getMessage());
-					}
-			} finally {
-				pdksEntityController.sessionClose(session);
-				setCalisiyor(Boolean.FALSE);
-			}
-
-		}
-		return null;
-	}
+	// @Asynchronous
+	// @SuppressWarnings("unchecked")
+	// public QuartzTriggerHandle iseGelmeDurumuTimer(@Expiration Date when, @IntervalCron String interval) {
+	// hataKonum = "iseGelmeDurumuTimer başladı ";
+	// hataKonum = "iseGelmeDurumuTimer kontrol ediliyor ";
+	// if (pdksEntityController != null && !isCalisiyor()) {
+	// boolean hataGonder = Boolean.FALSE;
+	// Session session = null;
+	// try {
+	//
+	// setCalisiyor(Boolean.TRUE);
+	// boolean zamanTamam = PdksUtil.zamanKontrolDurum();
+	// // zamanTamam = true;
+	// if (zamanTamam && (PdksUtil.getCanliSunucuDurum() || PdksUtil.getTestSunucuDurum() == false)) {
+	// izinDahil = true;
+	// // logger.error("Ise gelme durumu " + PdksUtil.getCurrentTimeStampStr());
+	// session = PdksUtil.getSession(entityManager, Boolean.TRUE);
+	// hataKonum = "Paramatre okunuyor ";
+	// Parameter parameter = ortakIslemler.getParameterAktif(session, PARAMETER_KEY);
+	// if (parameter == null) {
+	// parameter = ortakIslemler.getParameterAktif(session, PARAMETER_KEY + "IzinHaric");
+	// izinDahil = parameter == null;
+	// }
+	//
+	// String value = (parameter != null && parameter.getActive()) ? parameter.getValue() : null;
+	// hataKonum = "Paramatre okundu ";
+	// if (value != null) {
+	// hataGonder = Boolean.TRUE;
+	// hataKonum = "Zaman kontrolu yapılıyor ";
+	// Date time = ortakIslemler.getBugun();
+	// boolean zamanDurum = PdksUtil.getTestDurum() == false && PdksUtil.zamanKontrol(PARAMETER_KEY, value, time) && ortakIslemler.getGuncellemeDurum(PdksLog.TABLE_NAME, session);
+	// // if (!zamanDurum)
+	// // zamanDurum = PdksUtil.getTestDurum();
+	// if (zamanDurum)
+	// iseGelmemeDurumuCalistir(null, null, session, null, false, true);
+	// }
+	// }
+	// } catch (Exception e) {
+	// logger.error("Pdks hata in : \n");
+	// e.printStackTrace();
+	// logger.error("Pdks hata out : " + e.getMessage());
+	// logger.error("iseGelmeDurumuTimer : " + e.getMessage());
+	// if (hataGonder)
+	// try {
+	// zamanlayici.mailGonder(session, null, "İşe gelme durumu", "İşe gelme durumu kontrolü tamamlanmadı." + e.getMessage() + " ( " + hataKonum + " )", null, Boolean.TRUE);
+	//
+	// } catch (Exception e2) {
+	// logger.error("iseGelmeDurumuTimer 2 : " + e.getMessage());
+	// }
+	// } finally {
+	// pdksEntityController.sessionClose(session);
+	// setCalisiyor(Boolean.FALSE);
+	// }
+	//
+	// }
+	// return null;
+	// }
 
 	/**
 	 * @param as

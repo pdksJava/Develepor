@@ -49,8 +49,8 @@ public class Zamanlayici implements Serializable {
 	UserHome userHome;
 	@In(required = false, create = true)
 	EntityManager entityManager;
-	@In
-	IseGelmemeUyari iseGelmemeUyari;
+//	@In
+//	IseGelmemeUyari iseGelmemeUyari;
 	@In
 	PersonelERPGuncelleme personelERPGuncelleme;
 	@In
@@ -78,8 +78,8 @@ public class Zamanlayici implements Serializable {
 	}
 
 	public void scheduleIseGelmemeUyariTimer() {
-		iseGelmemeUyari.iseGelmeDurumuTimer(new Date(), "0 0/5 8-14 ? * *");
-		logger.info("scheduleIseGelmemeUyariTimer start : " + PdksUtil.getCurrentTimeStampStr());
+//		iseGelmemeUyari.iseGelmeDurumuTimer(new Date(), "0 0/5 8-14 ? * *");
+//		logger.info("scheduleIseGelmemeUyariTimer start : " + PdksUtil.getCurrentTimeStampStr());
 	}
 
 	public void schedulePersonelERPGuncellemeTimer() {
