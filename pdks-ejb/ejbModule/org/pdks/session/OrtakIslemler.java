@@ -4537,6 +4537,7 @@ public class OrtakIslemler implements Serializable {
 	/**
 	 * @param session
 	 */
+	@Transactional
 	public void kgsMasterUpdate(Session session) {
 		LinkedHashMap fields = new LinkedHashMap();
 		try {
@@ -5393,6 +5394,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @throws Exception
 	 */
+	@Transactional
 	public void setIkinciYoneticiSifirla(Session session) {
 		Boolean flush = Boolean.FALSE, yonetici2ERPKontrol = getParameterKey("yonetici2ERPKontrol").equals("1");
 		if (!yonetici2ERPKontrol) {
@@ -11134,7 +11136,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param ap
 	 * @param session
 	 */
-
+	@Transactional
 	public void puantajOnayKontrol(User guncelleyenUser, AylikPuantaj ap, Session session) {
 		if (ap != null && ap.getPersonelDenklestirme() != null) {
 			PersonelDenklestirme pd = ap.getPersonelDenklestirme();
@@ -11189,7 +11191,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @return
 	 */
-@Transactional 
+	@Transactional
 	public boolean vardiyaHareketlerdenGuncelle(TreeMap<Long, PersonelDenklestirmeTasiyici> personelDenklestirmeMap, TreeMap<Long, List<VardiyaGun>> personelVardiyaBulMap, HashMap<Long, ArrayList<VardiyaGun>> calismaPlaniMap, HashMap<Long, Boolean> hareketKaydiVardiyaMap,
 			HashMap<Long, ArrayList<HareketKGS>> personelHareketMap, Liste suaListe, Session session) {
 		List<Long> suaPerIdList = suaListe != null ? (List<Long>) suaListe.getId() : new ArrayList<Long>();
@@ -15571,6 +15573,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param session
 	 * @param object
 	 */
+	@Transactional
 	private boolean saveObject(Session session, Object object) {
 		boolean islem = saveOrUpdate(object, null, session);
 		return islem;
@@ -25663,12 +25666,12 @@ public class OrtakIslemler implements Serializable {
 		try {
 			boolean girisYok = izinTipi.getPersonelGirisTipi() == null || izinTipi.getPersonelGirisTipi().equals(IzinTipi.GIRIS_TIPI_YOK);
 			Tatil tatil = girisYok == false ? vardiyaGun.getTatil() : null;
-			if (izinTipi.isSenelikIzin() && vardiyaDateStr.endsWith("1029"))
+			if (vardiyaDateStr.endsWith("1103"))
 				logger.debug("");
 			Date bitisGun = null;
 			if (girisYok == false || tatilSay == false) {
 				bitisGun = PdksUtil.getDate(personelIzin.getBitisZamani());
-				if (vardiyaGun.getVardiyaDate().before(bitisGun))
+				if (vardiyaGun.getVardiyaDate().after(bitisGun) == false)
 					bitisGun = null;
 				tatil = vardiyaGun.getTatil();
 				if (tatil != null && tatil.isYarimGunMu())
@@ -26419,6 +26422,7 @@ public class OrtakIslemler implements Serializable {
 	 * @param loginUser
 	 * @param session
 	 */
+	@Transactional
 	public void hareketKapiUpdate(HashMap<Long, KapiKGS> hareketKapiKGSUpdateMap, HashMap<Long, KapiKGS> hareketKapiPDKSUpdateMap, boolean hareketKopyala, User loginUser, Session session) {
 		String sp = "SP_POOL_TERMINAL_UPDATE";
 		boolean fonksiyonVar = isExisStoreProcedure(sp, session);
