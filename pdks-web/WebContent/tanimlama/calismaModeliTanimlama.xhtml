@@ -161,7 +161,8 @@
 										<f:facet name="header">
 											<h:outputText value="İzin #{ ortakIslemler.getGunAdi(7,null) } (Saat)" />
 										</f:facet>
-										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.getSaatHesabi(calismaModeli.pazarIzinSaat))}" rendered="#{calismaModeli.pazarIzinSaat != 0}" />
+										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.getSaatHesabi(calismaModeli.pazarIzinSaat))}"
+											rendered="#{calismaModeli.pazarIzinSaat != 0}" />
 									</rich:column>
 								</c:if>
 								<rich:column>
@@ -435,7 +436,7 @@
 								</rich:toolTip>
 							</ui:fragment>
 						</s:decorate>
-						<s:decorate template="/layout/edit.xhtml" rendered="#{calismaModeliHome.saatlikCalismaVar}">
+						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Aylık Maaş Mı</ui:define>
 
 							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.aylikMaas}" disabled="#{authenticatedUser.admin == false}">

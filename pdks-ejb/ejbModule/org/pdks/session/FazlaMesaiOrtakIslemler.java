@@ -375,7 +375,7 @@ public class FazlaMesaiOrtakIslemler implements Serializable {
 								toplamIzinSure += izinSure;
 							} else if (vg.getTatil().isYarimGunMu()) {
 								if (PdksUtil.tarihKarsilastirNumeric(vg.getVardiyaDate(), vg.getTatil().getBasTarih()) == 0) {
-									if (vg.isHaftaIci() || cm.getSaat(dayOfWeek) > 0.0d) {
+									if (cm.isHaftaTatilSabitDegil() == false && cm.getSaat(dayOfWeek) > 0.0d) {
 										gunSure += cmYedek.getArife();
 										logger.debug(key + " " + sure);
 										toplamIzinSure += cm.getArife();
