@@ -761,15 +761,50 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 		return listAll;
 	}
 
+	/**
+	 * @param veriMap
+	 * @param sp
+	 * @return
+	 */
+	private StringBuffer getExecStringSP(LinkedHashMap<String, Object> veriMap, String sp) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("exec " + sp + " ");
+		if (veriMap != null) {
+			for (Iterator iterator = veriMap.keySet().iterator(); iterator.hasNext();) {
+				String key = (String) iterator.next();
+				Object value = veriMap.get(key);
+				if (value == null)
+					sb.append(" null ");
+				else if (value instanceof String)
+					sb.append("'" + value.toString().replace("'", "''") + "'");
+				else
+					sb.append(String.valueOf(value));
+				if (iterator.hasNext())
+					sb.append(", ");
+			}
+		}
+		return sb;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.pdks.dao.BaseDAO#execSPList(java.util.LinkedHashMap, java.lang.Class)
+	 */
 	public List execSPList(LinkedHashMap<String, Object> veriMap, Class class1) throws Exception {
 		List liste = null;
 		if (veriMap.containsKey(BaseDAOHibernate.MAP_KEY_SELECT)) {
-
+			String spName = (String) veriMap.get(BaseDAOHibernate.MAP_KEY_SELECT);
 			SQLQuery query = prepareProcedure(veriMap);
 			if (query != null) {
-				if (class1 != null)
-					query.addEntity(class1);
-				liste = query.list();
+				try {
+					if (class1 != null)
+						query.addEntity(class1);
+					liste = query.list();
+				} catch (Exception e) {
+					StringBuffer sb = getExecStringSP(veriMap, spName);
+					logger.error(sb.toString() + "\n" + e);
+					sb = null;
+				}
+
 			}
 		}
 
@@ -777,18 +812,23 @@ public class BaseDAOHibernate extends HibernateDaoSupport implements BaseDAO {
 	}
 
 	/**
-	 * @param fields
+	 * @param veriMap
 	 * @return
 	 */
 	public void execSP(LinkedHashMap<String, Object> veriMap) {
-
-		if (veriMap.containsKey(BaseDAOHibernate.MAP_KEY_SELECT)) {
+ 		if (veriMap.containsKey(BaseDAOHibernate.MAP_KEY_SELECT)) {
+			String spName = (String) veriMap.get(BaseDAOHibernate.MAP_KEY_SELECT);
 			SQLQuery query = prepareProcedure(veriMap);
 			if (query != null)
-				query.executeUpdate();
-		}
-
-	}
+				try {
+					query.executeUpdate();
+				} catch (Exception e) {
+					StringBuffer sb = getExecStringSP(veriMap, spName);
+					logger.error(sb.toString() + "\n" + e);
+					sb = null;
+				}
+ 		}
+ 	}
 
 	/**
 	 * @param veriMap
