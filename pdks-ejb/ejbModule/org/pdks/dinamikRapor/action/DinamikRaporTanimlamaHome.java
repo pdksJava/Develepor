@@ -31,6 +31,7 @@ import org.pdks.dinamikRapor.enums.ENumEsitlik;
 import org.pdks.dinamikRapor.enums.ENumRaporAlanTipi;
 import org.pdks.entity.MenuIliski;
 import org.pdks.entity.MenuItem;
+import org.pdks.security.action.StartupAction;
 import org.pdks.security.entity.MenuItemConstant;
 import org.pdks.security.entity.Role;
 import org.pdks.security.entity.User;
@@ -59,6 +60,8 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 	OrtakIslemler ortakIslemler;
 	@In(required = false, create = true)
 	ComponentState componentState;
+	@In(required = false, create = true)
+	StartupAction startupAction;
 
 	public static String sayfaURL = "dinamikRaporTanimlama";
 	/**
@@ -316,7 +319,7 @@ public class DinamikRaporTanimlamaHome extends EntityHome<PdksDinamikRapor> impl
 			logger.error(e);
 			e.printStackTrace();
 		}
-
+		startupAction.fillRaporRole(session);
 		fillDinamikRaporList();
 		return "";
 
