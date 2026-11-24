@@ -4463,7 +4463,7 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 		boolean kayit = false;
 		if (pdksVardiyaGun.isAyinGunu() && denklestirmeAy.getDurum()) {
 			pdksVardiyaGun.setDurum(false);
-			if (pdksVardiyaGun.getVardiya().isCalisma()&& pdksVardiyaGun.getIzin() == null && pdksVardiyaGun.getVardiyaSaat() == null) {
+			if (pdksVardiyaGun.getVardiya().isCalisma() && pdksVardiyaGun.getIzin() == null && pdksVardiyaGun.getVardiyaSaat() == null) {
 				VardiyaSaat vs = new VardiyaSaat();
 				vs.setNormalSure(pdksVardiyaGun.getVardiya().getNetCalismaSuresi());
 				saveOrUpdate(vs);
@@ -7565,6 +7565,8 @@ public class VardiyaGunHome extends EntityHome<VardiyaPlan> implements Serializa
 								gunSaatGuncelle = true;
 							}
 							personelDenklestirme.setCalismaModeliAy(cma);
+							if (cma != null && cma.getCalismaModeli() != null && cma.getCalismaModeli().isFazlaMesaiOdenir())
+								personelDenklestirme.setFazlaMesaiOde(Boolean.TRUE);
 							boolean islemDurum = saveOrUpdate(personelDenklestirme);
 							if (islemDurum)
 								flush = true;

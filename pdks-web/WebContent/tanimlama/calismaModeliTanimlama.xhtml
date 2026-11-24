@@ -161,7 +161,8 @@
 										<f:facet name="header">
 											<h:outputText value="İzin #{ ortakIslemler.getGunAdi(7,null) } (Saat)" />
 										</f:facet>
-										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.getSaatHesabi(calismaModeli.pazarIzinSaat))}" rendered="#{calismaModeli.pazarIzinSaat != 0}" />
+										<h:outputText value="#{authenticatedUser.sayiFormatliGoster(calismaModeli.getSaatHesabi(calismaModeli.pazarIzinSaat))}"
+											rendered="#{calismaModeli.pazarIzinSaat != 0}" />
 									</rich:column>
 								</c:if>
 								<rich:column>
@@ -603,6 +604,13 @@
 									action="#{ortakIslemler.emtpyAjaxFunction()}" />
 							</h:selectBooleanCheckbox>
 						</s:decorate>
+						<s:decorate template="/layout/edit.xhtml" id="fazlaMesaiOde">
+							<ui:define name="label">Fazla Mesai Öde</ui:define>
+							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.fazlaMesaiOde}">
+								<a4j:support event="onclick" reRender="fazlaMesaiOde" status="ajaxStatus" ajaxSingle="true" action="#{ortakIslemler.emtpyAjaxFunction()}" />
+							</h:selectBooleanCheckbox>
+						</s:decorate>
+
 						<s:decorate template="/layout/edit.xhtml" id="fazlaMesaiSureHesapla">
 							<ui:define name="label">Fazla Mesai Süre Hesapla</ui:define>
 							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.fazlaMesaiSureHesapla}"

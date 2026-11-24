@@ -201,8 +201,10 @@ public class PersonelDenklestirme extends BaseObject {
 	}
 
 	public void setCalismaModeliAy(CalismaModeliAy value) {
-		if (guncellendi != null && !guncellendi && value != null)
-			this.setGuncellendi(PdksUtil.isLongDegisti(value != null ? value.getId() : null, calismaModeliAy != null ? calismaModeliAy.getId() : null));
+		if (value != null) {
+			if (guncellendi != null && !guncellendi)
+				this.setGuncellendi(PdksUtil.isLongDegisti(value != null ? value.getId() : null, calismaModeliAy != null ? calismaModeliAy.getId() : null));
+ 		}
 		this.calismaModeliAy = value;
 	}
 

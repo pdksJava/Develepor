@@ -4553,6 +4553,8 @@ public class PdksVeriOrtakAktar implements Serializable {
 							cm = modeller.get(0);
 						if (cm != null) {
 							personel.setCalismaModeli(cm);
+							if (personel.getId() == null && cm.isFazlaMesaiOdenir())
+								personel.setFazlaMesaiOde(true);
 							if (vs == null) {
 								vs = cm.getBagliVardiyaSablonu();
 								personel.setSablon(vs);

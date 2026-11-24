@@ -78,6 +78,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	public static final String COLUMN_NAME_FM_SURE_HESAPLA = "FM_SURE_HESAPLA";
 	public static final String COLUMN_NAME_ARGE = "ARGE";
 	public static final String COLUMN_NAME_GUNLUK_SAAT_KATSAYI = "GUNLUK_SAAT_KATSAYI";
+	public static final String COLUMN_NAME_FAZLA_MESAI_ODE = "FAZLA_MESAI_ODE";
 
 	private Sirket sirket;
 	private Tanim tesis;
@@ -87,7 +88,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	private double haftaIci = 0.0d, arife = 0.0d, negatifBakiyeDenkSaat = 0.0d;
 	private Double haftaIciSutIzniSure = 7.5d, cumartesiSaat = 0.0d, izin = 0.0d, cumartesiIzinSaat = 0.0d, cumartesiSutIzniSure = 0.0d, sutIzniSabitSaat;
 	private Double pazarSaat = 0.0d, pazarIzinSaat = 0.0d, pazarSutIzniSure = 0.0d;
-	private Boolean fazlaMesaiVar = Boolean.TRUE, fazlaMesaiSureHesapla = Boolean.FALSE, toplamGunGuncelle = Boolean.FALSE, durum = Boolean.TRUE, genelVardiya = Boolean.TRUE, hareketKaydiVardiyaBul = Boolean.FALSE;
+	private Boolean fazlaMesaiVar = Boolean.TRUE, fazlaMesaiOde = Boolean.FALSE, fazlaMesaiSureHesapla = Boolean.FALSE, toplamGunGuncelle = Boolean.FALSE, durum = Boolean.TRUE, genelVardiya = Boolean.TRUE, hareketKaydiVardiyaBul = Boolean.FALSE;
 	private Boolean haftaTatilMesaiOde = Boolean.FALSE, geceHaftaTatilMesaiParcala = Boolean.FALSE, geceCalismaOdemeVar = Boolean.FALSE, otomatikFazlaCalismaOnaylansin = Boolean.FALSE;
 	private Boolean ortakVardiya = Boolean.FALSE, fazlaMesaiGoruntulensin = Boolean.TRUE, ilkPlanOnayliDurum = Boolean.FALSE, gunMaxCalismaOdemeDurum = Boolean.TRUE;
 	private Boolean genelModel = Boolean.TRUE, idariModel = Boolean.FALSE, suaDurum = Boolean.FALSE, haftaTatilHareketGuncelle = Boolean.FALSE, offHareketGuncelle = Boolean.FALSE;
@@ -342,6 +343,15 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 
 	public void setFazlaMesaiVar(Boolean fazlaMesaiVar) {
 		this.fazlaMesaiVar = fazlaMesaiVar;
+	}
+
+	@Column(name = COLUMN_NAME_FAZLA_MESAI_ODE)
+	public Boolean getFazlaMesaiOde() {
+		return fazlaMesaiOde;
+	}
+
+	public void setFazlaMesaiOde(Boolean fazlaMesaiOde) {
+		this.fazlaMesaiOde = fazlaMesaiOde;
 	}
 
 	@Column(name = COLUMN_NAME_FM_SURE_HESAPLA)
@@ -787,7 +797,7 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 			if (gunlukSaatKatSayi == null)
 				gunlukSaatKatSayi = ModelZamanBirimi.SAAT.value();
 			if (gunlukSaatKatSayi > 1) {
- 				BigDecimal bd = new BigDecimal(deger).divide(new BigDecimal(gunlukSaatKatSayi));
+				BigDecimal bd = new BigDecimal(deger).divide(new BigDecimal(gunlukSaatKatSayi));
 				sure = bd.doubleValue();
 				bd = null;
 			}
@@ -976,6 +986,14 @@ public class CalismaModeli extends BasePDKSObject implements Serializable {
 	public String getZamanBirimiAciklama() {
 		String str = getZamanBirimiAciklama(gunlukSaatKatSayi);
 		return str;
+	}
+
+	@Transient
+	public boolean isFazlaMesaiOdenir() {
+		boolean odenir = fazlaMesaiOde != null && fazlaMesaiOde.booleanValue();
+		if (odenir == false)
+			odenir = this.isSaatlikOdeme() || this.isArgemi();
+		return odenir;
 	}
 
 	@Transient
