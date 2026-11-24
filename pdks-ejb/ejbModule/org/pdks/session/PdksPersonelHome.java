@@ -559,6 +559,8 @@ public class PdksPersonelHome extends EntityHome<Personel> implements Serializab
 		Personel personel = getInstance();
 		if (personel.getCalismaModeli() != null) {
 			CalismaModeli calismaModeli = personel.getCalismaModeli();
+			if (calismaModeli.isFazlaMesaiOdenir())
+				personel.setFazlaMesaiOde(Boolean.TRUE);
 			if (calismaModeli.getBagliVardiyaSablonu() != null)
 				personel.setSablon(calismaModeli.getBagliVardiyaSablonu());
 		}
