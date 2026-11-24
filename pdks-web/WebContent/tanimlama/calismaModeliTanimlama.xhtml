@@ -436,7 +436,7 @@
 								</rich:toolTip>
 							</ui:fragment>
 						</s:decorate>
-						<s:decorate template="/layout/edit.xhtml" rendered="#{calismaModeliHome.saatlikCalismaVar}">
+						<s:decorate template="/layout/edit.xhtml">
 							<ui:define name="label">Aylık Maaş Mı</ui:define>
 
 							<h:selectBooleanCheckbox value="#{calismaModeliHome.calismaModeli.aylikMaas}" disabled="#{authenticatedUser.admin == false}">
