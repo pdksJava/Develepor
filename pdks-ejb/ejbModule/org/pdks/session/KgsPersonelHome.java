@@ -7,6 +7,10 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.validator.ValidatorException;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
@@ -74,6 +78,79 @@ public class KgsPersonelHome extends EntityHome<MySQLPersonel> implements Serial
 	@Override
 	public void create() {
 		super.create();
+	}
+
+	/**
+	 * @param context
+	 * @param component
+	 * @param value
+	 * @throws ValidatorException
+	 */
+	public void validateTarih(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+		Date girilenTarih = value == null ? null : ((Date) value);
+		String id = component.getId() != null ? component.getId() : "";
+		StringBuilder sb = null;
+		String alanAdi = "";
+		if (id.equals("isGirisTarihi")) {
+			alanAdi = "İşe Giriş Tarihi";
+			Date dogumTarihi = sqlPersonel.getDogumTarihi(), isCikisTarihi = sqlPersonel.getIsCikisTarihi();
+			if (dogumTarihi != null && girilenTarih.before(dogumTarihi)) {
+				sb = new StringBuilder();
+				sb.append("Doğum tarihinden küçük olamaz");
+			}
+			if (isCikisTarihi != null && girilenTarih.after(isCikisTarihi)) {
+				if (sb == null) {
+					sb = new StringBuilder();
+					sb.append("İşten ayrılma tarihinden büyük olamaz");
+				} else
+					sb.append(", işten ayrılma tarihinden büyük olamaz");
+
+			}
+		} else if (id.equals("isCikisTarihi")) {
+			if (girilenTarih != null) {
+
+				alanAdi = "İşten Ayrılma Tarihi";
+				Date dogumTarihi = sqlPersonel.getDogumTarihi(), isGirisTarihi = sqlPersonel.getIsGirisTarihi();
+				if (dogumTarihi != null && girilenTarih.before(dogumTarihi)) {
+					sb = new StringBuilder();
+					sb.append("Doğum tarihinden küçük olamaz");
+				}
+				if (girilenTarih.before(isGirisTarihi)) {
+					if (sb == null) {
+						sb = new StringBuilder();
+						sb.append("İşe giriş tarihinden küçük olamaz");
+					} else
+						sb.append(", işe giriş tarihinden küçük olamaz");
+
+				}
+			}
+		} else if (id.equals("dogumTarihi")) {
+			if (girilenTarih != null) {
+				alanAdi = "Doğum Tarihi";
+				Date isCikisTarihi = sqlPersonel.getIsCikisTarihi(), isGirisTarihi = sqlPersonel.getIsGirisTarihi();
+				if (girilenTarih.after(isGirisTarihi)) {
+					sb = new StringBuilder();
+					sb.append("İşe giriş tarihinden büyük olamaz");
+
+				}
+				if (isCikisTarihi != null && girilenTarih.after(isCikisTarihi)) {
+					if (sb == null) {
+						sb = new StringBuilder();
+						sb.append("İşten ayrılma tarihinden büyük olamaz");
+					} else
+						sb.append(", işten ayrılma tarihinden büyük olamaz");
+
+				}
+			}
+		}
+		if (sb != null) {
+			String mesaj = sb.toString() + "!";
+			sb = null;
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, alanAdi + " hata : " + mesaj, mesaj);
+			throw new ValidatorException(msg);
+
+		}
+
 	}
 
 	/**
