@@ -146,7 +146,7 @@ public class KgsPersonelHome extends EntityHome<MySQLPersonel> implements Serial
 		if (sb != null) {
 			String mesaj = sb.toString() + "!";
 			sb = null;
-			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, alanAdi + " hata : " + mesaj, mesaj);
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, alanAdi + " hata : " + mesaj, alanAdi + " : " + mesaj);
 			throw new ValidatorException(msg);
 
 		}
