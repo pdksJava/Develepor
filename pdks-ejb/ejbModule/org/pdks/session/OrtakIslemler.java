@@ -1899,10 +1899,19 @@ public class OrtakIslemler implements Serializable {
 			sb.append("select * from " + PersonelDinamikAlan.TABLE_NAME + " " + PdksEntityController.getSelectLOCK());
 			sb.append(" where " + PersonelDinamikAlan.COLUMN_NAME_PERSONEL + " :" + fieldName);
 			if (alanList.isEmpty() == false) {
-				for (Tanim alan : alanList)
-					alanIdList.add(alan.getId());
-				sb.append(" and " + PersonelDinamikAlan.COLUMN_NAME_ALAN + " :x");
-				fields.put("x", alanIdList);
+				StringBuffer alanStr = new StringBuffer();
+				String virgul = "";
+				for (Tanim alan : alanList) {
+					alanStr.append(virgul + alan.getId());
+					virgul = ", ";
+				}
+				virgul = alanStr.toString();
+				alanStr = null;
+				if (alanIdList.size() == 1)
+					sb.append(" and " + PersonelDinamikAlan.COLUMN_NAME_ALAN + " = " + virgul);
+				else
+					sb.append(" and " + PersonelDinamikAlan.COLUMN_NAME_ALAN + " in ( " + virgul + " )");
+
 			}
 			List<PersonelDinamikAlan> list = pdksEntityController.getSQLParamList(personelIdList, sb, fieldName, fields, PersonelDinamikAlan.class, session);
 
