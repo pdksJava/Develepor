@@ -1,6 +1,7 @@
 package org.pdks.session;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,7 +16,6 @@ import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import java.sql.Connection;
 import org.jboss.seam.annotations.Begin;
 import org.jboss.seam.annotations.FlushModeType;
 import org.jboss.seam.annotations.In;
@@ -29,6 +29,9 @@ import org.pdks.entity.Departman;
 import org.pdks.entity.PersonelKGS;
 import org.pdks.entity.Tanim;
 import org.pdks.security.entity.User;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Name("kgsPersonelHome")
 public class KgsPersonelHome extends EntityHome<MySQLPersonel> implements Serializable {
@@ -158,7 +161,7 @@ public class KgsPersonelHome extends EntityHome<MySQLPersonel> implements Serial
 	 * @return
 	 */
 	public String personelEkle(MySQLPersonel personel) {
-		kayitEdilebilir = personel != null || spAdi != null;
+		kayitEdilebilir = personel != null || spAdi != null || authenticatedUser.isAdmin();
 		if (personel == null) {
 			personel = new MySQLPersonel();
 			personel.setIsGirisTarihi(PdksUtil.getDate(new Date()));
@@ -219,8 +222,9 @@ public class KgsPersonelHome extends EntityHome<MySQLPersonel> implements Serial
 
 	@Transactional
 	public String kaydet() {
+		boolean veriGetir = false;
 		try {
-			if (sqlPersonel.getId() == null) {
+			if (spAdi != null && kgsPersonelSPMap != null && kgsPersonelSPMap.isEmpty()) {
 				LinkedHashMap<String, Object> veriMap = new LinkedHashMap<String, Object>();
 				for (Iterator iterator = kgsPersonelSPMap.keySet().iterator(); iterator.hasNext();) {
 					String key = (String) iterator.next();
@@ -253,18 +257,42 @@ public class KgsPersonelHome extends EntityHome<MySQLPersonel> implements Serial
 					}
 				}
 				veriMap = null;
-			} else {
-				pdksEntityController.saveOrUpdate(session, entityManager, sqlPersonel);
-				pdksEntityController.sessionFlush(session);
 			}
-
-			fillPersonelList();
+			try {
+				LinkedHashMap veriMap = new LinkedHashMap();
+				if (sqlPersonel.getId() == null) {
+					veriMap.put("adi", sqlPersonel.getAdi());
+					veriMap.put("soyadi", sqlPersonel.getSoyadi());
+					veriMap.put("kartId", sqlPersonel.getKartId());
+					veriMap.put("sicilNo", sqlPersonel.getSicilNo());
+					veriMap.put("kimlikNo", sqlPersonel.getKimlikNo());
+					veriMap.put("isGirisTarihi", sqlPersonel.getIsGirisTarihi());
+					veriMap.put("dogumTarihi", sqlPersonel.getDogumTarihi());
+					veriMap.put("isCikisTarihi", sqlPersonel.getIsCikisTarihi());
+					Gson gson = new GsonBuilder().serializeNulls().setDateFormat("yyyy-MM-dd").create();
+					String jsonStr = gson.toJson(veriMap);
+					veriMap.clear();
+					veriMap.put("jsonStr", jsonStr);
+					List<MySQLPersonel> list = pdksEntityController.execSPList(session, veriMap, "SP_INSERTMYSQLPERSONEL", MySQLPersonel.class);
+					if (list != null && list.isEmpty() == false)
+						veriGetir = true;
+				} else {
+					pdksEntityController.saveOrUpdate(session, entityManager, sqlPersonel);
+					pdksEntityController.sessionFlush(session);
+				}
+				veriGetir = true;
+				veriMap = null;
+			} catch (Exception ex) {
+				logger.error(ex);
+				ex.printStackTrace();
+			}
 
 		} catch (Exception e) {
 			logger.error(e);
 			e.printStackTrace();
 		}
-
+		if (veriGetir)
+			fillPersonelList();
 		return "";
 	}
 
